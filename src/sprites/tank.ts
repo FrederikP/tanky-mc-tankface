@@ -24,6 +24,9 @@ export class Tank extends kontra.Sprite.class {
             e.preventDefault();
             this.fireGun();
         });
+        kontra.on("scroll", (offset: number) => {
+            super.x = this.x - offset;
+        });
         this.terrain = terrain;
     }
 
@@ -75,6 +78,12 @@ export class Tank extends kontra.Sprite.class {
             this.goLeft(dt);
         }
         this.updateHeightAndRotation();
+        if (this.x < 100) {
+            this.terrain.scroll(-800);
+        }
+        if (this.x > 1366 - 100) {
+            this.terrain.scroll(800);
+        }
     }
 
     public liftGun(dt: number) {

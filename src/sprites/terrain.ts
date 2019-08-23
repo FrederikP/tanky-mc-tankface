@@ -5,7 +5,9 @@ export class Terrain extends kontra.Sprite.class {
     private width: number;
     private minHeight: number;
     private maxHeight: number;
-    private heightMap: number[];
+    private heightMapsPos: number[][];
+    private heightMapsNeg: number[][];
+    private offset = 0;
 
     constructor(originX: number, originY: number, width: number, minHeight: number, maxHeight: number) {
         super({
@@ -15,11 +17,14 @@ export class Terrain extends kontra.Sprite.class {
         this.width = width;
         this.minHeight = minHeight;
         this.maxHeight = maxHeight;
-        this.heightMap = this.generateHeightMap();
+        this.heightMapsPos = [this.generateHeightMap()];
+        this.heightMapsNeg = [];
     }
 
-    public generateHeightMap(): number[] {
-        const leftHeight = this.minHeight + Math.round(Math.random() * (this.maxHeight - this.minHeight));
+    public generateHeightMap(leftHeight?: number): number[] {
+        if (!leftHeight) {
+            leftHeight = this.minHeight + Math.round(Math.random() * (this.maxHeight - this.minHeight));
+        }
         const rightHeight = this.minHeight + Math.round(Math.random() * (this.maxHeight - this.minHeight));
         const heightMap = new Array(this.width);
         heightMap[0] = leftHeight;
@@ -53,17 +58,47 @@ export class Terrain extends kontra.Sprite.class {
         const context = this.context;
         context.beginPath();
 
-        for (let index = 0; index < this.heightMap.length; index++) {
-            const height = this.heightMap[index];
+        for (let index = 0; index < this.width; index++) {
+            const height = this.getGlobalHeight(index);
             context.fillStyle = "#663300";
-            context.fillRect(this.x + index, this.y - height, 1, this.y);
+            context.fillRect(this.x + index, height, 1, this.y);
             context.fillStyle = "#006400";
-            context.fillRect(this.x + index, this.y - height - 4, 1, 4);
+            context.fillRect(this.x + index, height - 4, 1, 4);
         }
     }
 
     public getGlobalHeight(x: number): number {
-        return this.y - this.heightMap[Math.round(x)];
+        const xWithOffset = Math.round(x) + this.offset;
+        let heightMap: number[];
+        const remainder = xWithOffset % this.width;
+        if (xWithOffset < 0) {
+            const heightMapIdx = Math.abs(Math.ceil(xWithOffset / this.width));
+            while (heightMapIdx >= this.heightMapsNeg.length) {
+                let startHeight: number;
+                if (this.heightMapsNeg.length < 1) {
+                    const leftMostHeightMap = this.heightMapsPos[0];
+                    startHeight = leftMostHeightMap[0];
+                } else {
+                    const leftMostHeightMap = this.heightMapsNeg[this.heightMapsNeg.length - 1];
+                    startHeight = leftMostHeightMap[leftMostHeightMap.length - 1];
+                }
+                this.heightMapsNeg.push(this.generateHeightMap(startHeight));
+            }
+            heightMap = this.heightMapsNeg[heightMapIdx];
+        } else {
+            const heightMapIdx = Math.floor(xWithOffset / this.width);
+            while (heightMapIdx >= this.heightMapsPos.length) {
+                const rightMostHeightMap = this.heightMapsPos[this.heightMapsPos.length - 1];
+                this.heightMapsPos.push(this.generateHeightMap(rightMostHeightMap[rightMostHeightMap.length - 1]));
+            }
+            heightMap = this.heightMapsPos[heightMapIdx];
+        }
+        return this.y - heightMap[Math.abs(remainder)];
+    }
+
+    public scroll(offset: number) {
+        this.offset = this.offset + offset;
+        kontra.emit("scroll", offset);
     }
 
 }
