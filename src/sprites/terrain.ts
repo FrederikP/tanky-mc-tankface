@@ -52,7 +52,7 @@ export class Terrain extends kontra.Sprite.class {
     public render() {
         const context = this.context;
         context.beginPath();
-        
+
         for (let index = 0; index < this.heightMap.length; index++) {
             const height = this.heightMap[index];
             context.fillStyle = "#663300";
@@ -60,6 +60,10 @@ export class Terrain extends kontra.Sprite.class {
             context.fillStyle = "#006400";
             context.fillRect(this.x + index, this.y - height - 4, 1, 4);
         }
+    }
+
+    public getGlobalHeight(x: number): number {
+        return this.y - this.heightMap[Math.round(x)];
     }
 
 }

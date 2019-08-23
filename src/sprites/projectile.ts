@@ -14,6 +14,8 @@ export class Projectile extends kontra.Sprite.class {
             x,
             y,
         });
+
+        console.log(`Spawning projectile at ${this.x}/${this.y}`);
         this.v0 = v0;
         this.angle = initialDirection;
         this.startX = x;

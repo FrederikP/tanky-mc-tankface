@@ -9,18 +9,12 @@ import { Terrain } from "../src/sprites/terrain";
 
 const { canvas, context } = kontra.init();
 
-const tank = new Tank(50, 600);
-
 const terrain = new Terrain(0, 768, 1366, 50, 400);
+const tank = new Tank(50, 600, terrain);
 
 let projectiles: Projectile[] = [];
 
 kontra.initKeys();
-
-kontra.bindKeys(["space"], function spacePressed(e: any) {
-    e.preventDefault();
-    tank.fireGun();
-});
 
 function spawnProjectile(x: number, y: number, direction: number) {
     projectiles.push(new Projectile(x, y, direction, 80));
@@ -41,25 +35,7 @@ const loop = kontra.GameLoop({  // create the main game loop
         projectiles.forEach((projectile) => {
             projectile.update();
         });
-        tank.update();
-
-        // wrap the sprites position when it reaches
-        // the edge of the screen
-        if (tank.x > canvas.width) {
-            tank.x = -tank.width;
-        }
-
-        if (kontra.keyPressed("up")) {
-            tank.liftGun(dt);
-        } else if (kontra.keyPressed("down")) {
-            tank.lowerGun(dt);
-        }
-
-        if (kontra.keyPressed("right")) {
-            tank.goRight(dt);
-        } else if (kontra.keyPressed("left")) {
-            tank.goLeft(dt);
-        }
+        tank.update(dt);
     },
 });
 

@@ -1,4 +1,5 @@
 import * as kontra from "kontra";
+import { Terrain } from "./terrain";
 
 export class Tank extends kontra.Sprite.class {
 
@@ -10,21 +11,31 @@ export class Tank extends kontra.Sprite.class {
     private gunRotation = 0;
 
     private faceLeft = false;
+    private terrain: Terrain;
 
-    constructor(x: number, y: number) {
+    private terrainRotationAngle = 0;
+
+    constructor(x: number, y: number, terrain: Terrain) {
         super({
             x,
             y,
         });
+        kontra.bindKeys(["space"], (e: any) => {
+            e.preventDefault();
+            this.fireGun();
+        });
+        this.terrain = terrain;
     }
 
     public render() {
         const context = this.context;
-
         context.save();
         context.translate(this.x + this.width / 2, this.y);
         if (this.faceLeft) {
             context.scale(-1, 1);
+            context.rotate(-this.terrainRotationAngle);
+        } else {
+            context.rotate(this.terrainRotationAngle);
         }
         context.beginPath();
         context.fillStyle = "silver";
@@ -51,6 +62,21 @@ export class Tank extends kontra.Sprite.class {
 
     }
 
+    public update(dt: number) {
+        if (kontra.keyPressed("up")) {
+            this.liftGun(dt);
+        } else if (kontra.keyPressed("down")) {
+            this.lowerGun(dt);
+        }
+
+        if (kontra.keyPressed("right")) {
+            this.goRight(dt);
+        } else if (kontra.keyPressed("left")) {
+            this.goLeft(dt);
+        }
+        this.updateHeightAndRotation();
+    }
+
     public liftGun(dt: number) {
         if (this.gunRotation >  ((- Math.PI / 2) + (Math.PI / 10))) {
             this.gunRotation = this.gunRotation - Math.PI * (dt / 5);
@@ -74,22 +100,31 @@ export class Tank extends kontra.Sprite.class {
     }
 
     public fireGun() {
-        const originX = this.x + this.width / 2;
-        const originY = this.y - 3;
+        const originXRotationDiff = 3 * Math.sin(this.terrainRotationAngle);
+        const originYRotationDiff = - 3 * Math.cos(this.terrainRotationAngle);
 
-        const originMuzzleDiffX = Math.cos(this.gunRotation) * 30;
-        const originMuzzleDiffY = Math.sin(this.gunRotation) * 30;
+        const originX = this.x + this.width / 2 + originXRotationDiff;
+        const originY = this.y - 3 + originYRotationDiff;
 
-        let muzzleX = originX + originMuzzleDiffX;
-        const muzzleY = originY + originMuzzleDiffY;
-
-        let rotation = this.gunRotation;
-
+        let rotation = this.gunRotation + this.terrainRotationAngle;
         if (this.faceLeft) {
-            rotation = -Math.PI - rotation;
-            muzzleX = originX - originMuzzleDiffX;
+            rotation = Math.PI - this.gunRotation + this.terrainRotationAngle;
         }
+
+        const originMuzzleDiffX = Math.cos(rotation) * 30;
+        const originMuzzleDiffY = Math.sin(rotation) * 30;
+
+        const muzzleX = originX + originMuzzleDiffX;
+        const muzzleY = originY + originMuzzleDiffY;
 
         kontra.emit("spawnProjectile", muzzleX, muzzleY, rotation);
     }
+
+    private updateHeightAndRotation() {
+        const leftTerrainHeight = this.terrain.getGlobalHeight(this.x);
+        const rightTerrainHeight = this.terrain.getGlobalHeight(this.x + this.width);
+        super.y = Math.round(leftTerrainHeight - ((leftTerrainHeight - rightTerrainHeight) / 2)) - 20;
+        this.terrainRotationAngle = Math.atan((rightTerrainHeight - leftTerrainHeight) / this.width);
+    }
+
 }
