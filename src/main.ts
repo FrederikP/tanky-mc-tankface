@@ -10,9 +10,9 @@ import { Terrain } from "../src/sprites/terrain";
 const { canvas, context } = kontra.init();
 
 const terrain = new Terrain(0, 768, 1366, 50, 400);
-const tank = new Tank(1366/2, 600, terrain);
+const tank = new Tank(1366 / 2, 600, terrain);
 
-let projectiles: Projectile[] = [];
+const projectiles: Projectile[] = [];
 
 kontra.initKeys();
 
@@ -32,9 +32,19 @@ const loop = kontra.GameLoop({  // create the main game loop
     },
     update: function update(dt: number) { // update the game state
         terrain.update();
-        projectiles.forEach((projectile) => {
+        const idxToRemove = [];
+        for (let index = 0; index < projectiles.length; index++) {
+            const projectile = projectiles[index];
             projectile.update();
-        });
+            const terrainHeight = terrain.getGlobalHeight(projectile.x);
+            if (projectile.y >= terrainHeight) {
+                terrain.explosion(projectile.x);
+                idxToRemove.push(index);
+            }
+        }
+        for (let i = idxToRemove.length - 1; i >= 0; i--) {
+            projectiles.splice(idxToRemove[i], 1);
+        }
         tank.update(dt);
     },
 });

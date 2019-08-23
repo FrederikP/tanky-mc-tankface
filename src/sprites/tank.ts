@@ -130,10 +130,21 @@ export class Tank extends kontra.Sprite.class {
     }
 
     private updateHeightAndRotation() {
-        const leftTerrainHeight = this.terrain.getGlobalHeight(this.x);
-        const rightTerrainHeight = this.terrain.getGlobalHeight(this.x + this.width);
-        super.y = Math.round(leftTerrainHeight - ((leftTerrainHeight - rightTerrainHeight) / 2)) - 20;
-        this.terrainRotationAngle = Math.atan((rightTerrainHeight - leftTerrainHeight) / this.width);
+        const left = Math.round(this.x);
+        const right = Math.round(left + this.width);
+        const middle = Math.round(left + (right - left) / 2);
+        const valuesLeft = [];
+        for (let idx = left; idx < middle + 1; idx++) {
+            valuesLeft.push(this.terrain.getGlobalHeight(idx));
+        }
+        const avgLeft = valuesLeft.reduce((a, b) => a + b, 0) / valuesLeft.length;
+        const valuesRight = [];
+        for (let idx = middle; idx < right + 1; idx++) {
+            valuesRight.push(this.terrain.getGlobalHeight(idx));
+        }
+        const avgRight = valuesRight.reduce((a, b) => a + b, 0) / valuesRight.length;
+        super.y = Math.round(avgLeft - ((avgLeft - avgRight) / 2)) - 20;
+        this.terrainRotationAngle = Math.atan((avgRight - avgLeft) / this.width);
     }
 
 }

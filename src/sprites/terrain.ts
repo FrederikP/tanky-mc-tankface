@@ -68,6 +68,22 @@ export class Terrain extends kontra.Sprite.class {
     }
 
     public getGlobalHeight(x: number): number {
+        const { heightMap, idx }: { heightMap: number[]; idx: number; } = this.getHeightMapAndIndex(x);
+        return this.y - heightMap[idx];
+    }
+
+    public scroll(offset: number) {
+        this.offset = this.offset + offset;
+        kontra.emit("scroll", offset);
+    }
+
+    public explosion(x: number) {
+        for (let idx = x - 10; idx < x + 11; idx++) {
+            this.changeHeight(idx, - (11 - Math.abs(idx - x)));
+        }
+    }
+
+    private getHeightMapAndIndex(x: number) {
         const xWithOffset = Math.round(x) + this.offset;
         let heightMap: number[];
         const remainder = xWithOffset % this.width;
@@ -93,12 +109,13 @@ export class Terrain extends kontra.Sprite.class {
             }
             heightMap = this.heightMapsPos[heightMapIdx];
         }
-        return this.y - heightMap[Math.abs(remainder)];
+        const idx = Math.abs(remainder);
+        return { heightMap, idx };
     }
 
-    public scroll(offset: number) {
-        this.offset = this.offset + offset;
-        kontra.emit("scroll", offset);
+    private changeHeight(x: number, heightDiff: number) {
+        const { heightMap, idx }: { heightMap: number[]; idx: number; } = this.getHeightMapAndIndex(x);
+        heightMap[idx] = Math.max(heightMap[idx] + heightDiff, this.minHeight);
     }
 
 }
