@@ -13,9 +13,8 @@ export class Tank extends kontra.Sprite.class {
 
     constructor(x: number, y: number) {
         super({
-            color: "grey",
-            x: 100,
-            y: 600,
+            x,
+            y,
         });
     }
 
@@ -53,7 +52,7 @@ export class Tank extends kontra.Sprite.class {
     }
 
     public liftGun(dt: number) {
-        if (this.gunRotation >  ((- Math.PI / 2) + (Math.PI / 6))) {
+        if (this.gunRotation >  ((- Math.PI / 2) + (Math.PI / 10))) {
             this.gunRotation = this.gunRotation - Math.PI * (dt / 5);
         }
     }
@@ -72,5 +71,25 @@ export class Tank extends kontra.Sprite.class {
     public goRight(dt: number) {
         super.x = this.x + dt * 50;
         this.faceLeft = false;
+    }
+
+    public fireGun() {
+        const originX = this.x + this.width / 2;
+        const originY = this.y - 3;
+
+        const originMuzzleDiffX = Math.cos(this.gunRotation) * 30;
+        const originMuzzleDiffY = Math.sin(this.gunRotation) * 30;
+
+        let muzzleX = originX + originMuzzleDiffX;
+        const muzzleY = originY + originMuzzleDiffY;
+
+        let rotation = this.gunRotation;
+
+        if (this.faceLeft) {
+            rotation = -Math.PI - rotation;
+            muzzleX = originX - originMuzzleDiffX;
+        }
+
+        kontra.emit("spawnProjectile", muzzleX, muzzleY, rotation);
     }
 }
