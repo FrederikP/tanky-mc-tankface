@@ -10,7 +10,7 @@ import { Terrain } from "../src/sprites/terrain";
 const { canvas, context } = kontra.init();
 
 const terrain = new Terrain(0, 768, 1366, 50, 400);
-const tank = new Tank(50, 600, terrain);
+const tank = new Tank(200, 600, terrain);
 
 let projectiles: Projectile[] = [];
 

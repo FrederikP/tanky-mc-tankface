@@ -90,12 +90,12 @@ export class Tank extends kontra.Sprite.class {
     }
 
     public goLeft(dt: number) {
-        super.x = this.x - dt * 50;
+        super.x = this.x - dt * (80 - this.terrainRotationAngle * 60);
         this.faceLeft = true;
     }
 
     public goRight(dt: number) {
-        super.x = this.x + dt * 50;
+        super.x = this.x + dt * (80 + this.terrainRotationAngle * 60);
         this.faceLeft = false;
     }
 
