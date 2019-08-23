@@ -78,11 +78,11 @@ export class Tank extends kontra.Sprite.class {
             this.goLeft(dt);
         }
         this.updateHeightAndRotation();
-        if (this.x < 100) {
-            this.terrain.scroll(-800);
+        if (this.x < 500) {
+            this.terrain.scroll(-2);
         }
-        if (this.x > 1366 - 100) {
-            this.terrain.scroll(800);
+        if (this.x > 1366 - 500) {
+            this.terrain.scroll(2);
         }
     }
 
