@@ -100,11 +100,11 @@ export class Tank extends kontra.Sprite.class {
     }
 
     public fireGun() {
-        const originXRotationDiff = 3 * Math.sin(this.terrainRotationAngle);
-        const originYRotationDiff = - 3 * Math.cos(this.terrainRotationAngle);
+        const originXRotationDiff = 2 * Math.sin(this.terrainRotationAngle);
+        const originYRotationDiff = - 2 * Math.cos(this.terrainRotationAngle);
 
         const originX = this.x + this.width / 2 + originXRotationDiff;
-        const originY = this.y - 3 + originYRotationDiff;
+        const originY = this.y - 2 + originYRotationDiff;
 
         let rotation = this.gunRotation + this.terrainRotationAngle;
         if (this.faceLeft) {
