@@ -56,8 +56,22 @@ export class Terrain extends kontra.Sprite.class {
 
     public render() {
         const context = this.context;
-        context.beginPath();
 
+        context.beginPath();
+        context.fillStyle = "yellow";
+        context.arc(12, 12, 12, 0, Math.PI * 2, true);
+        context.fill();
+
+        context.globalCompositeOperation = "destination-out";
+
+        context.beginPath();
+        context.arc(20, 12, 12, 0, Math.PI * 2, true);
+        context.fill();
+
+        context.globalCompositeOperation = "source-over";
+
+
+        context.beginPath();
         for (let index = 0; index < this.width; index++) {
             const height = this.getGlobalHeight(index);
             context.fillStyle = "#663300";
@@ -68,8 +82,7 @@ export class Terrain extends kontra.Sprite.class {
     }
 
     public getGlobalHeight(x: number): number {
-        const { heightMap, idx }: { heightMap: number[]; idx: number; } = this.getHeightMapAndIndex(x);
-        return this.y - heightMap[idx];
+        return this.y - this.getHeight(x);
     }
 
     public scroll(offset: number) {
@@ -78,8 +91,12 @@ export class Terrain extends kontra.Sprite.class {
     }
 
     public explosion(x: number) {
-        for (let idx = x - 10; idx < x + 11; idx++) {
-            this.changeHeight(idx, - (11 - Math.abs(idx - x)));
+        const height = this.getHeight(x);
+        for (let idx = x - 30; idx < x + 31; idx++) {
+            const newHeight = height - (10 - 0.1 * Math.abs(idx - x) * Math.abs(idx - x));
+            if (newHeight < this.getHeight(idx)) {
+                this.changeHeight(idx, newHeight);
+            }
         }
     }
 
@@ -113,9 +130,14 @@ export class Terrain extends kontra.Sprite.class {
         return { heightMap, idx };
     }
 
-    private changeHeight(x: number, heightDiff: number) {
+    private changeHeight(x: number, newHeight: number) {
         const { heightMap, idx }: { heightMap: number[]; idx: number; } = this.getHeightMapAndIndex(x);
-        heightMap[idx] = Math.max(heightMap[idx] + heightDiff, this.minHeight);
+        heightMap[idx] = Math.max(newHeight, this.minHeight);
+    }
+
+    private getHeight(x: number): number {
+        const { heightMap, idx }: { heightMap: number[]; idx: number; } = this.getHeightMapAndIndex(x);
+        return heightMap[idx];
     }
 
 }
