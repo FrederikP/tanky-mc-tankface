@@ -4,7 +4,7 @@
   "description": "tank game for 13k contest and getting to know typescript",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"No tests for now\"",
     "start": "webpack-dev-server",
     "build": "webpack"
   },

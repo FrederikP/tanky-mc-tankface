@@ -27,7 +27,7 @@ export class Projectile extends kontra.Sprite.class {
     public render() {
         const context = this.context;
         context.beginPath();
-        context.fillStyle = "black";
+        context.fillStyle = "white";
         context.arc(this.x, this.y, 2, 0, 2 * Math.PI);
         context.fill();
     }

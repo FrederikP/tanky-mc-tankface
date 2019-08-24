@@ -1,12 +1,21 @@
 import * as kontra from "kontra";
 
+class HeighEntry {
+    public height: number;
+    public exploded = false;
+    constructor(height: number) {
+        this.height = height;
+    }
+}
+
+// tslint:disable-next-line: max-classes-per-file
 export class Terrain extends kontra.Sprite.class {
 
     private width: number;
     private minHeight: number;
     private maxHeight: number;
-    private heightMapsPos: number[][];
-    private heightMapsNeg: number[][];
+    private heightMapsPos: HeighEntry[][];
+    private heightMapsNeg: HeighEntry[][];
     private offset = 0;
 
     constructor(originX: number, originY: number, width: number, minHeight: number, maxHeight: number) {
@@ -21,25 +30,25 @@ export class Terrain extends kontra.Sprite.class {
         this.heightMapsNeg = [];
     }
 
-    public generateHeightMap(leftHeight?: number): number[] {
+    public generateHeightMap(leftHeight?: number): HeighEntry[] {
         if (!leftHeight) {
             leftHeight = this.minHeight + Math.round(Math.random() * (this.maxHeight - this.minHeight));
         }
         const rightHeight = this.minHeight + Math.round(Math.random() * (this.maxHeight - this.minHeight));
-        const heightMap = new Array(this.width);
-        heightMap[0] = leftHeight;
-        heightMap[this.width - 1] = rightHeight;
+        const heightMap: HeighEntry[] = new Array(this.width);
+        heightMap[0] = new HeighEntry(leftHeight);
+        heightMap[this.width - 1] = new HeighEntry(rightHeight);
         this.midpointDisplacement(heightMap, 0, this.width - 1);
         return heightMap;
     }
 
-    public midpointDisplacement(heightMap: number[], leftIdx: number, rightIdx: number) {
-        const leftHeight = heightMap[leftIdx];
-        const rightHeight = heightMap[rightIdx];
+    public midpointDisplacement(heightMap: HeighEntry[], leftIdx: number, rightIdx: number) {
+        const leftHeight = heightMap[leftIdx].height;
+        const rightHeight = heightMap[rightIdx].height;
         const midHeight = leftHeight - ((leftHeight - rightHeight) / 2);
         if (rightIdx - leftIdx < 4) {
             for (let index = leftIdx + 1; index < rightIdx; index++) {
-                heightMap[index] = midHeight;
+                heightMap[index] = new HeighEntry(midHeight);
             }
         } else {
             const jitter = 0.3 * (Math.random() - 0.5) * Math.abs(leftIdx - rightIdx);
@@ -47,7 +56,7 @@ export class Terrain extends kontra.Sprite.class {
             let newHeight = midHeight + jitter;
             newHeight = Math.min(newHeight, this.maxHeight);
             newHeight = Math.max(newHeight, this.minHeight);
-            heightMap[midIdx] = newHeight;
+            heightMap[midIdx] = new HeighEntry(newHeight);
             this.midpointDisplacement(heightMap, leftIdx, midIdx);
             this.midpointDisplacement(heightMap, midIdx, rightIdx);
         }
@@ -70,13 +79,16 @@ export class Terrain extends kontra.Sprite.class {
 
         context.globalCompositeOperation = "source-over";
 
-
         context.beginPath();
         for (let index = 0; index < this.width; index++) {
             const height = this.getGlobalHeight(index);
             context.fillStyle = "#663300";
             context.fillRect(this.x + index, height, 1, this.y);
-            context.fillStyle = "#006400";
+            if (this.hasExploded(index)) {
+                context.fillStyle = "black";
+            } else {
+                context.fillStyle = "#006400";
+            }
             context.fillRect(this.x + index, height - 4, 1, 4);
         }
     }
@@ -102,7 +114,7 @@ export class Terrain extends kontra.Sprite.class {
 
     private getHeightMapAndIndex(x: number) {
         const xWithOffset = Math.round(x) + this.offset;
-        let heightMap: number[];
+        let heightMap: HeighEntry[];
         const remainder = xWithOffset % this.width;
         if (xWithOffset < 0) {
             const heightMapIdx = Math.abs(Math.ceil(xWithOffset / this.width));
@@ -110,10 +122,10 @@ export class Terrain extends kontra.Sprite.class {
                 let startHeight: number;
                 if (this.heightMapsNeg.length < 1) {
                     const leftMostHeightMap = this.heightMapsPos[0];
-                    startHeight = leftMostHeightMap[0];
+                    startHeight = leftMostHeightMap[0].height;
                 } else {
                     const leftMostHeightMap = this.heightMapsNeg[this.heightMapsNeg.length - 1];
-                    startHeight = leftMostHeightMap[leftMostHeightMap.length - 1];
+                    startHeight = leftMostHeightMap[leftMostHeightMap.length - 1].height;
                 }
                 this.heightMapsNeg.push(this.generateHeightMap(startHeight));
             }
@@ -122,7 +134,8 @@ export class Terrain extends kontra.Sprite.class {
             const heightMapIdx = Math.floor(xWithOffset / this.width);
             while (heightMapIdx >= this.heightMapsPos.length) {
                 const rightMostHeightMap = this.heightMapsPos[this.heightMapsPos.length - 1];
-                this.heightMapsPos.push(this.generateHeightMap(rightMostHeightMap[rightMostHeightMap.length - 1]));
+                const height = rightMostHeightMap[rightMostHeightMap.length - 1].height;
+                this.heightMapsPos.push(this.generateHeightMap(height));
             }
             heightMap = this.heightMapsPos[heightMapIdx];
         }
@@ -131,13 +144,19 @@ export class Terrain extends kontra.Sprite.class {
     }
 
     private changeHeight(x: number, newHeight: number) {
-        const { heightMap, idx }: { heightMap: number[]; idx: number; } = this.getHeightMapAndIndex(x);
-        heightMap[idx] = Math.max(newHeight, this.minHeight);
+        const { heightMap, idx }: { heightMap: HeighEntry[]; idx: number; } = this.getHeightMapAndIndex(x);
+        heightMap[idx].height = Math.max(newHeight, this.minHeight);
+        heightMap[idx].exploded = true;
     }
 
     private getHeight(x: number): number {
-        const { heightMap, idx }: { heightMap: number[]; idx: number; } = this.getHeightMapAndIndex(x);
-        return heightMap[idx];
+        const { heightMap, idx }: { heightMap: HeighEntry[]; idx: number; } = this.getHeightMapAndIndex(x);
+        return heightMap[idx].height;
+    }
+
+    private hasExploded(x: number): boolean {
+        const { heightMap, idx }: { heightMap: HeighEntry[]; idx: number; } = this.getHeightMapAndIndex(x);
+        return heightMap[idx].exploded;
     }
 
 }
