@@ -6,17 +6,28 @@ import { Terrain } from "./terrain";
 
 export class Turret extends Enemy {
 
-    private radius = 10;
-    private shootingSpeed = 65;
-    private lastShot = 0;
-    private msBetweenShots = 2000;
+    private shootingSpeed: number;
+    private msBetweenShots: number;
+    private directTrajectory: boolean;
+    private inaccuracy: number;
 
+    private radius = 10;
     private gunRotation = 0.75 * -Math.PI;
     private tank: Tank;
+    private lastShot = Date.now();
 
-    constructor(x: number, y: number, tank: Tank) {
+    private seenTanky = false;
+    private currentInaccuracy: number;
+
+    constructor(x: number, y: number, tank: Tank, shootingSpeed: number,
+                msBetweenShots: number, directTrajectory: boolean, inaccuracy: number) {
         super(x, y);
         this.tank = tank;
+        this.shootingSpeed = shootingSpeed;
+        this.msBetweenShots = msBetweenShots;
+        this.directTrajectory = directTrajectory;
+        this.inaccuracy = inaccuracy;
+        this.currentInaccuracy = (Math.random() - 0.5) * 2 * this.inaccuracy;
     }
 
     public collidesWith(projectile: Projectile) {
@@ -46,13 +57,19 @@ export class Turret extends Enemy {
 
     protected updateEnemy(dt: number) {
         const { muzzleX, muzzleY } = this.getMuzzlePosition();
-        if (Math.abs(muzzleX - this.x) < 500) {
-            const x = this.tank.x - muzzleX;
+        if (this.seenTanky || Math.abs(muzzleX - this.tank.x) < 630) {
+            this.seenTanky = true;
+            const x = this.tank.x - muzzleX + this.currentInaccuracy;
             const y = -(this.tank.y - muzzleY);
             const speedSquared = Math.pow(this.shootingSpeed, 2);
             const toSqrt1 = Math.pow(speedSquared, 2);
             const toSqrt2 = 9.8 * (9.8 * Math.pow(x, 2) + 2 * y  * speedSquared);
-            const rightSide = (speedSquared - Math.sqrt(toSqrt1 - toSqrt2)) / (9.8 * x);
+            let rightSide;
+            if (this.directTrajectory) {
+                rightSide = (speedSquared - Math.sqrt(toSqrt1 - toSqrt2)) / (9.8 * x);
+            } else {
+                rightSide = (speedSquared + Math.sqrt(toSqrt1 - toSqrt2)) / (9.8 * x);
+            }
             if (rightSide) {
                 const angle = Math.atan(rightSide);
                 let targetGunRotation;
@@ -65,6 +82,7 @@ export class Turret extends Enemy {
                 if (Date.now() - this.lastShot > this.msBetweenShots) {
                     this.fireGun();
                     this.lastShot = Date.now();
+                    this.currentInaccuracy = (Math.random() - 0.5) * 2 * this.inaccuracy;
                 }
             }
         }

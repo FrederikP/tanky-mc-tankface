@@ -28,6 +28,11 @@ export class HUD extends kontra.Sprite.class {
         context.fillRect(500, 730, powerMid, 30);
         context.fillStyle = "grey";
         context.fillRect(500 + powerMid, 730, HEALTHBAR_WIDTH - powerMid, 30);
+        if (this.tank.isReloading()) {
+            context.fillStyle = "black";
+            context.font = "20px Arial";
+            context.fillText(`RELOADING`, 530, 750);
+        }
     }
 
 }

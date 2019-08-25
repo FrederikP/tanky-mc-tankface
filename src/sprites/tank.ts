@@ -1,7 +1,7 @@
 import * as kontra from "kontra";
 import { Projectile } from "./projectile";
 import { Terrain } from "./terrain";
-import { circleAndRectangleCollide } from "./util";
+import { circleAndRectangleCollide } from "../util";
 
 export class Tank extends kontra.Sprite.class {
 
@@ -10,10 +10,14 @@ export class Tank extends kontra.Sprite.class {
 
     public power = 0;
 
+    public lastShot = 0;
+
     public width = 40;
 
     private radius = 10;
     private height = 20;
+
+    private timeToReload = 1000;
 
     private gunRotation = 0;
 
@@ -68,17 +72,24 @@ export class Tank extends kontra.Sprite.class {
 
     }
 
+    public isReloading() {
+        return Date.now() - this.lastShot < this.timeToReload;
+    }
+
     public update(dt: number) {
-        if (kontra.keyPressed("space")) {
-            if (this.power < 30) {
-                this.power = 35;
+        if (!this.isReloading()) {
+            if (kontra.keyPressed("space")) {
+                if (this.power < 30) {
+                    this.power = 35;
+                } else {
+                    this.power = Math.min(100, this.power + (dt * 100));
+                }
             } else {
-                this.power = Math.min(100, this.power + (dt * 100));
-            }
-        } else {
-            if (this.power > 30) {
-                this.fireGun();
-                this.power = 0;
+                if (this.power > 30) {
+                    this.fireGun();
+                    this.power = 0;
+                    this.lastShot = Date.now();
+                }
             }
         }
         if (kontra.keyPressed("up")) {
@@ -93,10 +104,10 @@ export class Tank extends kontra.Sprite.class {
             this.goLeft(dt);
         }
         this.updateHeightAndRotation();
-        if (this.x < 500) {
+        if (this.x < 650) {
             this.terrain.scroll(-2);
         }
-        if (this.x > 1366 - 500) {
+        if (this.x > 1366 - 650) {
             this.terrain.scroll(2);
         }
     }
