@@ -16,7 +16,7 @@ const tank = new Tank(1366 / 2, 600, terrain);
 
 const projectiles: Projectile[] = [];
 const enemies: Enemy[] = [];
-enemies.push(new Turret(1600, terrain.getGlobalHeight(1600), tank));
+enemies.push(new Turret(1600, terrain.getGlobalHeight(1600) - 20, tank));
 
 kontra.initKeys();
 

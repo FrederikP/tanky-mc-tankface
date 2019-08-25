@@ -24,7 +24,7 @@ export class Turret extends Enemy {
         const yDiff = projectile.y - this.y;
         const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
         let colliding = false;
-        if (distance < this.radius + projectile.radius) {
+        if (distance < this.radius + projectile.radius || (Math.abs(xDiff) < this.radius && projectile.y > this.y)) {
             colliding = true;
         }
         return colliding;
@@ -32,8 +32,13 @@ export class Turret extends Enemy {
 
     protected renderEnemy(context: any) {
         context.fillStyle = "orange";
-        context.arc(0, 0, this.radius, 0, Math.PI * 2);
+        context.arc(0, 0, this.radius, Math.PI, 0);
         context.fill();
+        context.beginPath();
+        context.fillStyle = "grey";
+        context.fillRect(- this.radius, 0, this.radius * 2, 200);
+        context.beginPath();
+        context.fillStyle = "orange";
         context.translate(0, -4);
         context.rotate(this.gunRotation);
         context.fillRect(0, -2, 20, 4);
