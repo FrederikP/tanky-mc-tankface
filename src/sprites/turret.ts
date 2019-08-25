@@ -9,6 +9,7 @@ export class Turret extends Enemy {
     private radius = 10;
     private shootingSpeed = 65;
     private lastShot = 0;
+    private msBetweenShots = 2000;
 
     private gunRotation = 0.75 * -Math.PI;
     private tank: Tank;
@@ -50,13 +51,13 @@ export class Turret extends Enemy {
             if (rightSide) {
                 const angle = Math.atan(rightSide);
                 let targetGunRotation;
-                if (angle > 0) {
+                if (this.tank.x - muzzleX > 0) {
                     targetGunRotation = - angle;
                 } else {
                     targetGunRotation = - Math.PI - angle;
                 }
                 this.gunRotation = this.gunRotation - Math.min(this.gunRotation - targetGunRotation, 20) * dt;
-                if (Date.now() - this.lastShot > 2000) {
+                if (Date.now() - this.lastShot > this.msBetweenShots) {
                     this.fireGun();
                     this.lastShot = Date.now();
                 }
