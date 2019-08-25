@@ -1,7 +1,14 @@
 import * as kontra from "kontra";
+import { Projectile } from "./projectile";
 import { Terrain } from "./terrain";
+import { circleAndRectangleCollide } from "./util";
 
 export class Tank extends kontra.Sprite.class {
+
+    public maxHealth = 10;
+    public health = this.maxHealth;
+
+    public power = 0;
 
     public width = 40;
 
@@ -19,10 +26,6 @@ export class Tank extends kontra.Sprite.class {
         super({
             x,
             y,
-        });
-        kontra.bindKeys(["space"], (e: any) => {
-            e.preventDefault();
-            this.fireGun();
         });
         kontra.on("scroll", (offset: number) => {
             super.x = this.x - offset;
@@ -66,6 +69,18 @@ export class Tank extends kontra.Sprite.class {
     }
 
     public update(dt: number) {
+        if (kontra.keyPressed("space")) {
+            if (this.power < 30) {
+                this.power = 35;
+            } else {
+                this.power = Math.min(100, this.power + (dt * 100));
+            }
+        } else {
+            if (this.power > 30) {
+                this.fireGun();
+                this.power = 0;
+            }
+        }
         if (kontra.keyPressed("up")) {
             this.liftGun(dt);
         } else if (kontra.keyPressed("down")) {
@@ -126,7 +141,29 @@ export class Tank extends kontra.Sprite.class {
         const muzzleX = originX + originMuzzleDiffX;
         const muzzleY = originY + originMuzzleDiffY;
 
-        kontra.emit("spawnProjectile", muzzleX, muzzleY, rotation, 80);
+        kontra.emit("spawnProjectile", muzzleX, muzzleY, rotation, this.power);
+    }
+
+    public isDead(): boolean {
+        return this.health <= 0;
+    }
+
+    public collidesWith(projectile: Projectile) {
+        const xDiff = projectile.x - this.x;
+        const yDiff = projectile.y - this.y;
+        const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+        let colliding = false;
+        if (distance < this.radius + projectile.radius ||
+            circleAndRectangleCollide(projectile.x, projectile.y, projectile.radius,
+                                      this.x - this.width / 2, this.y - this.width / 2,
+                                      this.width, this.height)) {
+            colliding = true;
+        }
+        return colliding;
+    }
+
+    public takeDamage(projectile: Projectile) {
+        this.health = this.health - projectile.damage;
     }
 
     private updateHeightAndRotation() {

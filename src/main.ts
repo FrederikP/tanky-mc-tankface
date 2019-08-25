@@ -8,11 +8,13 @@ import { Tank } from "../src/sprites/tank";
 import { Terrain } from "../src/sprites/terrain";
 import { Turret } from "../src/sprites/turret";
 import { Enemy } from "./sprites/enemy";
+import { HUD } from "./sprites/hud";
 
 const { canvas, context } = kontra.init();
 
 const terrain = new Terrain(0, 768, 1366, 50, 400);
 const tank = new Tank(1366 / 2, 600, terrain);
+const hud = new HUD(tank);
 
 const projectiles: Projectile[] = [];
 const enemies: Enemy[] = [];
@@ -36,6 +38,7 @@ const loop = kontra.GameLoop({  // create the main game loop
         });
         tank.render();
         terrain.render();
+        hud.render();
     },
     update: function update(dt: number) { // update the game state
         terrain.update();
@@ -65,6 +68,15 @@ const loop = kontra.GameLoop({  // create the main game loop
             if (projectile.y >= terrainHeight) {
                 terrain.explosion(projectile.x);
                 remove = true;
+            }
+            if (Math.abs(projectile.x - tank.x) < 50) {
+                if (tank.collidesWith(projectile)) {
+                    tank.takeDamage(projectile);
+                    remove = true;
+                    if (tank.isDead()) {
+                        // TODO reset
+                    }
+                }
             }
             if (remove) {
                 projectileIdsToRemove.push(index);
