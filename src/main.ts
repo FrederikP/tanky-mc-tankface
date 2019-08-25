@@ -10,15 +10,23 @@ import { Turret } from "../src/sprites/turret";
 import { Enemy } from "./sprites/enemy";
 import { HUD } from "./sprites/hud";
 
-const { canvas, context } = kontra.init();
+kontra.init();
 
-const terrain = new Terrain(0, 768, 1366, 50, 400);
-const tank = new Tank(1366 / 2, 600, terrain);
-const hud = new HUD(tank);
+let terrain: Terrain;
+let tank: Tank;
+let hud: HUD;
+let enemies: Enemy[];
+let projectiles: Projectile[];
 
-const projectiles: Projectile[] = [];
-const enemies: Enemy[] = [];
-enemies.push(new Turret(1600, terrain.getGlobalHeight(1600) - 20, tank, 100, 3000, false, 50));
+function startRun() {
+    terrain = new Terrain(0, 768, 1366, 50, 400);
+    tank = new Tank(1366 / 2, 600, terrain);
+    hud = new HUD(tank);
+
+    projectiles = [];
+    enemies = [];
+
+}
 
 kontra.initKeys();
 
@@ -27,6 +35,14 @@ function spawnProjectile(x: number, y: number, direction: number, v0: number) {
 }
 
 kontra.on("spawnProjectile", spawnProjectile);
+
+function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
+    const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
+    const height = terrain.getGlobalHeight(index, false) - 20;
+    enemies.push(new Turret(index - currentOffset, height, tank, 100, 3000, false, 50));
+}
+
+kontra.on("newTerrain", newTerrain);
 
 const loop = kontra.GameLoop({  // create the main game loop
     render: function render() { // render the game state
@@ -74,7 +90,7 @@ const loop = kontra.GameLoop({  // create the main game loop
                     tank.takeDamage(projectile);
                     remove = true;
                     if (tank.isDead()) {
-                        // TODO reset
+                        startRun();
                     }
                 }
             }
@@ -92,4 +108,5 @@ const loop = kontra.GameLoop({  // create the main game loop
     },
 });
 
+startRun();
 loop.start();    // start the game
