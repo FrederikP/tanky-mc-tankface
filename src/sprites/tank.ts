@@ -33,7 +33,7 @@ export class Tank extends kontra.Sprite.class {
     public render() {
         const context = this.context;
         context.save();
-        context.translate(this.x + this.width / 2, this.y);
+        context.translate(this.x, this.y);
         if (this.faceLeft) {
             context.scale(-1, 1);
             context.rotate(-this.terrainRotationAngle);
@@ -112,7 +112,7 @@ export class Tank extends kontra.Sprite.class {
         const originXRotationDiff = 2 * Math.sin(this.terrainRotationAngle);
         const originYRotationDiff = - 2 * Math.cos(this.terrainRotationAngle);
 
-        const originX = this.x + this.width / 2 + originXRotationDiff;
+        const originX = this.x + originXRotationDiff;
         const originY = this.y - 2 + originYRotationDiff;
 
         let rotation = this.gunRotation + this.terrainRotationAngle;
@@ -126,11 +126,11 @@ export class Tank extends kontra.Sprite.class {
         const muzzleX = originX + originMuzzleDiffX;
         const muzzleY = originY + originMuzzleDiffY;
 
-        kontra.emit("spawnProjectile", muzzleX, muzzleY, rotation);
+        kontra.emit("spawnProjectile", muzzleX, muzzleY, rotation, 80);
     }
 
     private updateHeightAndRotation() {
-        const left = Math.round(this.x);
+        const left = Math.round(this.x - this.width / 2);
         const right = Math.round(left + this.width);
         const middle = Math.round(left + (right - left) / 2);
         const valuesLeft = [];

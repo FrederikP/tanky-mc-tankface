@@ -2,6 +2,9 @@ import * as kontra from "kontra";
 
 export class Projectile extends kontra.Sprite.class {
 
+    public damage = 1;
+    public radius = 2;
+
     private startTime = Date.now();
 
     private v0: number;
@@ -28,7 +31,7 @@ export class Projectile extends kontra.Sprite.class {
         const context = this.context;
         context.beginPath();
         context.fillStyle = "white";
-        context.arc(this.x, this.y, 2, 0, 2 * Math.PI);
+        context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
         context.fill();
     }
 
