@@ -1,11 +1,12 @@
 import * as kontra from "kontra";
+import { circleAndRectangleCollide } from "../util";
 import { Projectile } from "./projectile";
 import { Terrain } from "./terrain";
-import { circleAndRectangleCollide } from "../util";
+import { Constants } from "../constants";
 
 export class Tank extends kontra.Sprite.class {
 
-    public maxHealth = 10;
+    public maxHealth = 5;
     public health = this.maxHealth;
 
     public power = 0;
@@ -104,10 +105,10 @@ export class Tank extends kontra.Sprite.class {
             this.goLeft(dt);
         }
         this.updateHeightAndRotation();
-        if (this.x < 650) {
+        if (this.x < Constants.CANVAS_WIDTH / 2 - 30) {
             this.terrain.scroll(-2);
         }
-        if (this.x > 1366 - 650) {
+        if (this.x > Constants.CANVAS_WIDTH / 2 + 30) {
             this.terrain.scroll(2);
         }
     }

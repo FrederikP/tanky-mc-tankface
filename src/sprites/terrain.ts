@@ -132,8 +132,8 @@ export class Terrain extends kontra.Sprite.class {
                     startHeight = leftMostHeightMap[leftMostHeightMap.length - 1].height;
                 }
                 this.heightMapsNeg.push(this.generateHeightMap(startHeight));
-                const startOfArea = this.heightMapsNeg.length * - 1366;
-                kontra.emit("newTerrain", startOfArea, startOfArea + 1365, this.offset);
+                const startOfArea = this.heightMapsNeg.length * - this.width;
+                kontra.emit("newTerrain", startOfArea, startOfArea + this.width - 1, this.offset);
             }
             heightMap = this.heightMapsNeg[heightMapIdx];
         } else {
@@ -142,8 +142,8 @@ export class Terrain extends kontra.Sprite.class {
                 const rightMostHeightMap = this.heightMapsPos[this.heightMapsPos.length - 1];
                 const height = rightMostHeightMap[rightMostHeightMap.length - 1].height;
                 this.heightMapsPos.push(this.generateHeightMap(height));
-                const startOfArea = (this.heightMapsPos.length - 1) * 1366;
-                kontra.emit("newTerrain", startOfArea, startOfArea + 1365, this.offset);
+                const startOfArea = (this.heightMapsPos.length - 1) * this.width;
+                kontra.emit("newTerrain", startOfArea, startOfArea + this.width - 1, this.offset);
             }
             heightMap = this.heightMapsPos[heightMapIdx];
         }

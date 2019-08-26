@@ -7,6 +7,7 @@ import { Projectile } from "../src/sprites/projectile";
 import { Tank } from "../src/sprites/tank";
 import { Terrain } from "../src/sprites/terrain";
 import { Turret } from "../src/sprites/turret";
+import { Constants } from "./constants";
 import { Enemy } from "./sprites/enemy";
 import { HUD } from "./sprites/hud";
 
@@ -19,8 +20,9 @@ let enemies: Enemy[];
 let projectiles: Projectile[];
 
 function startRun() {
-    terrain = new Terrain(0, 768, 1366, 50, 400);
-    tank = new Tank(1366 / 2, 600, terrain);
+    terrain = new Terrain(0, Constants.CANVAS_HEIGHT, Constants.CANVAS_WIDTH,
+                          Constants.MIN_TERRAIN_HEIGHT, Constants.MAX_TERRAIN_HEIGHT);
+    tank = new Tank(Constants.CANVAS_WIDTH / 2, Constants.CANVAS_HEIGHT / 2, terrain);
     hud = new HUD(tank);
 
     projectiles = [];
