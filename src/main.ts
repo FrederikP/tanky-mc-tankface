@@ -32,16 +32,29 @@ function startRun() {
 
 kontra.initKeys();
 
-function spawnProjectile(x: number, y: number, direction: number, v0: number) {
-    projectiles.push(new Projectile(x, y, direction, v0));
+function spawnProjectile(x: number, y: number, direction: number, v0: number, damage: number) {
+    projectiles.push(new Projectile(x, y, direction, v0, damage));
 }
 
 kontra.on("spawnProjectile", spawnProjectile);
 
 function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
-    const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
-    const height = terrain.getGlobalHeight(index, false) - 20;
-    enemies.push(new Turret(index - currentOffset, height, tank, 100, 3000, false, 50));
+    const difficultyFactor = leftIdx / Constants.CANVAS_WIDTH;
+    const numberOfTurrets = Math.max(1, Math.round(difficultyFactor * 2 * Math.random()));
+    for (let turretIdx = 0; turretIdx < numberOfTurrets; turretIdx++) {
+        const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
+        const height = terrain.getGlobalHeight(index, false) - 20;
+        const shootDirectly = difficultyFactor * Math.random() > 2 && Math.random() > 0.3;
+        const inaccuracy = Math.max(0, 80 - difficultyFactor * difficultyFactor * Math.random());
+        const msBetweenShots = Math.max(20, 4000 - difficultyFactor * difficultyFactor * Math.random());
+        const shootingSpeed = 100 + (Math.random() - 0.5) * 40;
+        const maxHealth = Math.round(1 + Math.random() * 0.2 * difficultyFactor * difficultyFactor);
+        const damage = Math.round(1 + Math.random() * 0.05 * difficultyFactor * difficultyFactor);
+        console.log(`Created turret with: shootDirectly=${shootDirectly},inaccuracy=${inaccuracy},msBetweenShots=${msBetweenShots},shootingSpeed=${shootingSpeed}`);
+        enemies.push(new Turret(index - currentOffset, height, tank, shootingSpeed,
+                                msBetweenShots, shootDirectly, inaccuracy, maxHealth,
+                                damage));
+    }
 }
 
 kontra.on("newTerrain", newTerrain);

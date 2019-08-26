@@ -1,8 +1,8 @@
 import * as kontra from "kontra";
+import { Constants } from "../constants";
 import { circleAndRectangleCollide } from "../util";
 import { Projectile } from "./projectile";
 import { Terrain } from "./terrain";
-import { Constants } from "../constants";
 
 export class Tank extends kontra.Sprite.class {
 
@@ -26,6 +26,7 @@ export class Tank extends kontra.Sprite.class {
     private terrain: Terrain;
 
     private terrainRotationAngle = 0;
+    private damage = 1;
 
     constructor(x: number, y: number, terrain: Terrain) {
         super({
@@ -153,7 +154,7 @@ export class Tank extends kontra.Sprite.class {
         const muzzleX = originX + originMuzzleDiffX;
         const muzzleY = originY + originMuzzleDiffY;
 
-        kontra.emit("spawnProjectile", muzzleX, muzzleY, rotation, this.power);
+        kontra.emit("spawnProjectile", muzzleX, muzzleY, rotation, this.power, this.damage);
     }
 
     public isDead(): boolean {

@@ -12,13 +12,14 @@ export class Projectile extends kontra.Sprite.class {
     private startX: number;
     private startY: number;
 
-    constructor(x: number, y: number, initialDirection: number, v0: number) {
+    constructor(x: number, y: number, initialDirection: number, v0: number, damage: number) {
         super({
             x,
             y,
         });
         this.v0 = v0;
         this.angle = initialDirection;
+        this.damage = damage;
         this.startX = x;
         this.startY = y;
         kontra.on("scroll", (offset: number) => {

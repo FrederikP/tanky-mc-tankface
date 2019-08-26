@@ -4,7 +4,7 @@
 
 ```
 npm run build
-zip -r game.zip dist/
+zip -r -j game.zip dist/*
 advzip -z -4 game.zip
 ```
 

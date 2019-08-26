@@ -10,6 +10,7 @@ export class Turret extends Enemy {
     private msBetweenShots: number;
     private directTrajectory: boolean;
     private inaccuracy: number;
+    private damage: number;
 
     private radius = 10;
     private gunRotation = 0.75 * -Math.PI;
@@ -17,17 +18,21 @@ export class Turret extends Enemy {
     private lastShot = Date.now();
 
     private seenTanky = false;
-    private currentInaccuracy: number;
+    private currentInaccuracyX: number;
+    private currentInaccuracyY: number;
 
     constructor(x: number, y: number, tank: Tank, shootingSpeed: number,
-                msBetweenShots: number, directTrajectory: boolean, inaccuracy: number) {
-        super(x, y);
+                msBetweenShots: number, directTrajectory: boolean, inaccuracy: number,
+                maxHealth: number, damage: number) {
+        super(x, y, maxHealth);
         this.tank = tank;
         this.shootingSpeed = shootingSpeed;
         this.msBetweenShots = msBetweenShots;
         this.directTrajectory = directTrajectory;
         this.inaccuracy = inaccuracy;
-        this.currentInaccuracy = (Math.random() - 0.5) * 2 * this.inaccuracy;
+        this.currentInaccuracyX = (Math.random() - 0.5) * 2 * this.inaccuracy;
+        this.currentInaccuracyY = (Math.random() - 0.5) * 2 * this.inaccuracy;
+        this.damage = damage;
     }
 
     public collidesWith(projectile: Projectile) {
@@ -59,8 +64,8 @@ export class Turret extends Enemy {
         const { muzzleX, muzzleY } = this.getMuzzlePosition();
         if (this.seenTanky || Math.abs(muzzleX - this.tank.x) < 630) {
             this.seenTanky = true;
-            const x = this.tank.x - muzzleX + this.currentInaccuracy;
-            const y = -(this.tank.y - muzzleY);
+            const x = this.tank.x - muzzleX + this.currentInaccuracyX;
+            const y = -(this.tank.y - muzzleY + this.currentInaccuracyY);
             const speedSquared = Math.pow(this.shootingSpeed, 2);
             const toSqrt1 = Math.pow(speedSquared, 2);
             const toSqrt2 = 9.8 * (9.8 * Math.pow(x, 2) + 2 * y  * speedSquared);
@@ -82,7 +87,8 @@ export class Turret extends Enemy {
                 if (Date.now() - this.lastShot > this.msBetweenShots) {
                     this.fireGun();
                     this.lastShot = Date.now();
-                    this.currentInaccuracy = (Math.random() - 0.5) * 2 * this.inaccuracy;
+                    this.currentInaccuracyX = (Math.random() - 0.5) * 2 * this.inaccuracy;
+                    this.currentInaccuracyY = (Math.random() - 0.5) * 2 * this.inaccuracy;
                 }
             }
         }
@@ -91,7 +97,7 @@ export class Turret extends Enemy {
     private fireGun() {
         const { muzzleX, muzzleY } = this.getMuzzlePosition();
 
-        kontra.emit("spawnProjectile", muzzleX, muzzleY, this.gunRotation, this.shootingSpeed);
+        kontra.emit("spawnProjectile", muzzleX, muzzleY, this.gunRotation, this.shootingSpeed, this.damage);
     }
 
     private getMuzzlePosition() {

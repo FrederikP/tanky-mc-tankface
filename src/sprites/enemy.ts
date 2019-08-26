@@ -2,10 +2,10 @@ import * as kontra from "kontra";
 import { Projectile } from "./projectile";
 
 export abstract class Enemy extends kontra.Sprite.class {
-    private maxHealth = 3;
-    private health = this.maxHealth;
+    private maxHealth: number;
+    private health: number;
 
-    constructor(x: number, y: number) {
+    constructor(x: number, y: number, maxHealth: number) {
         super({
             x,
             y,
@@ -13,6 +13,8 @@ export abstract class Enemy extends kontra.Sprite.class {
         kontra.on("scroll", (offset: number) => {
             super.x = this.x - offset;
         });
+        this.maxHealth = maxHealth;
+        this.health = maxHealth;
     }
 
     public render() {
