@@ -8,6 +8,7 @@ import { Tank } from "../src/sprites/tank";
 import { Terrain } from "../src/sprites/terrain";
 import { Turret } from "../src/sprites/turret";
 import { Constants } from "./constants";
+import { Score } from "./score";
 import { Enemy } from "./sprites/enemy";
 import { HUD } from "./sprites/hud";
 
@@ -18,16 +19,17 @@ let tank: Tank;
 let hud: HUD;
 let enemies: Enemy[];
 let projectiles: Projectile[];
+let score: Score;
 
-function startRun() {
+function startRun(highScore: number) {
     terrain = new Terrain(0, Constants.CANVAS_HEIGHT, Constants.CANVAS_WIDTH,
                           Constants.MIN_TERRAIN_HEIGHT, Constants.MAX_TERRAIN_HEIGHT);
     tank = new Tank(Constants.CANVAS_WIDTH / 2, Constants.CANVAS_HEIGHT / 2, terrain);
-    hud = new HUD(tank);
+    score = new Score(highScore);
+    hud = new HUD(tank, score);
 
     projectiles = [];
     enemies = [];
-
 }
 
 kontra.initKeys();
@@ -50,14 +52,23 @@ function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
         const shootingSpeed = 100 + (Math.random() - 0.5) * 40;
         const maxHealth = Math.round(1 + Math.random() * 0.2 * difficultyFactor * difficultyFactor);
         const damage = Math.round(1 + Math.random() * 0.05 * difficultyFactor * difficultyFactor);
-        console.log(`Created turret with: shootDirectly=${shootDirectly},inaccuracy=${inaccuracy},msBetweenShots=${msBetweenShots},shootingSpeed=${shootingSpeed}`);
+        const points = Math.round((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
+                       maxHealth * damage * (shootDirectly ? 5 : 1));
+        console.log(`Created turret with: shootDirectly=${shootDirectly},inaccuracy=${inaccuracy},
+                     msBetweenShots=${msBetweenShots},shootingSpeed=${shootingSpeed},points=${points}`);
         enemies.push(new Turret(index - currentOffset, height, tank, shootingSpeed,
                                 msBetweenShots, shootDirectly, inaccuracy, maxHealth,
-                                damage));
+                                damage, points));
     }
 }
 
 kontra.on("newTerrain", newTerrain);
+
+function enemyKilled(enemy: Enemy) {
+    score.addPoints(enemy.points);
+}
+
+kontra.on("enemyKilled", enemyKilled);
 
 const loop = kontra.GameLoop({  // create the main game loop
     render: function render() { // render the game state
@@ -91,6 +102,7 @@ const loop = kontra.GameLoop({  // create the main game loop
                         enemy.takeDamage(projectile);
                         if (enemy.isDead()) {
                             enemyIdsToRemove.push(enemyIdx);
+                            kontra.emit("enemyKilled", enemy);
                         }
                     }
                 }
@@ -105,7 +117,7 @@ const loop = kontra.GameLoop({  // create the main game loop
                     tank.takeDamage(projectile);
                     remove = true;
                     if (tank.isDead()) {
-                        startRun();
+                        startRun(score.getHighscore());
                     }
                 }
             }
@@ -123,5 +135,5 @@ const loop = kontra.GameLoop({  // create the main game loop
     },
 });
 
-startRun();
+startRun(Number(localStorage.getItem("tankymctankface_highscore")));
 loop.start();    // start the game

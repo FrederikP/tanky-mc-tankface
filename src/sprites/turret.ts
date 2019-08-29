@@ -23,8 +23,8 @@ export class Turret extends Enemy {
 
     constructor(x: number, y: number, tank: Tank, shootingSpeed: number,
                 msBetweenShots: number, directTrajectory: boolean, inaccuracy: number,
-                maxHealth: number, damage: number) {
-        super(x, y, maxHealth);
+                maxHealth: number, damage: number, points: number) {
+        super(x, y, maxHealth, points);
         this.tank = tank;
         this.shootingSpeed = shootingSpeed;
         this.msBetweenShots = msBetweenShots;

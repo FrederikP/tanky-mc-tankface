@@ -6,7 +6,7 @@ import { Terrain } from "./terrain";
 
 export class Tank extends kontra.Sprite.class {
 
-    public maxHealth = 5;
+    public maxHealth = 3;
     public health = this.maxHealth;
 
     public power = 0;
