@@ -10,7 +10,9 @@ import { Turret } from "../src/sprites/turret";
 import { Constants } from "./constants";
 import { Score } from "./score";
 import { Enemy } from "./sprites/enemy";
+import { HealthItem } from "./sprites/healthitem";
 import { HUD } from "./sprites/hud";
+import { Item } from "./sprites/item";
 
 kontra.init();
 
@@ -20,16 +22,23 @@ let hud: HUD;
 let enemies: Enemy[];
 let projectiles: Projectile[];
 let score: Score;
+let items: Item[];
 
-function startRun(highScore: number) {
+function startRun(highScore: number, itemsToApply: Item[]) {
     terrain = new Terrain(0, Constants.CANVAS_HEIGHT, Constants.CANVAS_WIDTH,
                           Constants.MIN_TERRAIN_HEIGHT, Constants.MAX_TERRAIN_HEIGHT);
     tank = new Tank(Constants.CANVAS_WIDTH / 2, Constants.CANVAS_HEIGHT / 2, terrain);
+
+    itemsToApply.forEach((item) => {
+        item.apply(tank);
+    });
+
     score = new Score(highScore);
     hud = new HUD(tank, score);
 
     projectiles = [];
     enemies = [];
+    items = [];
 }
 
 kontra.initKeys();
@@ -66,6 +75,7 @@ kontra.on("newTerrain", newTerrain);
 
 function enemyKilled(enemy: Enemy) {
     score.addPoints(enemy.points);
+    items.push(new HealthItem(enemy.x, enemy.y));
 }
 
 kontra.on("enemyKilled", enemyKilled);
@@ -79,6 +89,9 @@ const loop = kontra.GameLoop({  // create the main game loop
             projectile.render();
         });
         tank.render();
+        items.forEach((item) => {
+            item.render();
+        });
         terrain.render();
         hud.render();
     },
@@ -87,6 +100,17 @@ const loop = kontra.GameLoop({  // create the main game loop
         enemies.forEach((enemy) => {
             enemy.update(dt);
         });
+        const itemIdsToRemove = [];
+        for (let index = 0; index < items.length; index++) {
+            const item = items[index];
+            if (Math.abs(tank.x - item.x) < tank.width / 2) {
+                itemIdsToRemove.push(index);
+                tank.pickUp(item);
+            }
+        }
+        for (let i = itemIdsToRemove.length - 1; i >= 0; i--) {
+            items.splice(itemIdsToRemove[i], 1);
+        }
         const projectileIdsToRemove = [];
         const enemyIdsToRemove = [];
         for (let index = 0; index < projectiles.length; index++) {
@@ -117,7 +141,7 @@ const loop = kontra.GameLoop({  // create the main game loop
                     tank.takeDamage(projectile);
                     remove = true;
                     if (tank.isDead()) {
-                        startRun(score.getHighscore());
+                        startRun(score.getHighscore(), tank.getPickedUpItems());
                     }
                 }
             }
@@ -135,5 +159,5 @@ const loop = kontra.GameLoop({  // create the main game loop
     },
 });
 
-startRun(Number(localStorage.getItem("tankymctankface_highscore")));
+startRun(Number(localStorage.getItem("tankymctankface_highscore")), []);
 loop.start();    // start the game

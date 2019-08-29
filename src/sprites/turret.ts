@@ -3,6 +3,7 @@ import { Enemy } from "./enemy";
 import { Projectile } from "./projectile";
 import { Tank } from "./tank";
 import { Terrain } from "./terrain";
+import { Constants } from "../constants";
 
 export class Turret extends Enemy {
 
@@ -62,7 +63,7 @@ export class Turret extends Enemy {
 
     protected updateEnemy(dt: number) {
         const { muzzleX, muzzleY } = this.getMuzzlePosition();
-        if (this.seenTanky || Math.abs(muzzleX - this.tank.x) < 630) {
+        if (this.seenTanky || Math.abs(muzzleX - this.tank.x) < Constants.CANVAS_WIDTH / 2) {
             this.seenTanky = true;
             const x = this.tank.x - muzzleX + this.currentInaccuracyX;
             const y = -(this.tank.y - muzzleY + this.currentInaccuracyY);

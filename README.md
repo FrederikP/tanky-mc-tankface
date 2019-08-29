@@ -23,13 +23,14 @@ Game will be accessible running at http://localhost:9000/
 - [x] Add enemy health bar
 - [x] Add charge shooting mechanic
 - [x] Add health bar
-- [ ] Introduce first item to be dropped by enemy
-- [ ] Add background with paralax effect
+- [x] Autoload highscore from local storage
+- [x] Introduce first item to be dropped by enemy
+- [ ] Autoload loot from local storage
 - [ ] Add intro/tutorial text (and mission?)
-- [ ] Add simple menu
-- [ ] Autoload progress from local storage
-- [ ] Allow reseting progress
+- [ ] Add simple start screen
+- [ ] Add background with paralax effect
 - [ ] Add muzzle and explosion effects
+- [ ] Add sounds
 
 ## Text Ideas
 

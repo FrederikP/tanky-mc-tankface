@@ -3,6 +3,7 @@ import { Constants } from "../constants";
 import { circleAndRectangleCollide } from "../util";
 import { Projectile } from "./projectile";
 import { Terrain } from "./terrain";
+import { Item } from "./item";
 
 export class Tank extends kontra.Sprite.class {
 
@@ -27,6 +28,9 @@ export class Tank extends kontra.Sprite.class {
 
     private terrainRotationAngle = 0;
     private damage = 1;
+
+    private items: Item[] = [];
+    private itemLabelCounts: Record<string, number> = {};
 
     constructor(x: number, y: number, terrain: Terrain) {
         super({
@@ -177,6 +181,33 @@ export class Tank extends kontra.Sprite.class {
 
     public takeDamage(projectile: Projectile) {
         this.health = this.health - projectile.damage;
+    }
+
+    public setInitialHealth(newHealth: number) {
+        this.maxHealth = newHealth;
+        this.health = newHealth;
+    }
+
+    public getInitialHealth(): number {
+        return this.maxHealth;
+    }
+
+    public pickUp(item: Item) {
+        this.items.push(item);
+        const label = item.getLabel();
+        if (!this.itemLabelCounts[label]) {
+            this.itemLabelCounts[label] = 1;
+        } else {
+            this.itemLabelCounts[label] += 1;
+        }
+    }
+
+    public getPickedUpItems() {
+        return this.items;
+    }
+
+    public getPickedUpItemsLabelCounts() {
+        return this.itemLabelCounts;
     }
 
     private updateHeightAndRotation() {
