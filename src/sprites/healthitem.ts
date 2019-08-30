@@ -4,11 +4,11 @@ import { Tank } from "./tank";
 export class HealthItem extends Item {
 
     public getLabel(): string {
-        return "Double Health";
+        return "50% more health";
     }
 
     public apply(tank: Tank): void {
-        tank.setInitialHealth(tank.getInitialHealth() * 2);
+        tank.setInitialHealth(Math.round(tank.getInitialHealth() * 1.5));
     }
 
     protected renderItem(context: any): void {

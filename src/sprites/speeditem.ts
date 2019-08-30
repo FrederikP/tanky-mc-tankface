@@ -13,8 +13,8 @@ export class SpeedItem extends Item {
 
     protected renderItem(context: any): void {
         context.fillStyle = "pink";
-        this.drawArrow(context, -5);
-        this.drawArrow(context, -5);
+        this.drawArrow(context, -4);
+        this.drawArrow(context, 4);
     }
 
     private drawArrow(context: any, xOffset: number): void {
