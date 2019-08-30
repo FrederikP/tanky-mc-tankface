@@ -1,5 +1,13 @@
 # Tanky McTankface
 
+## Setup for development
+
+First clone the repository and change directory to the project root.
+Then:
+```
+npm install
+```
+
 ## Compile and zip for 13K contest
 
 ```

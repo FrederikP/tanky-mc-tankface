@@ -16,6 +16,8 @@ export class Tank extends kontra.Sprite.class {
 
     public width = 40;
 
+    public speed = 65;
+
     private radius = 10;
     private height = 20;
 
@@ -131,12 +133,12 @@ export class Tank extends kontra.Sprite.class {
     }
 
     public goLeft(dt: number) {
-        super.x = this.x - dt * (80 - this.terrainRotationAngle * 60);
+        super.x = this.x - dt * (this.speed - this.terrainRotationAngle * 60);
         this.faceLeft = true;
     }
 
     public goRight(dt: number) {
-        super.x = this.x + dt * (80 + this.terrainRotationAngle * 60);
+        super.x = this.x + dt * (this.speed + this.terrainRotationAngle * 60);
         this.faceLeft = false;
     }
 
@@ -190,6 +192,10 @@ export class Tank extends kontra.Sprite.class {
 
     public getInitialHealth(): number {
         return this.maxHealth;
+    }
+
+    public getSpeed(): number {
+        return this.speed;
     }
 
     public pickUp(item: Item) {
