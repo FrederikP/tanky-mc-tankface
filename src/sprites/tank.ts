@@ -18,6 +18,8 @@ export class Tank extends kontra.Sprite.class {
 
     public speed = 65;
 
+    public readonly acceleration = 0.1;
+
     private radius = 10;
     private height = 20;
 
@@ -33,6 +35,9 @@ export class Tank extends kontra.Sprite.class {
 
     private items: Item[] = [];
     private itemLabelCounts: Record<string, number> = {};
+
+    private startedMovingLeftAt: number = -1;
+    private startedMovingRightAt: number = -1;
 
     constructor(x: number, y: number, terrain: Terrain) {
         super({
@@ -107,9 +112,20 @@ export class Tank extends kontra.Sprite.class {
         }
 
         if (kontra.keyPressed("right")) {
+            this.startedMovingLeftAt = -1;
+            if (this.startedMovingRightAt < 0) {
+                this.startedMovingRightAt = Date.now();
+            }
             this.goRight(dt);
         } else if (kontra.keyPressed("left")) {
+            this.startedMovingRightAt = -1;
+            if (this.startedMovingLeftAt < 0) {
+                this.startedMovingLeftAt = Date.now();
+            }
             this.goLeft(dt);
+        } else {
+            this.startedMovingRightAt = -1;
+            this.startedMovingLeftAt = -1;
         }
         this.updateHeightAndRotation();
         if (this.x < Constants.CANVAS_WIDTH / 2 - 30) {
@@ -134,12 +150,14 @@ export class Tank extends kontra.Sprite.class {
     }
 
     public goLeft(dt: number) {
-        super.x = this.x - dt * (this.speed - this.terrainRotationAngle * 60);
+        super.x = this.x - dt * (Math.min(this.speed, Math.max(2, this.acceleration *
+            (Date.now() - this.startedMovingLeftAt)) - this.terrainRotationAngle * 60));
         this.faceLeft = true;
     }
 
     public goRight(dt: number) {
-        super.x = this.x + dt * (this.speed + this.terrainRotationAngle * 60);
+        super.x = this.x + dt * (Math.min(this.speed, Math.max(2, this.acceleration *
+            (Date.now() - this.startedMovingRightAt)) + this.terrainRotationAngle * 60));
         this.faceLeft = false;
     }
 
