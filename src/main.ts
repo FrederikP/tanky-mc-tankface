@@ -64,8 +64,6 @@ function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
         const damage = Math.round(1 + Math.random() * 0.05 * difficultyFactor * difficultyFactor);
         const points = Math.round((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
                        maxHealth * damage * (shootDirectly ? 5 : 1));
-        console.log(`Created turret with: shootDirectly=${shootDirectly},inaccuracy=${inaccuracy},
-                     msBetweenShots=${msBetweenShots},shootingSpeed=${shootingSpeed},points=${points}`);
         enemies.push(new Turret(index - currentOffset, height, tank, shootingSpeed,
                                 msBetweenShots, shootDirectly, inaccuracy, maxHealth,
                                 damage, points));

@@ -1,9 +1,9 @@
 import * as kontra from "kontra";
 import { Constants } from "../constants";
 import { circleAndRectangleCollide } from "../util";
+import { Item } from "./item";
 import { Projectile } from "./projectile";
 import { Terrain } from "./terrain";
-import { Item } from "./item";
 
 export class Tank extends kontra.Sprite.class {
 
@@ -132,7 +132,6 @@ export class Tank extends kontra.Sprite.class {
             this.terrain.scroll(Math.round(this.x - (Constants.CANVAS_WIDTH / 2 - 30)));
         }
         if (this.x > Constants.CANVAS_WIDTH / 2 + 30) {
-            console.log(this.x - (Constants.CANVAS_WIDTH / 2 + 30));
             this.terrain.scroll(Math.round(this.x - (Constants.CANVAS_WIDTH / 2 + 30)));
         }
     }
