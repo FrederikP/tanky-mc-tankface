@@ -9,6 +9,7 @@ import { Terrain } from "../src/sprites/terrain";
 import { Turret } from "../src/sprites/turret";
 import { Constants } from "./constants";
 import { Score } from "./score";
+import { Background } from "./sprites/background";
 import { DamageItem } from "./sprites/damageitem";
 import { Enemy } from "./sprites/enemy";
 import { HealthItem } from "./sprites/healthitem";
@@ -19,6 +20,7 @@ import { SpeedItem } from "./sprites/speeditem";
 
 kontra.init();
 
+let background: Background;
 let terrain: Terrain;
 let tank: Tank;
 let hud: HUD;
@@ -29,6 +31,7 @@ let items: Item[];
 let pickedUpItems: Item[];
 
 function startRun(highScore: number, itemsToApply: Item[]) {
+    background = new Background();
     terrain = new Terrain(0, Constants.CANVAS_HEIGHT, Constants.CANVAS_WIDTH,
                           Constants.MIN_TERRAIN_HEIGHT, Constants.MAX_TERRAIN_HEIGHT);
     tank = new Tank(Constants.CANVAS_WIDTH / 2, Constants.CANVAS_HEIGHT / 2, terrain);
@@ -94,6 +97,7 @@ kontra.on("enemyKilled", enemyKilled);
 
 const loop = kontra.GameLoop({  // create the main game loop
     render: function render() { // render the game state
+        background.render();
         enemies.forEach((enemy) => {
             enemy.render();
         });

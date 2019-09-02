@@ -67,19 +67,6 @@ export class Terrain extends kontra.Sprite.class {
         const context = this.context;
 
         context.beginPath();
-        context.fillStyle = "yellow";
-        context.arc(12, 12, 12, 0, Math.PI * 2, true);
-        context.fill();
-
-        context.globalCompositeOperation = "destination-out";
-
-        context.beginPath();
-        context.arc(20, 12, 12, 0, Math.PI * 2, true);
-        context.fill();
-
-        context.globalCompositeOperation = "source-over";
-
-        context.beginPath();
         for (let index = 0; index < this.width; index++) {
             const height = this.getGlobalHeight(index);
             context.fillStyle = "#663300";
