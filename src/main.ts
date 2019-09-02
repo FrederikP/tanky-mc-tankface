@@ -77,13 +77,13 @@ kontra.on("newTerrain", newTerrain);
 function enemyKilled(enemy: Enemy) {
     score.addPoints(enemy.points);
     const rand = Math.random() * 100;
-    if (rand < 5) {
+    if (rand < 10) {
         items.push(new ProjectileItem(enemy.x, enemy.y));
-    } else if (rand < 15) {
+    } else if (rand < 25) {
         items.push(new DamageItem(enemy.x, enemy.y));
-    } else if (rand < 30) {
+    } else if (rand < 45) {
         items.push(new SpeedItem(enemy.x, enemy.y));
-    } else if (rand < 50) {
+    } else if (rand < 70) {
         items.push(new HealthItem(enemy.x, enemy.y));
     }
 }
@@ -122,21 +122,22 @@ const loop = kontra.GameLoop({  // create the main game loop
             items.splice(itemIdsToRemove[i], 1);
         }
         const projectileIdsToRemove = [];
-        const enemyIdsToRemove = [];
+        const enemyIdsToRemoveSet: Set<number> = new Set();
         for (let index = 0; index < projectiles.length; index++) {
-            let remove = false;
+            let removeProjectile = false;
             const projectile = projectiles[index];
             projectile.update();
             for (let enemyIdx = 0; enemyIdx < enemies.length; enemyIdx++) {
                 const enemy = enemies[enemyIdx];
                 if (Math.abs(projectile.x - enemy.x) < 50) {
                     if (enemy.collidesWith(projectile)) {
-                        remove = true;
-                        projectileIdsToRemove.push(index);
+                        removeProjectile = true;
                         enemy.takeDamage(projectile);
                         if (enemy.isDead()) {
-                            enemyIdsToRemove.push(enemyIdx);
-                            kontra.emit("enemyKilled", enemy);
+                            if (!enemyIdsToRemoveSet.has(enemyIdx)) {
+                                enemyIdsToRemoveSet.add(enemyIdx);
+                                kontra.emit("enemyKilled", enemy);
+                            }
                         }
                     }
                 }
@@ -144,24 +145,25 @@ const loop = kontra.GameLoop({  // create the main game loop
             const terrainHeight = terrain.getGlobalHeight(projectile.x);
             if (projectile.y >= terrainHeight) {
                 terrain.explosion(projectile.x);
-                remove = true;
+                removeProjectile = true;
             }
             if (Math.abs(projectile.x - tank.x) < 50) {
                 if (tank.collidesWith(projectile)) {
                     tank.takeDamage(projectile);
-                    remove = true;
+                    removeProjectile = true;
                     if (tank.isDead()) {
                         startRun(score.getHighscore(), tank.getPickedUpItems());
                     }
                 }
             }
-            if (remove) {
+            if (removeProjectile) {
                 projectileIdsToRemove.push(index);
             }
         }
         for (let i = projectileIdsToRemove.length - 1; i >= 0; i--) {
             projectiles.splice(projectileIdsToRemove[i], 1);
         }
+        const enemyIdsToRemove: number[] = Array.from(enemyIdsToRemoveSet).sort((a, b) => a - b);
         for (let i = enemyIdsToRemove.length - 1; i >= 0; i--) {
             enemies.splice(enemyIdsToRemove[i], 1);
         }
