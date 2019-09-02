@@ -3,6 +3,8 @@ import { Tank } from "./tank";
 
 export class ProjectileItem extends Item {
 
+    public name = "proj";
+
     public getLabel(): string {
         return "one more projectile";
     }

@@ -26,6 +26,7 @@ let enemies: Enemy[];
 let projectiles: Projectile[];
 let score: Score;
 let items: Item[];
+let pickedUpItems: Item[];
 
 function startRun(highScore: number, itemsToApply: Item[]) {
     terrain = new Terrain(0, Constants.CANVAS_HEIGHT, Constants.CANVAS_WIDTH,
@@ -42,6 +43,7 @@ function startRun(highScore: number, itemsToApply: Item[]) {
     projectiles = [];
     enemies = [];
     items = [];
+    pickedUpItems = [];
 }
 
 kontra.initKeys();
@@ -116,6 +118,9 @@ const loop = kontra.GameLoop({  // create the main game loop
             if (Math.abs(tank.x - item.x) < tank.width / 2) {
                 itemIdsToRemove.push(index);
                 tank.pickUp(item);
+                pickedUpItems.push(item);
+                const itemsAsNames = pickedUpItems.map((pickedUpItem) => pickedUpItem.name);
+                localStorage.setItem("tankymctankface_items", JSON.stringify(itemsAsNames));
             }
         }
         for (let i = itemIdsToRemove.length - 1; i >= 0; i--) {
@@ -170,6 +175,26 @@ const loop = kontra.GameLoop({  // create the main game loop
         tank.update(dt);
     },
 });
+const itemNames = localStorage.getItem("tankymctankface_items");
+const oldItems: Item[] = [];
 
-startRun(Number(localStorage.getItem("tankymctankface_highscore")), []);
+const availableItems: Record<string, Item> = {};
+
+const projItem = new ProjectileItem(0, 0);
+availableItems[projItem.name] = projItem;
+const speedItem = new SpeedItem(0, 0);
+availableItems[speedItem.name] = speedItem;
+const damageItem = new DamageItem(0, 0);
+availableItems[damageItem.name] = damageItem;
+const healthItem = new HealthItem(0, 0);
+availableItems[healthItem.name] = healthItem;
+
+if (itemNames) {
+    const parsedItemNames: string[] = JSON.parse(itemNames);
+    parsedItemNames.forEach((parsedItemName) => {
+        oldItems.push(availableItems[parsedItemName]);
+    });
+}
+
+startRun(Number(localStorage.getItem("tankymctankface_highscore")), oldItems);
 loop.start();    // start the game

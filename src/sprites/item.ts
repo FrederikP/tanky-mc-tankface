@@ -20,7 +20,6 @@ export abstract class Item extends kontra.Sprite.class {
         context.beginPath();
         this.renderItem(context);
         context.restore();
-
     }
 
     public abstract apply(tank: Tank): void;

@@ -3,6 +3,8 @@ import { Tank } from "./tank";
 
 export class DamageItem extends Item {
 
+    public name = "damage";
+
     public getLabel(): string {
         return "50% more damage";
     }

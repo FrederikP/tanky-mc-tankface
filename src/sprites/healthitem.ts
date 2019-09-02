@@ -3,6 +3,8 @@ import { Tank } from "./tank";
 
 export class HealthItem extends Item {
 
+    public name = "health";
+
     public getLabel(): string {
         return "50% more health";
     }

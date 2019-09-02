@@ -3,6 +3,8 @@ import { Tank } from "./tank";
 
 export class SpeedItem extends Item {
 
+    public name = "speed";
+
     public getLabel(): string {
         return "20% more speed";
     }
