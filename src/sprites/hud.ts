@@ -37,6 +37,9 @@ export class HUD extends kontra.Sprite.class {
             context.font = "20px Arial";
             context.fillText(`RELOADING`, 530, Constants.CANVAS_HEIGHT - 20);
         }
+        context.fillStyle = "orange";
+        context.fillText(`Damage/Shot: ${new Intl.NumberFormat("en-us", {maximumFractionDigits: 2}).format(this.tank.damage)}`,
+            920, Constants.CANVAS_HEIGHT - 20);
 
         context.beginPath();
         context.fillStyle = "yellow";
@@ -53,13 +56,15 @@ export class HUD extends kontra.Sprite.class {
         context.fillStyle = "white";
         context.font = "15px Arial";
         let currentY = 130;
-        context.fillText(`Modifiers for next run:`, Constants.CANVAS_WIDTH - 300, currentY);
         const labelCounts = this.tank.getPickedUpItemsLabelCounts();
+        if (Object.keys(labelCounts).length > 0) {
+            context.fillText(`Modifiers for next run:`, Constants.CANVAS_WIDTH - 300, currentY);
 
-        for (const label of Object.keys(labelCounts)) {
-            const count = labelCounts[label];
-            currentY += 20;
-            context.fillText(`${count} x ${label}`, Constants.CANVAS_WIDTH - 300, currentY);
+            for (const label of Object.keys(labelCounts)) {
+                const count = labelCounts[label];
+                currentY += 20;
+                context.fillText(`${count} x ${label}`, Constants.CANVAS_WIDTH - 300, currentY);
+            }
         }
     }
 

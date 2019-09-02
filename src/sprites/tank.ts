@@ -18,6 +18,8 @@ export class Tank extends kontra.Sprite.class {
 
     public speed = 65;
 
+    public damage = 1;
+
     public readonly acceleration = 0.1;
 
     private radius = 10;
@@ -31,7 +33,6 @@ export class Tank extends kontra.Sprite.class {
     private terrain: Terrain;
 
     private terrainRotationAngle = 0;
-    private damage = 1;
 
     private items: Item[] = [];
     private itemLabelCounts: Record<string, number> = {};

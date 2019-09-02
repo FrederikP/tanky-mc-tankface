@@ -9,6 +9,7 @@ import { Terrain } from "../src/sprites/terrain";
 import { Turret } from "../src/sprites/turret";
 import { Constants } from "./constants";
 import { Score } from "./score";
+import { DamageItem } from "./sprites/damageitem";
 import { Enemy } from "./sprites/enemy";
 import { HealthItem } from "./sprites/healthitem";
 import { HUD } from "./sprites/hud";
@@ -74,7 +75,7 @@ kontra.on("newTerrain", newTerrain);
 
 function enemyKilled(enemy: Enemy) {
     score.addPoints(enemy.points);
-    items.push(new SpeedItem(enemy.x, enemy.y));
+    items.push(new DamageItem(enemy.x, enemy.y));
 }
 
 kontra.on("enemyKilled", enemyKilled);
