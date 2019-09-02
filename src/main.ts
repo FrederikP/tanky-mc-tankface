@@ -76,7 +76,16 @@ kontra.on("newTerrain", newTerrain);
 
 function enemyKilled(enemy: Enemy) {
     score.addPoints(enemy.points);
-    items.push(new ProjectileItem(enemy.x, enemy.y));
+    const rand = Math.random() * 100;
+    if (rand < 5) {
+        items.push(new ProjectileItem(enemy.x, enemy.y));
+    } else if (rand < 15) {
+        items.push(new DamageItem(enemy.x, enemy.y));
+    } else if (rand < 30) {
+        items.push(new SpeedItem(enemy.x, enemy.y));
+    } else if (rand < 50) {
+        items.push(new HealthItem(enemy.x, enemy.y));
+    }
 }
 
 kontra.on("enemyKilled", enemyKilled);
