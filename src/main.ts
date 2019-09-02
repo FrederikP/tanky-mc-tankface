@@ -14,6 +14,7 @@ import { Enemy } from "./sprites/enemy";
 import { HealthItem } from "./sprites/healthitem";
 import { HUD } from "./sprites/hud";
 import { Item } from "./sprites/item";
+import { ProjectileItem } from "./sprites/projectileitem";
 import { SpeedItem } from "./sprites/speeditem";
 
 kontra.init();
@@ -75,7 +76,7 @@ kontra.on("newTerrain", newTerrain);
 
 function enemyKilled(enemy: Enemy) {
     score.addPoints(enemy.points);
-    items.push(new DamageItem(enemy.x, enemy.y));
+    items.push(new ProjectileItem(enemy.x, enemy.y));
 }
 
 kontra.on("enemyKilled", enemyKilled);

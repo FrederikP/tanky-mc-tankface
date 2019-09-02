@@ -8,7 +8,7 @@ export class SpeedItem extends Item {
     }
 
     public apply(tank: Tank): void {
-        tank.speed = tank.speed * 1.2;
+        tank.speed *= 1.2;
     }
 
     protected renderItem(context: any): void {

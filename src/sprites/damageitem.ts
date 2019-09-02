@@ -8,7 +8,7 @@ export class DamageItem extends Item {
     }
 
     public apply(tank: Tank): void {
-        tank.damage = tank.damage * 1.5;
+        tank.damage *= 1.5;
     }
 
     protected renderItem(context: any): void {

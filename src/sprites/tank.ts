@@ -20,6 +20,8 @@ export class Tank extends kontra.Sprite.class {
 
     public damage = 1;
 
+    public projectiles = 1;
+
     public readonly acceleration = 0.1;
 
     private radius = 10;
@@ -180,6 +182,10 @@ export class Tank extends kontra.Sprite.class {
         const muzzleY = originY + originMuzzleDiffY;
 
         kontra.emit("spawnProjectile", muzzleX, muzzleY, rotation, this.power, this.damage);
+        for (let index = 1; index < this.projectiles; index++) {
+            kontra.emit("spawnProjectile", muzzleX, muzzleY, rotation + (Math.random() - 0.5) * (Math.PI / 10),
+                this.power, this.damage);
+        }
     }
 
     public isDead(): boolean {

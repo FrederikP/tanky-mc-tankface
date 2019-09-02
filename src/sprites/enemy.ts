@@ -10,7 +10,7 @@ export abstract class Enemy extends kontra.Sprite.class {
     constructor(x: number, y: number, maxHealth: number, points: number) {
         super({
             x,
-            y
+            y,
         });
         kontra.on("scroll", (offset: number) => {
             super.x = this.x - offset;
