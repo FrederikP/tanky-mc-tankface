@@ -59,18 +59,19 @@ kontra.on("spawnProjectile", spawnProjectile);
 
 function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
     const difficultyFactor = leftIdx / Constants.CANVAS_WIDTH;
-    const numberOfTurrets = Math.max(1, Math.round(difficultyFactor * 2 * Math.random()));
+    const numberOfTurrets = Math.max(3, Math.round(difficultyFactor * 2 * Math.random()));
+    const scaleFactor = Math.pow(difficultyFactor, 3);
     for (let turretIdx = 0; turretIdx < numberOfTurrets; turretIdx++) {
         const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
         const height = terrain.getGlobalHeight(index, false) - 20;
         const shootDirectly = difficultyFactor * Math.random() > 2 && Math.random() > 0.3;
-        const inaccuracy = Math.max(0, 80 - difficultyFactor * difficultyFactor * Math.random());
-        const msBetweenShots = Math.max(20, 4000 - difficultyFactor * difficultyFactor * Math.random());
+        const inaccuracy = Math.max(0, 80 - scaleFactor * Math.random());
+        const msBetweenShots = Math.max(100, 4000 - scaleFactor * Math.random());
         const shootingSpeed = 100 + (Math.random() - 0.5) * 40;
-        const maxHealth = Math.round(1 + Math.random() * 0.2 * difficultyFactor * difficultyFactor);
-        const damage = Math.round(1 + Math.random() * 0.05 * difficultyFactor * difficultyFactor);
-        const points = Math.round((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
-                       maxHealth * damage * (shootDirectly ? 5 : 1));
+        const maxHealth = Math.round(1 + Math.random() * 0.2 * scaleFactor);
+        const damage = maxHealth / 3;
+        const points = Math.round(((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
+                       maxHealth * damage * (shootDirectly ? 5 : 1)) / Math.log2(difficultyFactor + 1));
         enemies.push(new Turret(index - currentOffset, height, tank, shootingSpeed,
                                 msBetweenShots, shootDirectly, inaccuracy, maxHealth,
                                 damage, points));

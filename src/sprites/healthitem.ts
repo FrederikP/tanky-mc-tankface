@@ -10,7 +10,7 @@ export class HealthItem extends Item {
     }
 
     public apply(tank: Tank): void {
-        tank.setInitialHealth(Math.round(tank.getInitialHealth() * 1.5));
+        tank.setInitialHealth(tank.getInitialHealth() * 1.5);
     }
 
     protected renderItem(context: any): void {

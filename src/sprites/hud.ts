@@ -25,7 +25,7 @@ export class HUD extends kontra.Sprite.class {
         context.fillStyle = "red";
         context.fillRect(100 + healthMid, Constants.CANVAS_HEIGHT - 40, HEALTHBAR_WIDTH - healthMid, 30);
         context.fillStyle = "black";
-        context.fillText(`${this.tank.health} / ${this.tank.maxHealth} HP`, 130, Constants.CANVAS_HEIGHT - 20);
+        context.fillText(`${new Intl.NumberFormat("en-us", {maximumFractionDigits: 2}).format(this.tank.health)} / ${new Intl.NumberFormat("en-us", {maximumFractionDigits: 2}).format(this.tank.maxHealth)} HP`, 130, Constants.CANVAS_HEIGHT - 20);
         context.beginPath();
         const powerMid = HEALTHBAR_WIDTH * (this.tank.power / 100);
         context.fillStyle = "orange";
