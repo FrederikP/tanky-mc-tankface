@@ -8,6 +8,12 @@ Then:
 npm install
 ```
 
+## Compile for development
+
+```
+npm run build-dev
+```
+
 ## Compile and zip for 13K contest
 
 ```
