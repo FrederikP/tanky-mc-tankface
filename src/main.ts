@@ -17,10 +17,12 @@ import { HUD } from "./sprites/hud";
 import { Item } from "./sprites/item";
 import { ProjectileItem } from "./sprites/projectileitem";
 import { SpeedItem } from "./sprites/speeditem";
+import { TextLayer } from "./sprites/textlayer";
 
 kontra.init();
 
 let background: Background;
+let textLayer: TextLayer;
 let terrain: Terrain;
 let tank: Tank;
 let hud: HUD;
@@ -32,6 +34,7 @@ let pickedUpItems: Item[];
 
 function startRun(highScore: number, itemsToApply: Item[]) {
     background = new Background();
+    textLayer = new TextLayer();
     terrain = new Terrain(0, Constants.CANVAS_HEIGHT, Constants.CANVAS_WIDTH,
                           Constants.MIN_TERRAIN_HEIGHT, Constants.MAX_TERRAIN_HEIGHT);
     tank = new Tank(Constants.CANVAS_WIDTH / 2, Constants.CANVAS_HEIGHT / 2, terrain);
@@ -58,7 +61,7 @@ function spawnProjectile(x: number, y: number, direction: number, v0: number, da
 kontra.on("spawnProjectile", spawnProjectile);
 
 function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
-    const difficultyFactor = leftIdx / Constants.CANVAS_WIDTH;
+    const difficultyFactor = Math.abs(leftIdx / Constants.CANVAS_WIDTH);
     const numberOfTurrets = Math.max(3, Math.round(difficultyFactor * 2 * Math.random()));
     const scaleFactor = Math.pow(difficultyFactor, 3);
     for (let turretIdx = 0; turretIdx < numberOfTurrets; turretIdx++) {
@@ -99,6 +102,7 @@ kontra.on("enemyKilled", enemyKilled);
 const loop = kontra.GameLoop({  // create the main game loop
     render: function render() { // render the game state
         background.render();
+        textLayer.render();
         enemies.forEach((enemy) => {
             enemy.render();
         });

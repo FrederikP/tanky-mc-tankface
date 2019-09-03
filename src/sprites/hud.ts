@@ -13,11 +13,11 @@ export class HUD extends kontra.Sprite.class {
         super();
         this.tank = tank;
         this.score = score;
-        this.context.font = '20px "Lucida Console",Monaco,monospace';
     }
 
     public render() {
         const context = this.context;
+        context.font = '20px "Lucida Console",Monaco,monospace';
         context.beginPath();
         const healthMid = HEALTHBAR_WIDTH * (this.tank.health / this.tank.maxHealth);
         context.fillStyle = "green";
