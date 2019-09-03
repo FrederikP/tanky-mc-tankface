@@ -36,6 +36,8 @@ Game will be accessible running at http://localhost:9000/
 - [x] Autoload loot from local storage
 - [x] Add background with paralax effect
 - [x] Add intro/tutorial text
-- [ ] Add simple start screen
 - [ ] Add muzzle and explosion effects
 - [ ] Add sounds
+- [ ] Add simple start screen
+- [ ] Add more items if size allows, repeat
+- [ ] Final balance

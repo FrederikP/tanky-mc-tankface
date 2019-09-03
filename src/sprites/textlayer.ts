@@ -16,21 +16,17 @@ export class TextLayer extends kontra.Sprite.class {
         if (Math.abs(this.x) < 2000) {
             context.beginPath();
             context.fillStyle = "rgba(255, 255, 255, 0.7)";
-            context.fillRect(this.x + 50, 10, 420, 250);
+            context.fillRect(this.x + 50, 10, 420, 200);
             context.fillStyle = "black";
             const startText = `Welcome BACK Tanky McTankface,
 
 your time has come to put your parts to the test.
 
-You cannot win, as there are no winners in war 
+You cannot win, as there are no winners in war
 (except for the arms industry...).
 
-Make it as far as you can. Gather any parts you can find.
-
-When you break down, we will use them to build a
-better version for the next attempt.
-
-Go left or go right, it doesn't matter in the end.
+When you break down, we will use parts you find to
+build a better version of you.
 
 left/right arrow key -> move the tank
 up/down arrow key -> change gun angle
