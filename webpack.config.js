@@ -1,5 +1,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin')
+
 const TerserPlugin = require('terser-webpack-plugin')
 
 const distPath = path.resolve(__dirname, 'dist')
@@ -16,8 +19,11 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader"
+        ]
       }
     ]
   },
@@ -37,9 +43,15 @@ module.exports = {
         removeRedundantAttributes: true,
         removeScriptTypeAttributes: true,
         removeStyleLinkTypeAttributes: true,
-        useShortDoctype: true
+        useShortDoctype: true,
+        minifyCSS:true
       },
-    })
+    }),
+    new MiniCssExtractPlugin({
+      filename: "[name].css",
+      chunkFilename: "[id].css"
+    }),
+    new StyleExtHtmlWebpackPlugin(),
   ],
   devServer: {
     contentBase: distPath,
