@@ -43,7 +43,7 @@ export class Background extends kontra.Sprite.class {
             }
             context.beginPath();
             let radius = 2;
-            if (Math.random() > 0.95) {
+            if (Math.random() > 0.99) {
                 radius = Math.ceil(3 * Math.random());
             }
             context.arc(screenX, y, radius, 0, Math.PI * 2);
