@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"No tests for now\"",
     "start": "webpack-dev-server",
-    "build": "webpack"
+    "build": "webpack --mode=production",
+    "build-dev": "webpack --mode=development"
   },
   "author": "",
   "license": "ISC",

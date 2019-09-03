@@ -10,7 +10,6 @@ const distPath = path.resolve(__dirname, 'dist')
 module.exports = {
   entry: './src/main.ts',
   devtool: 'inline-source-map',
-  mode: 'production',
   module: {
     rules: [
       {
