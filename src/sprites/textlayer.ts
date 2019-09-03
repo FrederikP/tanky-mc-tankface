@@ -1,11 +1,10 @@
-import * as kontra from "kontra";
-import { Constants } from "../constants";
+import { on, Sprite } from "kontra";
 
-export class TextLayer extends kontra.Sprite.class {
+export class TextLayer extends Sprite.class {
 
     constructor() {
         super();
-        kontra.on("scroll", (offset: number) => {
+        on("scroll", (offset: number) => {
             super.x = this.x - offset / 2;
         });
     }
@@ -25,7 +24,7 @@ your time has come to put your parts to the test.
 You cannot win, as there are no winners in war
 (except for the arms industry...).
 
-When you break down, we will use parts you find to
+When you break down, we will use parts you found to
 build a better version of you.
 
 left/right arrow key -> move the tank

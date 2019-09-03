@@ -1,9 +1,8 @@
-import * as kontra from "kontra";
+import { emit } from "kontra";
+import { Constants } from "../constants";
 import { Enemy } from "./enemy";
 import { Projectile } from "./projectile";
 import { Tank } from "./tank";
-import { Terrain } from "./terrain";
-import { Constants } from "../constants";
 
 export class Turret extends Enemy {
 
@@ -98,7 +97,7 @@ export class Turret extends Enemy {
     private fireGun() {
         const { muzzleX, muzzleY } = this.getMuzzlePosition();
 
-        kontra.emit("spawnProjectile", muzzleX, muzzleY, this.gunRotation, this.shootingSpeed, this.damage);
+        emit("spawnProjectile", muzzleX, muzzleY, this.gunRotation, this.shootingSpeed, this.damage);
     }
 
     private getMuzzlePosition() {

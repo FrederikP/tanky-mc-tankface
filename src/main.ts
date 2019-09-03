@@ -1,7 +1,7 @@
 // tslint:disable-next-line: no-var-requires
 const css = require("./main.css");
 
-import * as kontra from "kontra";
+import {emit, GameLoop, init, initKeys, on} from "kontra";
 
 import { Projectile } from "../src/sprites/projectile";
 import { Tank } from "../src/sprites/tank";
@@ -19,7 +19,7 @@ import { ProjectileItem } from "./sprites/projectileitem";
 import { SpeedItem } from "./sprites/speeditem";
 import { TextLayer } from "./sprites/textlayer";
 
-kontra.init();
+init();
 
 let background: Background;
 let textLayer: TextLayer;
@@ -52,13 +52,13 @@ function startRun(highScore: number, itemsToApply: Item[]) {
     pickedUpItems = [];
 }
 
-kontra.initKeys();
+initKeys();
 
 function spawnProjectile(x: number, y: number, direction: number, v0: number, damage: number) {
     projectiles.push(new Projectile(x, y, direction, v0, damage));
 }
 
-kontra.on("spawnProjectile", spawnProjectile);
+on("spawnProjectile", spawnProjectile);
 
 function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
     const difficultyFactor = Math.abs(leftIdx / Constants.CANVAS_WIDTH);
@@ -81,7 +81,7 @@ function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
     }
 }
 
-kontra.on("newTerrain", newTerrain);
+on("newTerrain", newTerrain);
 
 function enemyKilled(enemy: Enemy) {
     score.addPoints(enemy.points);
@@ -97,9 +97,9 @@ function enemyKilled(enemy: Enemy) {
     }
 }
 
-kontra.on("enemyKilled", enemyKilled);
+on("enemyKilled", enemyKilled);
 
-const loop = kontra.GameLoop({  // create the main game loop
+const loop = GameLoop({  // create the main game loop
     render: function render() { // render the game state
         background.render();
         textLayer.render();
@@ -150,7 +150,7 @@ const loop = kontra.GameLoop({  // create the main game loop
                         if (enemy.isDead()) {
                             if (!enemyIdsToRemoveSet.has(enemyIdx)) {
                                 enemyIdsToRemoveSet.add(enemyIdx);
-                                kontra.emit("enemyKilled", enemy);
+                                emit("enemyKilled", enemy);
                             }
                         }
                     }

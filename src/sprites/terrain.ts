@@ -1,4 +1,4 @@
-import * as kontra from "kontra";
+import { emit, Sprite } from "kontra";
 
 class HeightEntry {
     public height: number;
@@ -9,7 +9,7 @@ class HeightEntry {
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class Terrain extends kontra.Sprite.class {
+export class Terrain extends Sprite.class {
 
     private width: number;
     private minHeight: number;
@@ -86,7 +86,7 @@ export class Terrain extends kontra.Sprite.class {
 
     public scroll(offset: number) {
         this.offset = this.offset + offset;
-        kontra.emit("scroll", offset);
+        emit("scroll", offset);
     }
 
     public explosion(x: number) {
@@ -120,7 +120,7 @@ export class Terrain extends kontra.Sprite.class {
                 }
                 this.heightMapsNeg.push(this.generateHeightMap(startHeight));
                 const startOfArea = this.heightMapsNeg.length * - this.width;
-                kontra.emit("newTerrain", startOfArea, startOfArea + this.width - 1, this.offset);
+                emit("newTerrain", startOfArea, startOfArea + this.width - 1, this.offset);
             }
             heightMap = this.heightMapsNeg[heightMapIdx];
         } else {
@@ -130,7 +130,7 @@ export class Terrain extends kontra.Sprite.class {
                 const height = rightMostHeightMap[rightMostHeightMap.length - 1].height;
                 this.heightMapsPos.push(this.generateHeightMap(height));
                 const startOfArea = (this.heightMapsPos.length - 1) * this.width;
-                kontra.emit("newTerrain", startOfArea, startOfArea + this.width - 1, this.offset);
+                emit("newTerrain", startOfArea, startOfArea + this.width - 1, this.offset);
             }
             heightMap = this.heightMapsPos[heightMapIdx];
         }

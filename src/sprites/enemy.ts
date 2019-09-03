@@ -1,7 +1,7 @@
-import * as kontra from "kontra";
+import { on, Sprite } from "kontra";
 import { Projectile } from "./projectile";
 
-export abstract class Enemy extends kontra.Sprite.class {
+export abstract class Enemy extends Sprite.class {
     public readonly points: number;
 
     private maxHealth: number;
@@ -12,7 +12,7 @@ export abstract class Enemy extends kontra.Sprite.class {
             x,
             y,
         });
-        kontra.on("scroll", (offset: number) => {
+        on("scroll", (offset: number) => {
             super.x = this.x - offset;
         });
         this.maxHealth = maxHealth;

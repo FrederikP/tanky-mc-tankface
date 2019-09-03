@@ -1,14 +1,14 @@
-import * as kontra from "kontra";
+import { on, Sprite } from "kontra";
 import { Tank } from "./tank";
 
-export abstract class Item extends kontra.Sprite.class {
+export abstract class Item extends Sprite.class {
 
     constructor(x: number, y: number) {
         super({
             x,
             y,
         });
-        kontra.on("scroll", (offset: number) => {
+        on("scroll", (offset: number) => {
             super.x = this.x - offset;
         });
     }

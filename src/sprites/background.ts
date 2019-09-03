@@ -1,14 +1,14 @@
-import * as kontra from "kontra";
+import { on, Sprite } from "kontra";
 import { Constants } from "../constants";
 
-export class Background extends kontra.Sprite.class {
+export class Background extends Sprite.class {
 
     private starPatternX: number[];
     private starPatternY: number[];
 
     constructor() {
         super();
-        kontra.on("scroll", (offset: number) => {
+        on("scroll", (offset: number) => {
             super.x = this.x - offset / 5;
         });
         this.starPatternX = [];

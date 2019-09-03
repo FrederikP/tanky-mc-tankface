@@ -1,11 +1,11 @@
-import * as kontra from "kontra";
+import { emit, keyPressed, on, Sprite } from "kontra";
 import { Constants } from "../constants";
 import { circleAndRectangleCollide } from "../util";
 import { Item } from "./item";
 import { Projectile } from "./projectile";
 import { Terrain } from "./terrain";
 
-export class Tank extends kontra.Sprite.class {
+export class Tank extends Sprite.class {
 
     public maxHealth = 3;
     public health = this.maxHealth;
@@ -47,7 +47,7 @@ export class Tank extends kontra.Sprite.class {
             x,
             y,
         });
-        kontra.on("scroll", (offset: number) => {
+        on("scroll", (offset: number) => {
             super.x = this.x - offset;
         });
         this.terrain = terrain;
@@ -94,7 +94,7 @@ export class Tank extends kontra.Sprite.class {
 
     public update(dt: number) {
         if (!this.isReloading()) {
-            if (kontra.keyPressed("space")) {
+            if (keyPressed("space")) {
                 if (this.power < 30) {
                     this.power = 35;
                 } else {
@@ -108,19 +108,19 @@ export class Tank extends kontra.Sprite.class {
                 }
             }
         }
-        if (kontra.keyPressed("up")) {
+        if (keyPressed("up")) {
             this.liftGun(dt);
-        } else if (kontra.keyPressed("down")) {
+        } else if (keyPressed("down")) {
             this.lowerGun(dt);
         }
 
-        if (kontra.keyPressed("right")) {
+        if (keyPressed("right")) {
             this.startedMovingLeftAt = -1;
             if (this.startedMovingRightAt < 0) {
                 this.startedMovingRightAt = Date.now();
             }
             this.goRight(dt);
-        } else if (kontra.keyPressed("left")) {
+        } else if (keyPressed("left")) {
             this.startedMovingRightAt = -1;
             if (this.startedMovingLeftAt < 0) {
                 this.startedMovingLeftAt = Date.now();
@@ -181,9 +181,9 @@ export class Tank extends kontra.Sprite.class {
         const muzzleX = originX + originMuzzleDiffX;
         const muzzleY = originY + originMuzzleDiffY;
 
-        kontra.emit("spawnProjectile", muzzleX, muzzleY, rotation, this.power, this.damage);
+        emit("spawnProjectile", muzzleX, muzzleY, rotation, this.power, this.damage);
         for (let index = 1; index < this.projectiles; index++) {
-            kontra.emit("spawnProjectile", muzzleX, muzzleY, rotation + (Math.random() - 0.5) * (Math.PI / 10),
+            emit("spawnProjectile", muzzleX, muzzleY, rotation + (Math.random() - 0.5) * (Math.PI / 10),
                 this.power, this.damage);
         }
     }

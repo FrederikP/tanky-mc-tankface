@@ -1,6 +1,6 @@
-import * as kontra from "kontra";
+import { on, Sprite } from "kontra";
 
-export class Projectile extends kontra.Sprite.class {
+export class Projectile extends Sprite.class {
 
     public damage = 1;
     public radius = 2;
@@ -22,7 +22,7 @@ export class Projectile extends kontra.Sprite.class {
         this.damage = damage;
         this.startX = x;
         this.startY = y;
-        kontra.on("scroll", (offset: number) => {
+        on("scroll", (offset: number) => {
             super.x = this.x - offset;
             this.startX = this.startX - offset;
         });

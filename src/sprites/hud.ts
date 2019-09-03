@@ -1,11 +1,11 @@
-import * as kontra from "kontra";
+import { Sprite } from "kontra";
 import { Constants } from "../constants";
 import { Score } from "../score";
 import { Tank } from "./tank";
 
 const HEALTHBAR_WIDTH = 300;
 
-export class HUD extends kontra.Sprite.class {
+export class HUD extends Sprite.class {
     private tank: Tank;
     private score: Score;
 
