@@ -13,6 +13,7 @@ export class HUD extends kontra.Sprite.class {
         super();
         this.tank = tank;
         this.score = score;
+        this.context.font = '20px "Lucida Console",Monaco,monospace';
     }
 
     public render() {
@@ -24,7 +25,6 @@ export class HUD extends kontra.Sprite.class {
         context.fillStyle = "red";
         context.fillRect(100 + healthMid, Constants.CANVAS_HEIGHT - 40, HEALTHBAR_WIDTH - healthMid, 30);
         context.fillStyle = "black";
-        context.font = "20px Arial";
         context.fillText(`${this.tank.health} / ${this.tank.maxHealth} HP`, 130, Constants.CANVAS_HEIGHT - 20);
         context.beginPath();
         const powerMid = HEALTHBAR_WIDTH * (this.tank.power / 100);
@@ -34,7 +34,6 @@ export class HUD extends kontra.Sprite.class {
         context.fillRect(500 + powerMid, 730, HEALTHBAR_WIDTH - powerMid, 30);
         if (this.tank.isReloading()) {
             context.fillStyle = "black";
-            context.font = "20px Arial";
             context.fillText(`RELOADING`, 530, Constants.CANVAS_HEIGHT - 20);
         }
         context.fillStyle = "orange";
@@ -43,7 +42,6 @@ export class HUD extends kontra.Sprite.class {
 
         context.beginPath();
         context.fillStyle = "yellow";
-        context.font = "20px Arial";
         context.fillText(`Current Score: ${this.score.getScore()}`, Constants.CANVAS_WIDTH - 300, 40);
         if (this.score.newHighscore()) {
             context.fillStyle = "pink";
@@ -54,7 +52,6 @@ export class HUD extends kontra.Sprite.class {
         }
 
         context.fillStyle = "white";
-        context.font = "15px Arial";
         let currentY = 130;
         const labelCounts = this.tank.getPickedUpItemsLabelCounts();
         if (Object.keys(labelCounts).length > 0) {

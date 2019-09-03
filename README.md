@@ -35,7 +35,7 @@ Game will be accessible running at http://localhost:9000/
 - [x] Introduce first item to be dropped by enemy
 - [x] Autoload loot from local storage
 - [x] Add background with paralax effect
-- [ ] Add intro/tutorial text (and mission?)
+- [ ] Add intro/tutorial text
 - [ ] Add simple start screen
 - [ ] Add muzzle and explosion effects
 - [ ] Add sounds
