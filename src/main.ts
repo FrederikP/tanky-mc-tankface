@@ -68,7 +68,7 @@ function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
         const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
         const height = terrain.getGlobalHeight(index, false) - 20;
         const shootDirectly = difficultyFactor * Math.random() > 2 && Math.random() > 0.3;
-        const inaccuracy = Math.max(0, 80 - scaleFactor * Math.random());
+        const inaccuracy = Math.max(1, 80 - scaleFactor * Math.random());
         const msBetweenShots = Math.max(100, 4000 - scaleFactor * Math.random());
         const shootingSpeed = 100 + (Math.random() - 0.5) * 40;
         const maxHealth = Math.round(1 + Math.random() * 0.2 * scaleFactor);
