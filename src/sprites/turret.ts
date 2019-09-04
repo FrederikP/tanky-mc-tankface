@@ -107,8 +107,8 @@ export class Turret extends Enemy {
     private getMuzzlePosition() {
         const originX = this.x;
         const originY = this.y - 2;
-        const originMuzzleDiffX = Math.cos(this.gunRotation) * 30;
-        const originMuzzleDiffY = Math.sin(this.gunRotation) * 30;
+        const originMuzzleDiffX = Math.cos(this.gunRotation) * 20;
+        const originMuzzleDiffY = Math.sin(this.gunRotation) * 20;
         const muzzleX = originX + originMuzzleDiffX;
         const muzzleY = originY + originMuzzleDiffY;
         return { muzzleX, muzzleY };
