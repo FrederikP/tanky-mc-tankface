@@ -42,7 +42,7 @@ export class HUD extends Sprite.class {
         }
         context.fillStyle = "orange";
         context.fillText(`Damage/Shot: ${new Intl.NumberFormat("en-us", {maximumFractionDigits: 2}).format(this.tank.damage)}`,
-            this.gameDimensions.width / 3 * 2, this.gameDimensions.height - 20);
+            this.gameDimensions.width / 3 * 2, this.gameDimensions.height - 16);
 
         context.beginPath();
         context.fillStyle = "yellow";
