@@ -1,6 +1,6 @@
 {
   "name": "tanky-mc-tankface",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "tank game for 13k contest and getting to know typescript",
   "private": true,
   "scripts": {
