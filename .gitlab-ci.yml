@@ -35,5 +35,5 @@ deploy-html:
     - unzip ../tanky.zip
     - cp ../tanky.zip .
     - ssh -o StrictHostKeyChecking=no $UPSEIL_USER@upseil.com "mkdir -p ~/html/$CI_BUILD_REF_NAME && rm -rf ~/html/$CI_BUILD_REF_NAME/*"
-    - scp -o StrictHostKeyChecking=no -r . $UPSEIL_USER@upseil.com:~/html/$CI_BUILD_REF_NAME
+    - scp -o StrictHostKeyChecking=no -r $(pwd) $UPSEIL_USER@upseil.com:~/html/$CI_BUILD_REF_NAME
     - ssh -o StrictHostKeyChecking=no $UPSEIL_USER@upseil.com "chown -R $UPSEIL_USER:www-data ~/html"
