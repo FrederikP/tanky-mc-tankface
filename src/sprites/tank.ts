@@ -155,13 +155,13 @@ export class Tank extends Sprite.class {
     }
 
     public goLeft(dt: number) {
-        super.x = this.x - dt * (Math.min(this.speed, Math.max(2, this.acceleration *
+        super.x = this.x - dt * (Math.min(this.speed - this.terrainRotationAngle * 60, Math.max(2, this.acceleration *
             (Date.now() - this.startedMovingLeftAt)) - this.terrainRotationAngle * 60));
         this.faceLeft = true;
     }
 
     public goRight(dt: number) {
-        super.x = this.x + dt * (Math.min(this.speed, Math.max(2, this.acceleration *
+        super.x = this.x + dt * (Math.min(this.speed + this.terrainRotationAngle * 60, Math.max(2, this.acceleration *
             (Date.now() - this.startedMovingRightAt)) + this.terrainRotationAngle * 60));
         this.faceLeft = false;
     }
