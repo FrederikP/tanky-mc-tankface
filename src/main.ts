@@ -64,7 +64,7 @@ on("spawnProjectile", spawnProjectile);
 function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
     const difficultyFactor = Math.abs(leftIdx / terrain.sectorWidth);
     const numberOfTurrets = Math.max(3, Math.round(difficultyFactor * 2 * Math.random()));
-    const scaleFactor = Math.pow(difficultyFactor, 3);
+    const scaleFactor = Math.pow(difficultyFactor, 2) * 3;
     for (let turretIdx = 0; turretIdx < numberOfTurrets; turretIdx++) {
         const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
         const shootDirectly = difficultyFactor * Math.random() > 2 && Math.random() > 0.3;
