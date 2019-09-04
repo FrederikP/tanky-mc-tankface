@@ -58,7 +58,7 @@ export class HUD extends Sprite.class {
         }
 
         context.fillStyle = "white";
-        let currentY = 40 + lineDiff * 2;
+        let currentY = 40 + lineDiff * 3;
         const labelCounts = this.tank.getPickedUpItemsLabelCounts();
         if (Object.keys(labelCounts).length > 0) {
             context.fillText(`Modifiers for next run:`, scoreX, currentY);
@@ -66,7 +66,7 @@ export class HUD extends Sprite.class {
             for (const label of Object.keys(labelCounts)) {
                 const count = labelCounts[label];
                 currentY += lineDiff;
-                context.fillText(`${count} x ${label}`, this.gameDimensions.width - 300, currentY);
+                context.fillText(`${count} x ${label}`, scoreX, currentY);
             }
         }
     }

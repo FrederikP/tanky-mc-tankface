@@ -36,7 +36,7 @@ const gameDimensions = new GameDimensions();
 
 function startRun(highScore: number, itemsToApply: Item[]) {
     background = new Background(gameDimensions);
-    textLayer = new TextLayer();
+    textLayer = new TextLayer(gameDimensions);
     terrain = new Terrain(gameDimensions);
     tank = new Tank(gameDimensions.width / 2, -30, gameDimensions, terrain);
 
