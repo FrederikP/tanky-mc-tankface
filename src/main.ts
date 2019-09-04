@@ -11,10 +11,12 @@ import { GameDimensions } from "./dimensions";
 import { Score } from "./score";
 import { Background } from "./sprites/background";
 import { DamageItem } from "./sprites/damageitem";
+import { Effect } from "./sprites/effect";
 import { Enemy } from "./sprites/enemy";
 import { HealthItem } from "./sprites/healthitem";
 import { HUD } from "./sprites/hud";
 import { Item } from "./sprites/item";
+import { MuzzleFlash } from "./sprites/muzzleflash";
 import { ProjectileItem } from "./sprites/projectileitem";
 import { SpeedItem } from "./sprites/speeditem";
 import { TextLayer } from "./sprites/textlayer";
@@ -31,6 +33,7 @@ let projectiles: Projectile[];
 let score: Score;
 let items: Item[];
 let pickedUpItems: Item[];
+let effects: Effect[];
 
 const gameDimensions = new GameDimensions();
 
@@ -51,12 +54,14 @@ function startRun(highScore: number, itemsToApply: Item[]) {
     enemies = [];
     items = [];
     pickedUpItems = [];
+    effects = [];
 }
 
 initKeys();
 
 function spawnProjectile(x: number, y: number, direction: number, v0: number, damage: number) {
     projectiles.push(new Projectile(x, y, direction, v0, damage));
+    effects.push(new MuzzleFlash(x, y, direction));
 }
 
 on("spawnProjectile", spawnProjectile);
@@ -147,6 +152,9 @@ const loop = GameLoop({  // create the main game loop
             item.render();
         });
         terrain.render();
+        effects.forEach((effect) => {
+            effect.render();
+        });
         hud.render();
     },
     update: function update(dt: number) { // update the game state
@@ -154,6 +162,18 @@ const loop = GameLoop({  // create the main game loop
         enemies.forEach((enemy) => {
             enemy.update(dt);
         });
+
+        const effectIdsToRemove = [];
+        for (let index = 0; index < effects.length; index++) {
+            const effect = effects[index];
+            if (effect.effectDone()) {
+                effectIdsToRemove.push(index);
+            }
+        }
+        for (let i = effectIdsToRemove.length - 1; i >= 0; i--) {
+            effects.splice(effectIdsToRemove[i], 1);
+        }
+
         const itemIdsToRemove = [];
         for (let index = 0; index < items.length; index++) {
             const item = items[index];

@@ -9,7 +9,7 @@
     "build": "webpack --mode=production",
     "build-dev": "webpack --mode=development"
   },
-  "author": "",
+  "author": "Frederik Petersen",
   "license": "ISC",
   "dependencies": {
     "kontra": "^6.3.0"

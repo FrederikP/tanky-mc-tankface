@@ -49,3 +49,14 @@ Game will be accessible running at http://localhost:9000/
 - [ ] Add simple start screen
 - [ ] Add more items if size allows, repeat
 - [ ] Final balance
+
+## Libraries and Tools
+
+This project benefits from these great open source projects:
+
+* [Kontra.js](https://straker.github.io/kontra/)
+* [TypeScript](https://www.typescriptlang.org/)
+* [webpack](https://webpack.js.org/)
+* [terser](https://terser.org/)
+
+And more...
