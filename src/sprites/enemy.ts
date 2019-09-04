@@ -1,16 +1,17 @@
 import { on, Sprite } from "kontra";
 import { Projectile } from "./projectile";
+import { Terrain } from "./terrain";
 
 export abstract class Enemy extends Sprite.class {
     public readonly points: number;
 
     private maxHealth: number;
     private health: number;
+    private terrain: Terrain;
 
-    constructor(x: number, y: number, maxHealth: number, points: number) {
+    constructor(x: number, maxHealth: number, points: number, terrain: Terrain) {
         super({
             x,
-            y,
         });
         on("scroll", (offset: number) => {
             super.x = this.x - offset;
@@ -18,11 +19,13 @@ export abstract class Enemy extends Sprite.class {
         this.maxHealth = maxHealth;
         this.health = maxHealth;
         this.points = points;
+        this.terrain = terrain;
     }
 
     public render() {
         const context = this.context;
         context.save();
+        super.y = this.terrain.getGlobalHeight(this.x, true, true) - 20;
         context.translate(this.x, this.y);
         context.beginPath();
 

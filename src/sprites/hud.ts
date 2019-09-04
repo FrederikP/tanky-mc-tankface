@@ -1,66 +1,72 @@
 import { Sprite } from "kontra";
-import { Constants } from "../constants";
+import { GameDimensions } from "../dimensions";
 import { Score } from "../score";
 import { Tank } from "./tank";
-
-const HEALTHBAR_WIDTH = 300;
 
 export class HUD extends Sprite.class {
     private tank: Tank;
     private score: Score;
+    private gameDimensions: GameDimensions;
 
-    constructor(tank: Tank, score: Score) {
+    constructor(tank: Tank, score: Score, gameDimensions: GameDimensions) {
         super();
         this.tank = tank;
         this.score = score;
+        this.gameDimensions = gameDimensions;
     }
 
     public render() {
         const context = this.context;
-        context.font = '20px "Lucida Console",Monaco,monospace';
+        context.font = '1em "Lucida Console",Monaco,monospace';
         context.beginPath();
-        const healthMid = HEALTHBAR_WIDTH * (this.tank.health / this.tank.maxHealth);
+        const barWidth = this.gameDimensions.width / 5;
+        const healthMid = barWidth * (this.tank.health / this.tank.maxHealth);
         context.fillStyle = "green";
-        context.fillRect(100, Constants.CANVAS_HEIGHT - 40, healthMid, 30);
+        context.fillRect(this.gameDimensions.width / 9, this.gameDimensions.height - 40, healthMid, 30);
         context.fillStyle = "red";
-        context.fillRect(100 + healthMid, Constants.CANVAS_HEIGHT - 40, HEALTHBAR_WIDTH - healthMid, 30);
+        context.fillRect(this.gameDimensions.width / 9 + healthMid,
+            this.gameDimensions.height - 40, barWidth - healthMid, 30);
         context.fillStyle = "black";
-        context.fillText(`${new Intl.NumberFormat("en-us", {maximumFractionDigits: 2}).format(this.tank.health)} / ${new Intl.NumberFormat("en-us", {maximumFractionDigits: 2}).format(this.tank.maxHealth)} HP`, 130, Constants.CANVAS_HEIGHT - 20);
+        context.fillText(`${new Intl.NumberFormat("en-us", {maximumFractionDigits: 2}).format(this.tank.health)}/${new Intl.NumberFormat("en-us", {maximumFractionDigits: 2}).format(this.tank.maxHealth)} HP`,
+            this.gameDimensions.width / 9 + 20, this.gameDimensions.height - 16);
         context.beginPath();
-        const powerMid = HEALTHBAR_WIDTH * (this.tank.power / 100);
+        const powerMid = barWidth * (this.tank.power / 100);
         context.fillStyle = "orange";
-        context.fillRect(500, Constants.CANVAS_HEIGHT - 40, powerMid, 30);
+        context.fillRect(this.gameDimensions.width / 5 * 2, this.gameDimensions.height - 40, powerMid, 30);
         context.fillStyle = "grey";
-        context.fillRect(500 + powerMid, 730, HEALTHBAR_WIDTH - powerMid, 30);
+        context.fillRect(this.gameDimensions.width / 5 * 2 + powerMid, this.gameDimensions.height - 40,
+            barWidth - powerMid, 30);
         if (this.tank.isReloading()) {
             context.fillStyle = "black";
-            context.fillText(`RELOADING`, 530, Constants.CANVAS_HEIGHT - 20);
+            context.fillText(`RELOADING`, 530, this.gameDimensions.height - 20);
         }
         context.fillStyle = "orange";
         context.fillText(`Damage/Shot: ${new Intl.NumberFormat("en-us", {maximumFractionDigits: 2}).format(this.tank.damage)}`,
-            920, Constants.CANVAS_HEIGHT - 20);
+            this.gameDimensions.width / 3 * 2, this.gameDimensions.height - 20);
 
         context.beginPath();
         context.fillStyle = "yellow";
-        context.fillText(`Current Score: ${this.score.getScore()}`, Constants.CANVAS_WIDTH - 300, 40);
+        const scoreX = this.gameDimensions.width / 4 * 3;
+        const lineDiff = this.gameDimensions.height / 30;
+        context.fillText(`Current Score: ${this.score.getScore()}`, scoreX, 40);
         if (this.score.newHighscore()) {
             context.fillStyle = "pink";
-            context.fillText(`NEW HIGHSCORE!`, Constants.CANVAS_WIDTH - 300, 70);
+            context.fillText(`NEW HIGHSCORE!`, scoreX, 70);
         } else {
             context.fillStyle = "white";
-            context.fillText(`Highscore: ${this.score.getHighscore()}`, Constants.CANVAS_WIDTH - 300, 70);
+            context.fillText(`Highscore: ${this.score.getHighscore()}`, scoreX, 40 + lineDiff);
         }
 
         context.fillStyle = "white";
-        let currentY = 130;
+        let currentY = 40 + lineDiff * 2;
         const labelCounts = this.tank.getPickedUpItemsLabelCounts();
         if (Object.keys(labelCounts).length > 0) {
-            context.fillText(`Modifiers for next run:`, Constants.CANVAS_WIDTH - 300, currentY);
+            context.fillText(`Modifiers for next run:`, scoreX, currentY);
 
             for (const label of Object.keys(labelCounts)) {
                 const count = labelCounts[label];
-                currentY += 20;
-                context.fillText(`${count} x ${label}`, Constants.CANVAS_WIDTH - 300, currentY);
+                currentY += lineDiff;
+                context.fillText(`${count} x ${label}`, this.gameDimensions.width - 300, currentY);
             }
         }
     }

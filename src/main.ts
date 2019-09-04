@@ -7,7 +7,7 @@ import { Projectile } from "../src/sprites/projectile";
 import { Tank } from "../src/sprites/tank";
 import { Terrain } from "../src/sprites/terrain";
 import { Turret } from "../src/sprites/turret";
-import { Constants } from "./constants";
+import { GameDimensions } from "./dimensions";
 import { Score } from "./score";
 import { Background } from "./sprites/background";
 import { DamageItem } from "./sprites/damageitem";
@@ -32,19 +32,20 @@ let score: Score;
 let items: Item[];
 let pickedUpItems: Item[];
 
+const gameDimensions = new GameDimensions();
+
 function startRun(highScore: number, itemsToApply: Item[]) {
-    background = new Background();
+    background = new Background(gameDimensions);
     textLayer = new TextLayer();
-    terrain = new Terrain(0, Constants.CANVAS_HEIGHT, Constants.CANVAS_WIDTH,
-                          Constants.MIN_TERRAIN_HEIGHT, Constants.MAX_TERRAIN_HEIGHT);
-    tank = new Tank(Constants.CANVAS_WIDTH / 2, Constants.CANVAS_HEIGHT / 2, terrain);
+    terrain = new Terrain(gameDimensions);
+    tank = new Tank(gameDimensions.width / 2, -30, gameDimensions, terrain);
 
     itemsToApply.forEach((item) => {
         item.apply(tank);
     });
 
     score = new Score(highScore);
-    hud = new HUD(tank, score);
+    hud = new HUD(tank, score, gameDimensions);
 
     projectiles = [];
     enemies = [];
@@ -61,12 +62,11 @@ function spawnProjectile(x: number, y: number, direction: number, v0: number, da
 on("spawnProjectile", spawnProjectile);
 
 function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
-    const difficultyFactor = Math.abs(leftIdx / Constants.CANVAS_WIDTH);
+    const difficultyFactor = Math.abs(leftIdx / terrain.sectorWidth);
     const numberOfTurrets = Math.max(3, Math.round(difficultyFactor * 2 * Math.random()));
     const scaleFactor = Math.pow(difficultyFactor, 3);
     for (let turretIdx = 0; turretIdx < numberOfTurrets; turretIdx++) {
         const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
-        const height = terrain.getGlobalHeight(index, false) - 20;
         const shootDirectly = difficultyFactor * Math.random() > 2 && Math.random() > 0.3;
         const inaccuracy = Math.max(1, 80 - scaleFactor * Math.random());
         const msBetweenShots = Math.max(100, 4000 - scaleFactor * Math.random());
@@ -75,9 +75,9 @@ function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
         const damage = maxHealth / 3;
         const points = Math.round(((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
                        maxHealth * damage * (shootDirectly ? 5 : 1)) / Math.log2(difficultyFactor + 1));
-        enemies.push(new Turret(index - currentOffset, height, tank, shootingSpeed,
+        enemies.push(new Turret(index - currentOffset, tank, shootingSpeed,
                                 msBetweenShots, shootDirectly, inaccuracy, maxHealth,
-                                damage, points));
+                                damage, points, gameDimensions, terrain));
     }
 }
 
@@ -99,8 +99,41 @@ function enemyKilled(enemy: Enemy) {
 
 on("enemyKilled", enemyKilled);
 
+function resizeIfNeeded() {
+    const gameArea = document.getElementById("gameArea")!;
+    const widthToHeight = 16 / 9;
+    let newWidth = window.innerWidth;
+    let newHeight = window.innerHeight;
+    const newWidthToHeight = newWidth / newHeight;
+    if (newWidthToHeight > widthToHeight) {
+        // window width is too wide relative to desired game width
+        newWidth = Math.round(newHeight * widthToHeight);
+        gameArea.style.height = newHeight + "px";
+        gameArea.style.width = newWidth + "px";
+    } else { // window height is too high relative to desired game height
+        newHeight = Math.round(newWidth / widthToHeight);
+        gameArea.style.width = newWidth + "px";
+        gameArea.style.height = newHeight + "px";
+    }
+    gameArea.style.marginTop = (-newHeight / 2) + "px";
+    gameArea.style.marginLeft = (-newWidth / 2) + "px";
+    gameArea.style.fontSize = (newWidth / 1000) + "em";
+
+    const gameCanvas = document.getElementById("gameCanvas")! as HTMLCanvasElement;
+    gameCanvas.width = newWidth;
+    gameCanvas.height = newHeight;
+    gameDimensions.width = newWidth;
+    gameDimensions.height = newHeight;
+}
+
+window.addEventListener("resize", resizeIfNeeded, false);
+window.addEventListener("orientationchange", resizeIfNeeded, false);
+
+resizeIfNeeded();
+
 const loop = GameLoop({  // create the main game loop
     render: function render() { // render the game state
+        resizeIfNeeded();
         background.render();
         textLayer.render();
         enemies.forEach((enemy) => {

@@ -1,8 +1,9 @@
 import { emit } from "kontra";
-import { Constants } from "../constants";
+import { GameDimensions } from "../dimensions";
 import { Enemy } from "./enemy";
 import { Projectile } from "./projectile";
 import { Tank } from "./tank";
+import { Terrain } from "./terrain";
 
 export class Turret extends Enemy {
 
@@ -20,11 +21,13 @@ export class Turret extends Enemy {
     private seenTanky = false;
     private currentInaccuracyX: number;
     private currentInaccuracyY: number;
+    private gameDimensions: GameDimensions;
 
-    constructor(x: number, y: number, tank: Tank, shootingSpeed: number,
+    constructor(x: number, tank: Tank, shootingSpeed: number,
                 msBetweenShots: number, directTrajectory: boolean, inaccuracy: number,
-                maxHealth: number, damage: number, points: number) {
-        super(x, y, maxHealth, points);
+                maxHealth: number, damage: number, points: number,
+                gameDimensions: GameDimensions, terrain: Terrain) {
+        super(x, maxHealth, points, terrain);
         this.tank = tank;
         this.shootingSpeed = shootingSpeed;
         this.msBetweenShots = msBetweenShots;
@@ -33,6 +36,7 @@ export class Turret extends Enemy {
         this.currentInaccuracyX = (Math.random() - 0.5) * 2 * this.inaccuracy;
         this.currentInaccuracyY = (Math.random() - 0.5) * 2 * this.inaccuracy;
         this.damage = damage;
+        this.gameDimensions = gameDimensions;
     }
 
     public collidesWith(projectile: Projectile) {
@@ -62,7 +66,7 @@ export class Turret extends Enemy {
 
     protected updateEnemy(dt: number) {
         const { muzzleX, muzzleY } = this.getMuzzlePosition();
-        if (this.seenTanky || Math.abs(muzzleX - this.tank.x) < Constants.CANVAS_WIDTH / 2) {
+        if (this.seenTanky || Math.abs(muzzleX - this.tank.x) < this.gameDimensions.height / 2) {
             this.seenTanky = true;
             const x = this.tank.x - muzzleX + this.currentInaccuracyX;
             const y = -(this.tank.y - muzzleY + this.currentInaccuracyY);

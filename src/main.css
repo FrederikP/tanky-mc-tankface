@@ -1,12 +1,18 @@
-#gameCanvas
-{
-    height: 100vh;
-    width: 100vw;
+#gameArea {
+    position: absolute;
+    left:     50%;
+    top:      50%;
+    background-color: #001a4d;
+}
+
+#gameCanvas {
+    width: 100%;
+    height: 100%;
 }
 
 html, body {
     height: 100%;
     overflow: hidden;
     margin: 0;
-    background-color: #001a4d;
+    background-color: #000000;
   }

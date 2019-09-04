@@ -1,5 +1,5 @@
 import { emit, keyPressed, on, Sprite } from "kontra";
-import { Constants } from "../constants";
+import { GameDimensions } from "../dimensions";
 import { circleAndRectangleCollide } from "../util";
 import { Item } from "./item";
 import { Projectile } from "./projectile";
@@ -41,8 +41,9 @@ export class Tank extends Sprite.class {
 
     private startedMovingLeftAt: number = -1;
     private startedMovingRightAt: number = -1;
+    private gameDimensions: GameDimensions;
 
-    constructor(x: number, y: number, terrain: Terrain) {
+    constructor(x: number, y: number, gameDimensions: GameDimensions, terrain: Terrain) {
         super({
             x,
             y,
@@ -51,6 +52,7 @@ export class Tank extends Sprite.class {
             super.x = this.x - offset;
         });
         this.terrain = terrain;
+        this.gameDimensions = gameDimensions;
     }
 
     public render() {
@@ -131,11 +133,12 @@ export class Tank extends Sprite.class {
             this.startedMovingLeftAt = -1;
         }
         this.updateHeightAndRotation();
-        if (this.x < Constants.CANVAS_WIDTH / 2 - 30) {
-            this.terrain.scroll(Math.round(this.x - (Constants.CANVAS_WIDTH / 2 - 30)));
+        const gameWidth = this.gameDimensions.width;
+        if (this.x < gameWidth / 2 - 30) {
+            this.terrain.scroll(Math.round(this.x - (gameWidth / 2 - 30)));
         }
-        if (this.x > Constants.CANVAS_WIDTH / 2 + 30) {
-            this.terrain.scroll(Math.round(this.x - (Constants.CANVAS_WIDTH / 2 + 30)));
+        if (this.x > gameWidth / 2 + 30) {
+            this.terrain.scroll(Math.round(this.x - (gameWidth / 2 + 30)));
         }
     }
 
