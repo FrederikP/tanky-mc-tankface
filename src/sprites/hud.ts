@@ -38,7 +38,7 @@ export class HUD extends Sprite.class {
             barWidth - powerMid, 30);
         if (this.tank.isReloading()) {
             context.fillStyle = "black";
-            context.fillText(`RELOADING`, 530, this.gameDimensions.height - 20);
+            context.fillText(`RELOADING`, this.gameDimensions.width / 5 * 2 + 20, this.gameDimensions.height - 20);
         }
         context.fillStyle = "orange";
         context.fillText(`Damage/Shot: ${new Intl.NumberFormat("en-us", {maximumFractionDigits: 2}).format(this.tank.damage)}`,
