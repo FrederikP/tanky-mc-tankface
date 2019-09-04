@@ -49,7 +49,8 @@ export class Terrain extends Sprite.class {
                 heightMap[index] = new HeightEntry(midHeight);
             }
         } else {
-            const jitter = 0.3 * (Math.random() - 0.5) * Math.abs(leftIdx - rightIdx);
+            const distance = Math.abs(leftIdx - rightIdx);
+            const jitter = (Math.random() - 0.5) * (distance / 6);
             const midIdx = Math.round(leftIdx + ((rightIdx - leftIdx) / 2));
             let newHeight = midHeight + jitter;
             newHeight = Math.min(newHeight, 100);
@@ -91,7 +92,7 @@ export class Terrain extends Sprite.class {
     public explosion(x: number) {
         const height = this.getHeight(x);
         for (let idx = x - 30; idx < x + 31; idx++) {
-            const newHeight = height - (10 - 0.1 * Math.abs(idx - x) * Math.abs(idx - x));
+            const newHeight = height - (3 - 0.05 * Math.abs(idx - x) * Math.abs(idx - x));
             if (newHeight < this.getHeight(idx)) {
                 this.changeHeight(idx, newHeight);
             }
