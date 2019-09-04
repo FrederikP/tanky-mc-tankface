@@ -1,0 +1,38 @@
+image: node:alpine
+
+stages:
+  - build
+  - deploy
+
+
+build-html:
+  stage: build
+  script:
+    - apk add --no-cache zip advancecomp
+    - npm install 
+    - npm run build
+    - zip -r -j tanky.zip dist/*
+    - advzip -z -4 tanky.zip
+  artifacts:
+    paths:
+      - tanky.zip
+    expire_in: 8 days
+
+deploy-html:
+  stage: deploy
+  dependencies:
+    - build-html
+  script:
+    - apk update
+    - apk add --no-cache bash openssh-client zip
+    - eval `ssh-agent -s`
+    - echo "$UPSEIL_KEY" > thekey
+    - chmod 400 thekey
+    - ssh-add thekey
+    - mkdir todeploy
+    - cd todeploy
+    - unzip ../tanky.zip
+    - cp ../tanky.zip .
+    - ssh -o StrictHostKeyChecking=no $UPSEIL_USER@upseil.com "mkdir -p ~/html/$CI_BUILD_REF_NAME && rm -rf ~/html/$CI_BUILD_REF_NAME/*"
+    - scp -o StrictHostKeyChecking=no -r . $UPSEIL_USER@upseil.com:~/html/$CI_BUILD_REF_NAME
+    - ssh -o StrictHostKeyChecking=no $UPSEIL_USER@upseil.com "chown -R $UPSEIL_USER:www-data ~/html"

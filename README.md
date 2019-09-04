@@ -18,8 +18,8 @@ npm run build-dev
 
 ```
 npm run build
-zip -r -j game.zip dist/*
-advzip -z -4 game.zip
+zip -r -j tanky.zip dist/*
+advzip -z -4 tanky.zip
 ```
 
 ## Starting dev server
