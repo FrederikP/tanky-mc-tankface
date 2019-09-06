@@ -23,7 +23,7 @@
 *
 *
 * 2019 Altered by Frederik Petersen for js13k game Tanky McTankface
-* - Typescript
+* - Typescript conversion
 *
 */
 

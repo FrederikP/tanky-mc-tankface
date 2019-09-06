@@ -58,5 +58,6 @@ This project benefits from these great open source projects:
 * [TypeScript](https://www.typescriptlang.org/)
 * [webpack](https://webpack.js.org/)
 * [terser](https://terser.org/)
+* [SoundBox](https://sb.bitsnbites.eu/) - I converted the player code to typescript, see [this file](src/soundbox/player.ts)
 
 And more...

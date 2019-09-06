@@ -9,6 +9,8 @@ import { Terrain } from "../src/sprites/terrain";
 import { Turret } from "../src/sprites/turret";
 import { GameDimensions } from "./dimensions";
 import { Score } from "./score";
+import { shot } from "./sounds/shot";
+import { Sound } from "./sounds/sound";
 import { Background } from "./sprites/background";
 import { DamageItem } from "./sprites/damageitem";
 import { Effect } from "./sprites/effect";
@@ -20,6 +22,14 @@ import { MuzzleFlash } from "./sprites/muzzleflash";
 import { ProjectileItem } from "./sprites/projectileitem";
 import { SpeedItem } from "./sprites/speeditem";
 import { TextLayer } from "./sprites/textlayer";
+
+// const backgroundSong = new Sound(song, true);
+// const timerId = setInterval(() => {
+//     backgroundSong.play();
+//     clearInterval(timerId);
+// }, 500);
+
+const shotSound = new Sound(shot);
 
 init();
 
@@ -62,6 +72,7 @@ initKeys();
 function spawnProjectile(x: number, y: number, direction: number, v0: number, damage: number) {
     projectiles.push(new Projectile(x, y, direction, v0, damage));
     effects.push(new MuzzleFlash(x, y, direction));
+    shotSound.play();
 }
 
 on("spawnProjectile", spawnProjectile);
