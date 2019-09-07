@@ -18,7 +18,7 @@ export class BlowupParticle extends Effect {
     protected renderEffect(context: any) {
         this.updatePositionsForBallisticCurve();
         context.fillStyle = "grey";
-        context.arc(0, 0, 2, 0, Math.PI);
+        context.arc(0, 0, 2, 0, 2 * Math.PI);
         context.fill();
     }
 
