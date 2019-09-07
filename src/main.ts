@@ -50,10 +50,11 @@ let effects: Effect[];
 const gameDimensions = new GameDimensions();
 
 function startRun(highScore: number, itemsToApply: Item[]) {
+    effects = [];
     background = new Background(gameDimensions);
     textLayer = new TextLayer(gameDimensions);
     terrain = new Terrain(gameDimensions);
-    tank = new Tank(gameDimensions.width / 2, -30, gameDimensions, terrain);
+    tank = new Tank(gameDimensions.width / 2, -30, gameDimensions, terrain, effects);
 
     itemsToApply.forEach((item) => {
         item.apply(tank);
@@ -66,7 +67,6 @@ function startRun(highScore: number, itemsToApply: Item[]) {
     enemies = [];
     items = [];
     pickedUpItems = [];
-    effects = [];
 }
 
 initKeys();
@@ -154,7 +154,7 @@ function blowUpParticles(projectile: Projectile) {
     for (let bpIdx = 0; bpIdx < 10; bpIdx++) {
         const angle = Math.random() * -Math.PI;
         const v0 = 10 + Math.random() * 20;
-        const particle: Effect = new BlowupParticle(projectile.x, projectile.y, angle, v0);
+        const particle: Effect = new BlowupParticle(projectile.x, projectile.y, angle, v0, "#696969");
         effects.push(particle);
     }
 }

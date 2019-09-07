@@ -1,6 +1,8 @@
 import { emit, keyPressed, on, Sprite } from "kontra";
 import { GameDimensions } from "../dimensions";
 import { circleAndRectangleCollide } from "../util";
+import { BlowupParticle } from "./blowupparticle";
+import { Effect } from "./effect";
 import { Item } from "./item";
 import { Projectile } from "./projectile";
 import { Terrain } from "./terrain";
@@ -42,8 +44,9 @@ export class Tank extends Sprite.class {
     private startedMovingLeftAt: number = -1;
     private startedMovingRightAt: number = -1;
     private gameDimensions: GameDimensions;
+    private effects: Effect[];
 
-    constructor(x: number, y: number, gameDimensions: GameDimensions, terrain: Terrain) {
+    constructor(x: number, y: number, gameDimensions: GameDimensions, terrain: Terrain, effects: Effect[]) {
         super({
             x,
             y,
@@ -53,6 +56,7 @@ export class Tank extends Sprite.class {
         });
         this.terrain = terrain;
         this.gameDimensions = gameDimensions;
+        this.effects = effects;
     }
 
     public render() {
@@ -122,12 +126,14 @@ export class Tank extends Sprite.class {
                 this.startedMovingRightAt = Date.now();
             }
             this.goRight(dt);
+            this.blowUpParticle();
         } else if (keyPressed("left")) {
             this.startedMovingRightAt = -1;
             if (this.startedMovingLeftAt < 0) {
                 this.startedMovingLeftAt = Date.now();
             }
             this.goLeft(dt);
+            this.blowUpParticle();
         } else {
             this.startedMovingRightAt = -1;
             this.startedMovingLeftAt = -1;
@@ -260,6 +266,15 @@ export class Tank extends Sprite.class {
         const avgRight = valuesRight.reduce((a, b) => a + b, 0) / valuesRight.length;
         super.y = Math.round(avgLeft - ((avgLeft - avgRight) / 2)) - 20;
         this.terrainRotationAngle = Math.atan((avgRight - avgLeft) / this.width);
+    }
+
+    private blowUpParticle() {
+        const diff = Math.PI / 4 + Math.random() * Math.PI / 4;
+        const angle = - Math.PI / 2 + (this.faceLeft ? diff : -diff);
+        const v0 = 5 + Math.random() * 10;
+        const xDiff = (Math.random() - 0.5) * this.width;
+        const particle: Effect = new BlowupParticle(this.x + xDiff, this.y + 20, angle, v0, "#663300");
+        this.effects.push(particle);
     }
 
 }
