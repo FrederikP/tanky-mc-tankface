@@ -66,7 +66,7 @@ export class Turret extends Enemy {
 
     protected updateEnemy(dt: number) {
         const { muzzleX, muzzleY } = this.getMuzzlePosition();
-        if (this.seenTanky || Math.abs(muzzleX - this.tank.x) < this.gameDimensions.height / 2) {
+        if (this.seenTanky || Math.abs(muzzleX - this.tank.x) < this.gameDimensions.width / 2) {
             this.seenTanky = true;
             const x = this.tank.x - muzzleX + this.currentInaccuracyX;
             const y = -(this.tank.y - muzzleY + this.currentInaccuracyY);

@@ -87,7 +87,7 @@ function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
         const shootDirectly = difficultyFactor * Math.random() > 2 && Math.random() > 0.3;
         const inaccuracy = Math.max(1, 80 - scaleFactor * Math.random());
         const msBetweenShots = Math.max(100, 4000 - scaleFactor * Math.random());
-        const shootingSpeed = 110 + (Math.random() - 0.5) * 30;
+        const shootingSpeed = 100 + (Math.random() - 0.5) * 40;
         const maxHealth = Math.round(1 + Math.random() * 0.2 * scaleFactor);
         const damage = maxHealth / 3;
         const points = Math.round(((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
@@ -163,10 +163,10 @@ const loop = GameLoop({  // create the main game loop
         items.forEach((item) => {
             item.render();
         });
-        terrain.render();
         effects.forEach((effect) => {
             effect.render();
         });
+        terrain.render();
         hud.render();
     },
     update: function update(dt: number) { // update the game state
