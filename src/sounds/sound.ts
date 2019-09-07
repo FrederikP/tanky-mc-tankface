@@ -28,12 +28,12 @@ export class Sound {
         if (this.audio.paused) {
             const audioPromise = this.audio.play();
             if (audioPromise !== undefined) {
-                audioPromise.then(_ => {
+                audioPromise.then((_) => {
                     // Autoplay started!
-                }).catch(error => {
+                }).catch((error) => {
                     // Autoplay was prevented.
                     // Show a "Play" button so that user can start playback.
-                    console.log(error.message);
+                    // console.log(error.message);
                 });
             }
         } else {

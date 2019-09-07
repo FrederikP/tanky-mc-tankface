@@ -49,9 +49,10 @@ Game will be accessible running at http://localhost:9000/
 - [x] Add intro/tutorial text
 - [x] Add scaling to window size
 - [x] Fix uphill speed vs accel
-- [ ] Add muzzle and explosion effects
-- [ ] Add sounds
+- [x] Add muzzle and explosion effects
+- [x] Add sounds
 - [ ] Add simple start screen
+- [ ] Optimize performance
 - [ ] Add more items if size allows, repeat
 - [ ] Final balance
 
