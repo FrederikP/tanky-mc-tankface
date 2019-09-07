@@ -3,6 +3,12 @@ const css = require("./main.css");
 
 import { GameDimensions } from "./dimensions";
 import { TankyGame } from "./game";
+import { SoundSettings } from "./sounds/soundsettings";
+import { DamageItem } from "./sprites/damageitem";
+import { HealthItem } from "./sprites/healthitem";
+import { Item } from "./sprites/item";
+import { ProjectileItem } from "./sprites/projectileitem";
+import { SpeedItem } from "./sprites/speeditem";
 
 const gameDimensions = new GameDimensions();
 
@@ -38,11 +44,84 @@ window.addEventListener("orientationchange", resizeIfNeeded, false);
 
 resizeIfNeeded();
 
-const game = new TankyGame(gameDimensions);
+const items = getItemsFromStorage();
+
+const musicSlider = document.getElementById("musicSlider")! as HTMLInputElement;
+musicSlider.oninput = (_) => {
+    soundSettings.musicVolume = Number(musicSlider.value) / 100;
+    localStorage.setItem("tankymctankface_music", musicSlider.value);
+};
+
+const fxSlider = document.getElementById("fxSlider")! as HTMLInputElement;
+fxSlider.oninput = (_) => {
+    soundSettings.fxVolume = Number(fxSlider.value) / 100;
+    localStorage.setItem("tankymctankface_fx", fxSlider.value);
+};
+
+const soundSettings = new SoundSettings();
+const musicVol = localStorage.getItem("tankymctankface_music");
+if (musicVol) {
+    musicSlider.value = musicVol;
+    soundSettings.musicVolume = Number(musicVol) / 100;
+} else {
+    soundSettings.musicVolume = 0.1;
+}
+const fxVol = localStorage.getItem("tankymctankface_fx");
+if (fxVol) {
+    fxSlider.value = fxVol;
+    soundSettings.fxVolume = Number(fxVol) / 100;
+} else {
+    soundSettings.fxVolume = 0.5;
+}
+
+let game = new TankyGame(gameDimensions, items, soundSettings);
 
 const startButton = document.getElementById("startbutton")!;
+const freshStartButton = document.getElementById("freshstartbutton")!;
+const gameMenu = document.getElementById("gameMenu")!;
+const freshDiv = document.getElementById("freshdiv")!;
+if (items.length < 1) {
+    freshDiv.hidden = true;
+}
 startButton.addEventListener("click", (_) => {
     game.start();
-    const gameMenu = document.getElementById("gameMenu")!;
     gameMenu.hidden = true;
 });
+
+freshStartButton.addEventListener("click", (_) => {
+    localStorage.removeItem("tankymctankface_items");
+    game = new TankyGame(gameDimensions, [], soundSettings);
+    game.start();
+    gameMenu.hidden = true;
+});
+
+document.addEventListener("keydown", (event) => {
+    const keyName = event.key;
+    if (keyName === "Escape") {
+        freshDiv.hidden = false;
+        startButton.innerHTML = "Continue";
+        game.stop();
+        gameMenu.hidden = false;
+    }
+}, false);
+
+function getItemsFromStorage() {
+    const itemNames = localStorage.getItem("tankymctankface_items");
+    const oldItems: Item[] = [];
+    const availableItems: Record<string, Item> = {};
+    const projItem = new ProjectileItem(0, 0);
+    availableItems[projItem.name] = projItem;
+    const speedItem = new SpeedItem(0, 0);
+    availableItems[speedItem.name] = speedItem;
+    const damageItem = new DamageItem(0, 0);
+    availableItems[damageItem.name] = damageItem;
+    const healthItem = new HealthItem(0, 0);
+    availableItems[healthItem.name] = healthItem;
+    if (itemNames) {
+        const parsedItemNames: string[] = JSON.parse(itemNames);
+        parsedItemNames.forEach((parsedItemName) => {
+            oldItems.push(availableItems[parsedItemName]);
+        });
+    }
+    return oldItems;
+}

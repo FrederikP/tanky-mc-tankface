@@ -1,10 +1,13 @@
 import { CPlayer } from "../soundbox/player";
+import { SoundSettings } from "./soundsettings";
 
 export class Sound {
 
     private audio: HTMLAudioElement;
+    private isMusic: boolean;
+    private soundSettings: SoundSettings;
 
-    public constructor(sound: any, volume = 1, loop = false) {
+    public constructor(sound: any, soundSettings: SoundSettings, loop = false, isMusic = false) {
         const player = new CPlayer(sound);
         // Generate music...
         let done = false;
@@ -19,12 +22,15 @@ export class Sound {
         if (loop) {
             audio.setAttribute("loop", "loop");
         }
-        audio.volume = volume;
         audio.src = URL.createObjectURL(new Blob([wave], {type: "audio/wav"}));
         this.audio = audio;
+        this.isMusic = isMusic;
+        this.soundSettings = soundSettings;
+        this.updateVolume();
     }
 
     public play() {
+        this.updateVolume();
         if (this.audio.paused) {
             const audioPromise = this.audio.play();
             if (audioPromise !== undefined) {
@@ -47,5 +53,13 @@ export class Sound {
 
     public isPaused() {
         return this.audio.paused;
+    }
+
+    private updateVolume() {
+        if (this.isMusic) {
+            this.audio.volume = this.soundSettings.musicVolume;
+        } else {
+            this.audio.volume = this.soundSettings.fxVolume;
+        }
     }
 }

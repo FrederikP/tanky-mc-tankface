@@ -12,6 +12,7 @@ import { explosionSoundData } from "./sounds/explosion";
 import { itemSoundData } from "./sounds/itempickup";
 import { shotSoundData } from "./sounds/shot";
 import { Sound } from "./sounds/sound";
+import { SoundSettings } from "./sounds/soundsettings";
 import { Background } from "./sprites/background";
 import { BlowupParticle } from "./sprites/blowupparticle";
 import { DamageItem } from "./sprites/damageitem";
@@ -45,17 +46,18 @@ export class TankyGame {
     private loop: any;
     private backgroundSong: Sound;
 
-    public constructor(gameDimensions: GameDimensions) {
+    private hasStarted = false;
+
+    public constructor(gameDimensions: GameDimensions, initialItems: Item[], soundSettings: SoundSettings) {
         init();
         initKeys();
-        this.backgroundSong = new Sound(backgroundMusicData, 0.05, true);
+        this.backgroundSong = new Sound(backgroundMusicData, soundSettings, true, true);
 
-        this.shotSound = new Sound(shotSoundData);
-        this.explosionSound = new Sound(explosionSoundData);
-        this.itemSound = new Sound(itemSoundData, 0.2);
+        this.shotSound = new Sound(shotSoundData, soundSettings);
+        this.explosionSound = new Sound(explosionSoundData, soundSettings);
+        this.itemSound = new Sound(itemSoundData, soundSettings);
 
         this.gameDimensions = gameDimensions;
-        const oldItems: Item[] = this.getItemsFromStorage();
 
         on("spawnProjectile", (x: number, y: number, direction: number,
                                v0: number, damage: number) =>
@@ -69,7 +71,7 @@ export class TankyGame {
         this.textLayer = new TextLayer(this.gameDimensions);
         this.terrain = new Terrain(this.gameDimensions);
         this.tank = new Tank(this.gameDimensions.width / 2, -30, this.gameDimensions, this.terrain, this.effects);
-        this.getItemsFromStorage().forEach((item) => {
+        initialItems.forEach((item) => {
             item.apply(this.tank);
         });
 
@@ -90,6 +92,16 @@ export class TankyGame {
     public start() {
         this.backgroundSong.play();
         this.loop.start();
+        this.hasStarted = true;
+    }
+
+    public started() {
+        return this.hasStarted;
+    }
+
+    public stop() {
+        this.backgroundSong.pause();
+        this.loop.stop();
     }
 
     private render() { // render the game state
@@ -198,27 +210,6 @@ export class TankyGame {
             this.enemies.splice(enemyIdsToRemove[i], 1);
         }
         this.tank.update(dt);
-    }
-
-    private getItemsFromStorage() {
-        const itemNames = localStorage.getItem("tankymctankface_items");
-        const oldItems: Item[] = [];
-        const availableItems: Record<string, Item> = {};
-        const projItem = new ProjectileItem(0, 0);
-        availableItems[projItem.name] = projItem;
-        const speedItem = new SpeedItem(0, 0);
-        availableItems[speedItem.name] = speedItem;
-        const damageItem = new DamageItem(0, 0);
-        availableItems[damageItem.name] = damageItem;
-        const healthItem = new HealthItem(0, 0);
-        availableItems[healthItem.name] = healthItem;
-        if (itemNames) {
-            const parsedItemNames: string[] = JSON.parse(itemNames);
-            parsedItemNames.forEach((parsedItemName) => {
-                oldItems.push(availableItems[parsedItemName]);
-            });
-        }
-        return oldItems;
     }
 
     private restartRun(highScore: number, itemsToApply: Item[]) {
