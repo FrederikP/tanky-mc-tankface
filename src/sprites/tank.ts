@@ -271,8 +271,8 @@ export class Tank extends Sprite.class {
     private blowUpParticle() {
         const diff = Math.PI / 4 + Math.random() * Math.PI / 4;
         const angle = - Math.PI / 2 + (this.faceLeft ? diff : -diff);
-        const v0 = 5 + Math.random() * 10;
-        const xDiff = (Math.random() - 0.5) * this.width;
+        const v0 = 5 + Math.random() * 20;
+        const xDiff = Math.random() * this.width / 2 * (this.faceLeft ? 1 : -1);
         const particle: Effect = new BlowupParticle(this.x + xDiff, this.y + 20, angle, v0, "#663300");
         this.effects.push(particle);
     }
