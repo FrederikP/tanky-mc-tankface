@@ -51,14 +51,20 @@ export class Turret extends Enemy {
     }
 
     protected renderEnemy(context: any) {
-        context.fillStyle = "orange";
-        context.arc(0, 0, this.radius, Math.PI, 0);
-        context.fill();
         context.beginPath();
         context.fillStyle = "grey";
         context.fillRect(- this.radius, 0, this.radius * 2, 200);
+        let turretColor = "green";
+        if (this.tank.health < this.damage) {
+            turretColor = "red";
+        } else if (this.tank.health / 2 < this.damage) {
+            turretColor = "orange";
+        }
+        context.fillStyle = turretColor;
+        context.arc(0, 0, this.radius, Math.PI, 0);
+        context.fill();
         context.beginPath();
-        context.fillStyle = "orange";
+        context.fillStyle = turretColor;
         context.translate(0, -4);
         context.rotate(this.gunRotation);
         context.fillRect(0, -2, 20, 4);

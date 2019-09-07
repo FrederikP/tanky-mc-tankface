@@ -263,15 +263,15 @@ export class TankyGame {
     private enemyKilled(enemy: Enemy) {
         this.score.addPoints(enemy.points);
         const rand = Math.random() * 100;
-        if (rand < 10) {
+        if (rand < 5) {
             this.items.push(new ProjectileItem(enemy.x, enemy.y));
-        } else if (rand < 30) {
+        } else if (rand < 15) {
             this.items.push(new DamageItem(enemy.x, enemy.y));
-        } else if (rand < 50) {
+        } else if (rand < 25) {
             this.items.push(new SpeedItem(enemy.x, enemy.y));
-        } else if (rand < 75) {
+        } else if (rand < 35) {
             this.items.push(new HealthItem(enemy.x, enemy.y));
-        } else if (rand < 100) {
+        } else if (rand < 45) {
             this.items.push(new ReloadTimeItem(enemy.x, enemy.y));
         }
     }
