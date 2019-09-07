@@ -2,7 +2,7 @@ import { on, Sprite } from "kontra";
 
 export abstract class Effect extends Sprite.class {
 
-    private startTime = Date.now();
+    protected startTime = Date.now();
     private ttl: number;
 
     constructor(x: number, y: number, ttl: number) {

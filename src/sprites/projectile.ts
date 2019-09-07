@@ -37,10 +37,14 @@ export class Projectile extends Sprite.class {
     }
 
     public update() {
-        const timePassedInSeconds = (Date.now() - this.startTime) / 100;
-        const xOffset = this.v0 * timePassedInSeconds * Math.cos(-this.angle);
-        const yOffset = this.v0 * timePassedInSeconds * Math.sin(-this.angle) -
-            0.5 * 9.8 * timePassedInSeconds * timePassedInSeconds;
+        this.updatePositionsForBallisticCurve();
+    }
+
+    private updatePositionsForBallisticCurve() {
+        const timePassed = (Date.now() - this.startTime) / 100;
+        const xOffset = this.v0 * timePassed * Math.cos(-this.angle);
+        const yOffset = this.v0 * timePassed * Math.sin(-this.angle) -
+            0.5 * 9.8 * timePassed * timePassed;
         super.x = this.startX + xOffset;
         super.y = this.startY - yOffset;
     }

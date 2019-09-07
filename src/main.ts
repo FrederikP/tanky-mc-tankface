@@ -13,6 +13,7 @@ import { backgroundMusicData } from "./sounds/background";
 import { shotSoundData } from "./sounds/shot";
 import { Sound } from "./sounds/sound";
 import { Background } from "./sprites/background";
+import { BlowupParticle } from "./sprites/blowupparticle";
 import { DamageItem } from "./sprites/damageitem";
 import { Effect } from "./sprites/effect";
 import { Enemy } from "./sprites/enemy";
@@ -148,6 +149,15 @@ window.addEventListener("orientationchange", resizeIfNeeded, false);
 
 resizeIfNeeded();
 
+function blowUpParticles(projectile: Projectile) {
+    for (let bpIdx = 0; bpIdx < 10; bpIdx++) {
+        const angle = Math.random() * -Math.PI;
+        const v0 = 10 + Math.random() * 20;
+        const particle: Effect = new BlowupParticle(projectile.x, projectile.y, angle, v0);
+        effects.push(particle);
+    }
+}
+
 const loop = GameLoop({  // create the main game loop
     render: function render() { // render the game state
         resizeIfNeeded();
@@ -211,6 +221,7 @@ const loop = GameLoop({  // create the main game loop
                 if (Math.abs(projectile.x - enemy.x) < 50) {
                     if (enemy.collidesWith(projectile)) {
                         removeProjectile = true;
+                        blowUpParticles(projectile);
                         enemy.takeDamage(projectile);
                         if (enemy.isDead()) {
                             if (!enemyIdsToRemoveSet.has(enemyIdx)) {
@@ -225,11 +236,13 @@ const loop = GameLoop({  // create the main game loop
             if (projectile.y >= terrainHeight) {
                 terrain.explosion(projectile.x);
                 removeProjectile = true;
+                blowUpParticles(projectile);
             }
             if (Math.abs(projectile.x - tank.x) < 50) {
                 if (tank.collidesWith(projectile)) {
                     tank.takeDamage(projectile);
                     removeProjectile = true;
+                    blowUpParticles(projectile);
                     if (tank.isDead()) {
                         startRun(score.getHighscore(), tank.getPickedUpItems());
                     }
