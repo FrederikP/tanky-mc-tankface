@@ -11,6 +11,7 @@ import { GameDimensions } from "./dimensions";
 import { Score } from "./score";
 import { backgroundMusicData } from "./sounds/background";
 import { explosionSoundData } from "./sounds/explosion";
+import { itemSoundData } from "./sounds/itempickup";
 import { shotSoundData } from "./sounds/shot";
 import { Sound } from "./sounds/sound";
 import { Background } from "./sprites/background";
@@ -34,6 +35,7 @@ const timerId = setInterval(() => {
 
 const shotSound = new Sound(shotSoundData);
 const explosionSound = new Sound(explosionSoundData);
+const itemSound = new Sound(itemSoundData, 0.2);
 
 init();
 
@@ -84,7 +86,8 @@ on("spawnProjectile", spawnProjectile);
 function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
     const difficultyFactor = Math.abs(leftIdx / 1000);
     const numberOfTurrets = Math.round(difficultyFactor * Math.random() *
-        (1 + 4 / ( difficultyFactor * difficultyFactor / 5 + 1)));
+        (1 + 10 / ( difficultyFactor * difficultyFactor / 2 + 1)) * (rightIdx - leftIdx) / 2000);
+    console.log(numberOfTurrets);
     const scaleFactor = Math.pow(difficultyFactor, 2) * 3;
     for (let turretIdx = 0; turretIdx < numberOfTurrets; turretIdx++) {
         const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
@@ -206,6 +209,7 @@ const loop = GameLoop({  // create the main game loop
                 itemIdsToRemove.push(index);
                 tank.pickUp(item);
                 pickedUpItems.push(item);
+                itemSound.play();
                 const itemsAsNames = pickedUpItems.map((pickedUpItem) => pickedUpItem.name);
                 localStorage.setItem("tankymctankface_items", JSON.stringify(itemsAsNames));
             }
