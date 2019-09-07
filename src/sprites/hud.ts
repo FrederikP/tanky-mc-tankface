@@ -60,9 +60,9 @@ export class HUD extends Sprite.class {
         if (this.tank.isReloading()) {
             const reloadMid = barWidth * this.tank.reloadRatio();
             context.fillStyle = "white";
-            context.fillRect(this.gameDimensions.width / 5 * 2, this.gameDimensions.height - 40, reloadMid, 30);
+            context.fillRect(this.gameDimensions.width / 5 * 3, this.gameDimensions.height - 40, -reloadMid, 30);
             context.fillStyle = "grey";
-            context.fillRect(this.gameDimensions.width / 5 * 2 + reloadMid, this.gameDimensions.height - 40,
+            context.fillRect(this.gameDimensions.width / 5 * 2, this.gameDimensions.height - 40,
                 barWidth - reloadMid, 30);
             context.fillStyle = "black";
             context.fillText(`RELOADING`, this.gameDimensions.width / 5 * 2 + 20, this.gameDimensions.height - 16);

@@ -27,7 +27,7 @@ export class Tank extends Sprite.class {
 
     public readonly acceleration = 0.1;
 
-    public reloadTime = 1000;
+    public reloadTime = 1500;
 
     private radius = 10;
     private height = 20;

@@ -240,10 +240,10 @@ export class TankyGame {
     }
 
     private newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
-        const difficultyFactor = Math.abs(leftIdx / 1000);
+        const difficultyFactor = Math.abs(leftIdx / 2000);
         const numberOfTurrets = Math.round(difficultyFactor * Math.random() *
             (1 + 10 / (difficultyFactor * difficultyFactor / 2 + 1)) * (rightIdx - leftIdx) / 2000);
-        const scaleFactor = Math.pow(difficultyFactor, 2) * 3;
+        const scaleFactor = Math.pow(difficultyFactor, 2);
         for (let turretIdx = 0; turretIdx < numberOfTurrets; turretIdx++) {
             const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
             const shootDirectly = difficultyFactor * Math.random() > 2 && Math.random() > 0.3;
@@ -263,15 +263,15 @@ export class TankyGame {
     private enemyKilled(enemy: Enemy) {
         this.score.addPoints(enemy.points);
         const rand = Math.random() * 100;
-        if (rand < 5) {
+        if (rand < 10) {
             this.items.push(new ProjectileItem(enemy.x, enemy.y));
-        } else if (rand < 25) {
+        } else if (rand < 30) {
             this.items.push(new DamageItem(enemy.x, enemy.y));
-        } else if (rand < 45) {
+        } else if (rand < 50) {
             this.items.push(new SpeedItem(enemy.x, enemy.y));
-        } else if (rand < 70) {
+        } else if (rand < 75) {
             this.items.push(new HealthItem(enemy.x, enemy.y));
-        } else if (rand < 95) {
+        } else if (rand < 100) {
             this.items.push(new ReloadTimeItem(enemy.x, enemy.y));
         }
     }
