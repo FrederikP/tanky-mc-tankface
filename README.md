@@ -37,7 +37,7 @@ Game will be accessible running at http://localhost:9000/
 
 ## ToDo
 
-- [x] Shooting will blacken the terrain (gras does not survive shot)
+- [x] Shooting will blacken the terrain
 - [x] Introduce first enemy
 - [x] Add enemy health bar
 - [x] Add charge shooting mechanic
