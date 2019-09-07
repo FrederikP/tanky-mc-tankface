@@ -10,6 +10,7 @@ import { Turret } from "../src/sprites/turret";
 import { GameDimensions } from "./dimensions";
 import { Score } from "./score";
 import { backgroundMusicData } from "./sounds/background";
+import { explosionSoundData } from "./sounds/explosion";
 import { shotSoundData } from "./sounds/shot";
 import { Sound } from "./sounds/sound";
 import { Background } from "./sprites/background";
@@ -25,13 +26,14 @@ import { ProjectileItem } from "./sprites/projectileitem";
 import { SpeedItem } from "./sprites/speeditem";
 import { TextLayer } from "./sprites/textlayer";
 
-const backgroundSong = new Sound(backgroundMusicData, 0.1, true);
+const backgroundSong = new Sound(backgroundMusicData, 0.05, true);
 const timerId = setInterval(() => {
     backgroundSong.play();
     clearInterval(timerId);
 }, 2000);
 
 const shotSound = new Sound(shotSoundData);
+const explosionSound = new Sound(explosionSoundData);
 
 init();
 
@@ -223,6 +225,7 @@ const loop = GameLoop({  // create the main game loop
                     if (enemy.collidesWith(projectile)) {
                         removeProjectile = true;
                         blowUpParticles(projectile);
+                        explosionSound.play();
                         enemy.takeDamage(projectile);
                         if (enemy.isDead()) {
                             if (!enemyIdsToRemoveSet.has(enemyIdx)) {
@@ -238,12 +241,14 @@ const loop = GameLoop({  // create the main game loop
                 terrain.explosion(projectile.x);
                 removeProjectile = true;
                 blowUpParticles(projectile);
+                explosionSound.play();
             }
             if (Math.abs(projectile.x - tank.x) < 50) {
                 if (tank.collidesWith(projectile)) {
                     tank.takeDamage(projectile);
                     removeProjectile = true;
                     blowUpParticles(projectile);
+                    explosionSound.play();
                     if (tank.isDead()) {
                         startRun(score.getHighscore(), tank.getPickedUpItems());
                     }

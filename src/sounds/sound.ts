@@ -40,4 +40,12 @@ export class Sound {
             this.audio.currentTime = 0;
         }
     }
+
+    public pause() {
+        this.audio.pause();
+    }
+
+    public isPaused() {
+        return this.audio.paused;
+    }
 }

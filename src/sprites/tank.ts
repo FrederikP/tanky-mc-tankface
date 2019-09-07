@@ -1,5 +1,6 @@
 import { emit, keyPressed, on, Sprite } from "kontra";
 import { GameDimensions } from "../dimensions";
+import { Sound } from "../sounds/sound";
 import { circleAndRectangleCollide } from "../util";
 import { BlowupParticle } from "./blowupparticle";
 import { Effect } from "./effect";
@@ -46,7 +47,8 @@ export class Tank extends Sprite.class {
     private gameDimensions: GameDimensions;
     private effects: Effect[];
 
-    constructor(x: number, y: number, gameDimensions: GameDimensions, terrain: Terrain, effects: Effect[]) {
+    constructor(x: number, y: number, gameDimensions: GameDimensions, terrain: Terrain,
+                effects: Effect[]) {
         super({
             x,
             y,
@@ -126,14 +128,14 @@ export class Tank extends Sprite.class {
                 this.startedMovingRightAt = Date.now();
             }
             this.goRight(dt);
-            this.blowUpParticle();
+            this.onDrive();
         } else if (keyPressed("left")) {
             this.startedMovingRightAt = -1;
             if (this.startedMovingLeftAt < 0) {
                 this.startedMovingLeftAt = Date.now();
             }
             this.goLeft(dt);
-            this.blowUpParticle();
+            this.onDrive();
         } else {
             this.startedMovingRightAt = -1;
             this.startedMovingLeftAt = -1;
@@ -275,6 +277,10 @@ export class Tank extends Sprite.class {
         const xDiff = Math.random() * this.width / 2 * (this.faceLeft ? 1 : -1);
         const particle: Effect = new BlowupParticle(this.x + xDiff, this.y + 20, angle, v0, "#663300");
         this.effects.push(particle);
+    }
+
+    private onDrive() {
+        this.blowUpParticle();
     }
 
 }
