@@ -80,7 +80,7 @@ on("spawnProjectile", spawnProjectile);
 
 function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
     const difficultyFactor = Math.abs(leftIdx / 1000);
-    const numberOfTurrets = Math.max(3, Math.round(difficultyFactor * 2 * Math.random()));
+    const numberOfTurrets = Math.round(difficultyFactor * 2 * Math.random());
     const scaleFactor = Math.pow(difficultyFactor, 2) * 3;
     for (let turretIdx = 0; turretIdx < numberOfTurrets; turretIdx++) {
         const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
@@ -103,7 +103,7 @@ on("newTerrain", newTerrain);
 function enemyKilled(enemy: Enemy) {
     score.addPoints(enemy.points);
     const rand = Math.random() * 100;
-    if (rand < 10) {
+    if (rand < 5) {
         items.push(new ProjectileItem(enemy.x, enemy.y));
     } else if (rand < 25) {
         items.push(new DamageItem(enemy.x, enemy.y));

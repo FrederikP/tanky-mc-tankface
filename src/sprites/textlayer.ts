@@ -28,8 +28,8 @@ your time has come to put your parts to the test.
 You cannot win, as there are no winners in war
 (except for the arms industry...).
 
-When you break down, we will use parts you found to
-build a better version of you.
+When you break down, we will use parts you found
+in the last run to build a better version of you.
 
 Controls:
 left/right arrow key -> move the tank
