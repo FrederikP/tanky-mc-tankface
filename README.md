@@ -51,7 +51,8 @@ Game will be accessible running at http://localhost:9000/
 - [x] Fix uphill speed vs accel
 - [x] Add muzzle and explosion effects
 - [x] Add sounds
-- [ ] Add simple start screen
+- [x] Add simple start screen
+- [ ] Mirror repo to github and include link to repo in game menu
 - [ ] Optimize performance
 - [ ] Add more items if size allows, repeat
 - [ ] Final balance
