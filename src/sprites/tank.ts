@@ -100,6 +100,10 @@ export class Tank extends Sprite.class {
         return Date.now() - this.lastShot < this.reloadTime;
     }
 
+    public reloadRatio() {
+        return (Date.now() - this.lastShot) / this.reloadTime;
+    }
+
     public update(dt: number) {
         if (!this.isReloading()) {
             if (keyPressed("space")) {

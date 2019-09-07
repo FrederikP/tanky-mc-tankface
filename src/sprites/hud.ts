@@ -56,15 +56,23 @@ export class HUD extends Sprite.class {
         context.fillText(`${currentHealth}/${maxHealth} HP`,
             this.gameDimensions.width / 9 + 20, this.gameDimensions.height - 16);
         context.beginPath();
-        const powerMid = barWidth * (this.tank.power / 100);
-        context.fillStyle = "orange";
-        context.fillRect(this.gameDimensions.width / 5 * 2, this.gameDimensions.height - 40, powerMid, 30);
-        context.fillStyle = "grey";
-        context.fillRect(this.gameDimensions.width / 5 * 2 + powerMid, this.gameDimensions.height - 40,
-            barWidth - powerMid, 30);
+
         if (this.tank.isReloading()) {
+            const reloadMid = barWidth * this.tank.reloadRatio();
+            context.fillStyle = "white";
+            context.fillRect(this.gameDimensions.width / 5 * 2, this.gameDimensions.height - 40, reloadMid, 30);
+            context.fillStyle = "grey";
+            context.fillRect(this.gameDimensions.width / 5 * 2 + reloadMid, this.gameDimensions.height - 40,
+                barWidth - reloadMid, 30);
             context.fillStyle = "black";
             context.fillText(`RELOADING`, this.gameDimensions.width / 5 * 2 + 20, this.gameDimensions.height - 16);
+        } else {
+            const powerMid = barWidth * (this.tank.power / 100);
+            context.fillStyle = "orange";
+            context.fillRect(this.gameDimensions.width / 5 * 2, this.gameDimensions.height - 40, powerMid, 30);
+            context.fillStyle = "grey";
+            context.fillRect(this.gameDimensions.width / 5 * 2 + powerMid, this.gameDimensions.height - 40,
+                barWidth - powerMid, 30);
         }
         context.fillStyle = "orange";
         const damage = abbreviateNumber(this.tank.damage);

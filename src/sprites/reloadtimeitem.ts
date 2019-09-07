@@ -6,11 +6,11 @@ export class ReloadTimeItem extends Item {
     public name = "reload";
 
     public getLabel(): string {
-        return "50% less reload time";
+        return "20% less reload time";
     }
 
     public apply(tank: Tank): void {
-        tank.reloadTime = tank.reloadTime * 0.5;
+        tank.reloadTime = tank.reloadTime * 0.8;
     }
 
     protected renderItem(context: any): void {
