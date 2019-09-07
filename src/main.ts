@@ -24,7 +24,7 @@ import { ProjectileItem } from "./sprites/projectileitem";
 import { SpeedItem } from "./sprites/speeditem";
 import { TextLayer } from "./sprites/textlayer";
 
-const backgroundSong = new Sound(backgroundMusicData, 0.3, true);
+const backgroundSong = new Sound(backgroundMusicData, 0.1, true);
 const timerId = setInterval(() => {
     backgroundSong.play();
     clearInterval(timerId);
@@ -79,7 +79,7 @@ function spawnProjectile(x: number, y: number, direction: number, v0: number, da
 on("spawnProjectile", spawnProjectile);
 
 function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
-    const difficultyFactor = Math.abs(leftIdx / terrain.sectorWidth);
+    const difficultyFactor = Math.abs(leftIdx / 1000);
     const numberOfTurrets = Math.max(3, Math.round(difficultyFactor * 2 * Math.random()));
     const scaleFactor = Math.pow(difficultyFactor, 2) * 3;
     for (let turretIdx = 0; turretIdx < numberOfTurrets; turretIdx++) {

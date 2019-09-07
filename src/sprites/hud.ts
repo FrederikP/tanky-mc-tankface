@@ -3,6 +3,30 @@ import { GameDimensions } from "../dimensions";
 import { Score } from "../score";
 import { Tank } from "./tank";
 
+const SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
+
+function abbreviateNumber(numberToAbbrev: number) {
+
+    // what tier? (determines SI symbol)
+    // tslint:disable-next-line: no-bitwise
+    const tier = Math.log10(numberToAbbrev) / 3 | 0;
+
+    // if zero, we don't need a suffix
+    if (tier === 0) {
+        return numberToAbbrev.toLocaleString("en-us", {maximumFractionDigits: 2});
+    }
+
+    // get suffix and determine scale
+    const suffix = SI_SYMBOL[tier];
+    const scale = Math.pow(10, tier * 3);
+
+    // scale the number
+    const scaled = numberToAbbrev / scale;
+
+    // format number and add suffix
+    return scaled.toFixed(2) + suffix;
+}
+
 export class HUD extends Sprite.class {
     private tank: Tank;
     private score: Score;
@@ -27,7 +51,9 @@ export class HUD extends Sprite.class {
         context.fillRect(this.gameDimensions.width / 9 + healthMid,
             this.gameDimensions.height - 40, barWidth - healthMid, 30);
         context.fillStyle = "black";
-        context.fillText(`${new Intl.NumberFormat("en-us", {maximumFractionDigits: 2}).format(this.tank.health)}/${new Intl.NumberFormat("en-us", {maximumFractionDigits: 2}).format(this.tank.maxHealth)} HP`,
+        const currentHealth = abbreviateNumber(this.tank.health);
+        const maxHealth = abbreviateNumber(this.tank.maxHealth);
+        context.fillText(`${currentHealth}/${maxHealth} HP`,
             this.gameDimensions.width / 9 + 20, this.gameDimensions.height - 16);
         context.beginPath();
         const powerMid = barWidth * (this.tank.power / 100);
@@ -41,20 +67,22 @@ export class HUD extends Sprite.class {
             context.fillText(`RELOADING`, this.gameDimensions.width / 5 * 2 + 20, this.gameDimensions.height - 16);
         }
         context.fillStyle = "orange";
-        context.fillText(`Damage/Shot: ${new Intl.NumberFormat("en-us", {maximumFractionDigits: 2}).format(this.tank.damage)}`,
-            this.gameDimensions.width / 3 * 2, this.gameDimensions.height - 16);
+        const damage = abbreviateNumber(this.tank.damage);
+        context.fillText(`Damage/Shot: ${damage}`, this.gameDimensions.width / 3 * 2, this.gameDimensions.height - 16);
 
         context.beginPath();
         context.fillStyle = "yellow";
         const scoreX = this.gameDimensions.width / 4 * 3;
         const lineDiff = this.gameDimensions.height / 30;
-        context.fillText(`Current Score: ${this.score.getScore()}`, scoreX, 40);
+        const score = abbreviateNumber(this.score.getScore());
+        context.fillText(`Current Score: ${score}`, scoreX, 40);
         if (this.score.newHighscore()) {
             context.fillStyle = "pink";
             context.fillText(`NEW HIGHSCORE!`, scoreX, 70);
         } else {
             context.fillStyle = "white";
-            context.fillText(`Highscore: ${this.score.getHighscore()}`, scoreX, 40 + lineDiff);
+            const highscore = abbreviateNumber(this.score.getHighscore());
+            context.fillText(`Highscore: ${highscore}`, scoreX, 40 + lineDiff);
         }
 
         context.fillStyle = "white";
