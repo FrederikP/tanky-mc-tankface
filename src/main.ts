@@ -80,7 +80,7 @@ on("spawnProjectile", spawnProjectile);
 
 function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
     const difficultyFactor = Math.abs(leftIdx / 1000);
-    const numberOfTurrets = Math.round(difficultyFactor * 2 * Math.random());
+    const numberOfTurrets = Math.round(difficultyFactor * Math.random());
     const scaleFactor = Math.pow(difficultyFactor, 2) * 3;
     for (let turretIdx = 0; turretIdx < numberOfTurrets; turretIdx++) {
         const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
