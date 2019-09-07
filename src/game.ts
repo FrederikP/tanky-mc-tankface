@@ -25,61 +25,229 @@ import { ProjectileItem } from "./sprites/projectileitem";
 import { SpeedItem } from "./sprites/speeditem";
 import { TextLayer } from "./sprites/textlayer";
 
-export function start(gameDimensions: GameDimensions) {
-    const backgroundSong = new Sound(backgroundMusicData, 0.05, true);
-    const timerId = setInterval(() => {
-        backgroundSong.play();
-        clearInterval(timerId);
-    }, 2000);
+export class TankyGame {
 
-    const shotSound = new Sound(shotSoundData);
-    const explosionSound = new Sound(explosionSoundData);
-    const itemSound = new Sound(itemSoundData, 0.2);
+    private background: Background;
+    private textLayer: TextLayer;
+    private terrain: Terrain;
+    private tank: Tank;
+    private hud: HUD;
+    private enemies: Enemy[];
+    private projectiles: Projectile[];
+    private score: Score;
+    private items: Item[];
+    private pickedUpItems: Item[];
+    private effects: Effect[];
+    private gameDimensions: GameDimensions;
+    private shotSound: Sound;
+    private explosionSound: Sound;
+    private itemSound: Sound;
+    private loop: any;
+    private backgroundSong: Sound;
 
-    init();
-    let background: Background;
-    let textLayer: TextLayer;
-    let terrain: Terrain;
-    let tank: Tank;
-    let hud: HUD;
-    let enemies: Enemy[];
-    let projectiles: Projectile[];
-    let score: Score;
-    let items: Item[];
-    let pickedUpItems: Item[];
-    let effects: Effect[];
+    public constructor(gameDimensions: GameDimensions) {
+        init();
+        initKeys();
+        this.backgroundSong = new Sound(backgroundMusicData, 0.05, true);
 
-    function startRun(highScore: number, itemsToApply: Item[]) {
-        effects = [];
-        background = new Background(gameDimensions);
-        textLayer = new TextLayer(gameDimensions);
-        terrain = new Terrain(gameDimensions);
-        tank = new Tank(gameDimensions.width / 2, -30, gameDimensions, terrain, effects);
+        this.shotSound = new Sound(shotSoundData);
+        this.explosionSound = new Sound(explosionSoundData);
+        this.itemSound = new Sound(itemSoundData, 0.2);
 
-        itemsToApply.forEach((item) => {
-            item.apply(tank);
+        this.gameDimensions = gameDimensions;
+        const oldItems: Item[] = this.getItemsFromStorage();
+
+        on("spawnProjectile", (x: number, y: number, direction: number,
+                               v0: number, damage: number) =>
+            this.spawnProjectile(x, y, direction, v0, damage));
+        on("newTerrain", (leftIdx: number, rightIdx: number, currentOffset: number) =>
+            this.newTerrain(leftIdx, rightIdx, currentOffset));
+        on("enemyKilled", (enemy: Enemy) => this.enemyKilled(enemy));
+
+        this.effects = [];
+        this.background = new Background(this.gameDimensions);
+        this.textLayer = new TextLayer(this.gameDimensions);
+        this.terrain = new Terrain(this.gameDimensions);
+        this.tank = new Tank(this.gameDimensions.width / 2, -30, this.gameDimensions, this.terrain, this.effects);
+        this.getItemsFromStorage().forEach((item) => {
+            item.apply(this.tank);
         });
 
-        score = new Score(highScore);
-        hud = new HUD(tank, score, gameDimensions);
+        this.score = new Score(Number(localStorage.getItem("tankymctankface_highscore")));
+        this.hud = new HUD(this.tank, this.score, this.gameDimensions);
 
-        projectiles = [];
-        enemies = [];
-        items = [];
-        pickedUpItems = [];
+        this.projectiles = [];
+        this.enemies = [];
+        this.items = [];
+        this.pickedUpItems = [];
+
+        this.loop = GameLoop({
+            render: () => this.render(),
+            update: (dt: number) => this.update(dt),
+        });
     }
 
-    initKeys();
-
-    function spawnProjectile(x: number, y: number, direction: number, v0: number, damage: number) {
-        projectiles.push(new Projectile(x, y, direction, v0, damage));
-        effects.push(new MuzzleFlash(x, y, direction));
-        shotSound.play();
+    public start() {
+        this.backgroundSong.play();
+        this.loop.start();
     }
 
-    on("spawnProjectile", spawnProjectile);
+    private render() { // render the game state
+        resizeIfNeeded();
+        this.background.render();
+        this.textLayer.render();
+        this.enemies.forEach((enemy) => {
+            enemy.render();
+        });
+        this.projectiles.forEach((projectile) => {
+            projectile.render();
+        });
+        this.tank.render();
+        this.items.forEach((item) => {
+            item.render();
+        });
+        this.effects.forEach((effect) => {
+            effect.render();
+        });
+        this.terrain.render();
+        this.hud.render();
+    }
 
-    function newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
+    private update(dt: number) { // update the game state
+        this.terrain.update();
+        this.enemies.forEach((enemy) => {
+            enemy.update(dt);
+        });
+
+        const effectIdsToRemove = [];
+        for (let index = 0; index < this.effects.length; index++) {
+            const effect = this.effects[index];
+            if (effect.effectDone()) {
+                effectIdsToRemove.push(index);
+            }
+        }
+        for (let i = effectIdsToRemove.length - 1; i >= 0; i--) {
+            this.effects.splice(effectIdsToRemove[i], 1);
+        }
+
+        const itemIdsToRemove = [];
+        for (let index = 0; index < this.items.length; index++) {
+            const item = this.items[index];
+            if (Math.abs(this.tank.x - item.x) < this.tank.width / 2) {
+                itemIdsToRemove.push(index);
+                this.tank.pickUp(item);
+                this.pickedUpItems.push(item);
+                this.itemSound.play();
+                const itemsAsNames = this.pickedUpItems.map((pickedUpItem) => pickedUpItem.name);
+                localStorage.setItem("tankymctankface_items", JSON.stringify(itemsAsNames));
+            }
+        }
+        for (let i = itemIdsToRemove.length - 1; i >= 0; i--) {
+            this.items.splice(itemIdsToRemove[i], 1);
+        }
+        const projectileIdsToRemove = [];
+        const enemyIdsToRemoveSet: Set<number> = new Set();
+        for (let index = 0; index < this.projectiles.length; index++) {
+            let removeProjectile = false;
+            const projectile = this.projectiles[index];
+            projectile.update();
+            for (let enemyIdx = 0; enemyIdx < this.enemies.length; enemyIdx++) {
+                const enemy = this.enemies[enemyIdx];
+                if (Math.abs(projectile.x - enemy.x) < 50) {
+                    if (enemy.collidesWith(projectile)) {
+                        removeProjectile = true;
+                        this.blowUpParticles(projectile);
+                        this.explosionSound.play();
+                        enemy.takeDamage(projectile);
+                        if (enemy.isDead()) {
+                            if (!enemyIdsToRemoveSet.has(enemyIdx)) {
+                                enemyIdsToRemoveSet.add(enemyIdx);
+                                emit("enemyKilled", enemy);
+                            }
+                        }
+                    }
+                }
+            }
+            const terrainHeight = this.terrain.getGlobalHeight(projectile.x);
+            if (projectile.y >= terrainHeight) {
+                this.terrain.explosion(projectile.x);
+                removeProjectile = true;
+                this.blowUpParticles(projectile);
+                this.explosionSound.play();
+            }
+            if (Math.abs(projectile.x - this.tank.x) < 50) {
+                if (this.tank.collidesWith(projectile)) {
+                    this.tank.takeDamage(projectile);
+                    removeProjectile = true;
+                    this.blowUpParticles(projectile);
+                    this.explosionSound.play();
+                    if (this.tank.isDead()) {
+                        this.restartRun(this.score.getHighscore(), this.tank.getPickedUpItems());
+                    }
+                }
+            }
+            if (removeProjectile) {
+                projectileIdsToRemove.push(index);
+            }
+        }
+        for (let i = projectileIdsToRemove.length - 1; i >= 0; i--) {
+            this.projectiles.splice(projectileIdsToRemove[i], 1);
+        }
+        const enemyIdsToRemove: number[] = Array.from(enemyIdsToRemoveSet).sort((a, b) => a - b);
+        for (let i = enemyIdsToRemove.length - 1; i >= 0; i--) {
+            this.enemies.splice(enemyIdsToRemove[i], 1);
+        }
+        this.tank.update(dt);
+    }
+
+    private getItemsFromStorage() {
+        const itemNames = localStorage.getItem("tankymctankface_items");
+        const oldItems: Item[] = [];
+        const availableItems: Record<string, Item> = {};
+        const projItem = new ProjectileItem(0, 0);
+        availableItems[projItem.name] = projItem;
+        const speedItem = new SpeedItem(0, 0);
+        availableItems[speedItem.name] = speedItem;
+        const damageItem = new DamageItem(0, 0);
+        availableItems[damageItem.name] = damageItem;
+        const healthItem = new HealthItem(0, 0);
+        availableItems[healthItem.name] = healthItem;
+        if (itemNames) {
+            const parsedItemNames: string[] = JSON.parse(itemNames);
+            parsedItemNames.forEach((parsedItemName) => {
+                oldItems.push(availableItems[parsedItemName]);
+            });
+        }
+        return oldItems;
+    }
+
+    private restartRun(highScore: number, itemsToApply: Item[]) {
+        this.effects = [];
+        this.background = new Background(this.gameDimensions);
+        this.textLayer = new TextLayer(this.gameDimensions);
+        this.terrain = new Terrain(this.gameDimensions);
+        this.tank = new Tank(this.gameDimensions.width / 2, -30, this.gameDimensions, this.terrain, this.effects);
+
+        itemsToApply.forEach((item) => {
+            item.apply(this.tank);
+        });
+
+        this.score = new Score(highScore);
+        this.hud = new HUD(this.tank, this.score, this.gameDimensions);
+
+        this.projectiles = [];
+        this.enemies = [];
+        this.items = [];
+        this.pickedUpItems = [];
+    }
+
+    private spawnProjectile(x: number, y: number, direction: number, v0: number, damage: number) {
+        this.projectiles.push(new Projectile(x, y, direction, v0, damage));
+        this.effects.push(new MuzzleFlash(x, y, direction));
+        this.shotSound.play();
+    }
+
+    private newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
         const difficultyFactor = Math.abs(leftIdx / 1000);
         const numberOfTurrets = Math.round(difficultyFactor * Math.random() *
             (1 + 10 / (difficultyFactor * difficultyFactor / 2 + 1)) * (rightIdx - leftIdx) / 2000);
@@ -94,169 +262,32 @@ export function start(gameDimensions: GameDimensions) {
             const damage = maxHealth / 3;
             const points = Math.round(((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
                 maxHealth * damage * (shootDirectly ? 5 : 1)) / Math.log2(difficultyFactor + 1));
-            enemies.push(new Turret(index - currentOffset, tank, shootingSpeed,
+            this.enemies.push(new Turret(index - currentOffset, this.tank, shootingSpeed,
                 msBetweenShots, shootDirectly, inaccuracy, maxHealth,
-                damage, points, gameDimensions, terrain));
+                damage, points, this.gameDimensions, this.terrain));
         }
     }
 
-    on("newTerrain", newTerrain);
-
-    function enemyKilled(enemy: Enemy) {
-        score.addPoints(enemy.points);
+    private enemyKilled(enemy: Enemy) {
+        this.score.addPoints(enemy.points);
         const rand = Math.random() * 100;
         if (rand < 5) {
-            items.push(new ProjectileItem(enemy.x, enemy.y));
+            this.items.push(new ProjectileItem(enemy.x, enemy.y));
         } else if (rand < 25) {
-            items.push(new DamageItem(enemy.x, enemy.y));
+            this.items.push(new DamageItem(enemy.x, enemy.y));
         } else if (rand < 45) {
-            items.push(new SpeedItem(enemy.x, enemy.y));
+            this.items.push(new SpeedItem(enemy.x, enemy.y));
         } else if (rand < 70) {
-            items.push(new HealthItem(enemy.x, enemy.y));
+            this.items.push(new HealthItem(enemy.x, enemy.y));
         }
     }
 
-    on("enemyKilled", enemyKilled);
-
-    function blowUpParticles(projectile: Projectile) {
+    private blowUpParticles(projectile: Projectile) {
         for (let bpIdx = 0; bpIdx < 10; bpIdx++) {
             const angle = Math.random() * -Math.PI;
             const v0 = 10 + Math.random() * 20;
             const particle: Effect = new BlowupParticle(projectile.x, projectile.y, angle, v0, "#696969");
-            effects.push(particle);
+            this.effects.push(particle);
         }
     }
-
-    const loop = GameLoop({  // create the main game loop
-        render: function render() { // render the game state
-            resizeIfNeeded();
-            background.render();
-            textLayer.render();
-            enemies.forEach((enemy) => {
-                enemy.render();
-            });
-            projectiles.forEach((projectile) => {
-                projectile.render();
-            });
-            tank.render();
-            items.forEach((item) => {
-                item.render();
-            });
-            effects.forEach((effect) => {
-                effect.render();
-            });
-            terrain.render();
-            hud.render();
-        },
-        update: function update(dt: number) { // update the game state
-            terrain.update();
-            enemies.forEach((enemy) => {
-                enemy.update(dt);
-            });
-
-            const effectIdsToRemove = [];
-            for (let index = 0; index < effects.length; index++) {
-                const effect = effects[index];
-                if (effect.effectDone()) {
-                    effectIdsToRemove.push(index);
-                }
-            }
-            for (let i = effectIdsToRemove.length - 1; i >= 0; i--) {
-                effects.splice(effectIdsToRemove[i], 1);
-            }
-
-            const itemIdsToRemove = [];
-            for (let index = 0; index < items.length; index++) {
-                const item = items[index];
-                if (Math.abs(tank.x - item.x) < tank.width / 2) {
-                    itemIdsToRemove.push(index);
-                    tank.pickUp(item);
-                    pickedUpItems.push(item);
-                    itemSound.play();
-                    const itemsAsNames = pickedUpItems.map((pickedUpItem) => pickedUpItem.name);
-                    localStorage.setItem("tankymctankface_items", JSON.stringify(itemsAsNames));
-                }
-            }
-            for (let i = itemIdsToRemove.length - 1; i >= 0; i--) {
-                items.splice(itemIdsToRemove[i], 1);
-            }
-            const projectileIdsToRemove = [];
-            const enemyIdsToRemoveSet: Set<number> = new Set();
-            for (let index = 0; index < projectiles.length; index++) {
-                let removeProjectile = false;
-                const projectile = projectiles[index];
-                projectile.update();
-                for (let enemyIdx = 0; enemyIdx < enemies.length; enemyIdx++) {
-                    const enemy = enemies[enemyIdx];
-                    if (Math.abs(projectile.x - enemy.x) < 50) {
-                        if (enemy.collidesWith(projectile)) {
-                            removeProjectile = true;
-                            blowUpParticles(projectile);
-                            explosionSound.play();
-                            enemy.takeDamage(projectile);
-                            if (enemy.isDead()) {
-                                if (!enemyIdsToRemoveSet.has(enemyIdx)) {
-                                    enemyIdsToRemoveSet.add(enemyIdx);
-                                    emit("enemyKilled", enemy);
-                                }
-                            }
-                        }
-                    }
-                }
-                const terrainHeight = terrain.getGlobalHeight(projectile.x);
-                if (projectile.y >= terrainHeight) {
-                    terrain.explosion(projectile.x);
-                    removeProjectile = true;
-                    blowUpParticles(projectile);
-                    explosionSound.play();
-                }
-                if (Math.abs(projectile.x - tank.x) < 50) {
-                    if (tank.collidesWith(projectile)) {
-                        tank.takeDamage(projectile);
-                        removeProjectile = true;
-                        blowUpParticles(projectile);
-                        explosionSound.play();
-                        if (tank.isDead()) {
-                            startRun(score.getHighscore(), tank.getPickedUpItems());
-                        }
-                    }
-                }
-                if (removeProjectile) {
-                    projectileIdsToRemove.push(index);
-                }
-            }
-            for (let i = projectileIdsToRemove.length - 1; i >= 0; i--) {
-                projectiles.splice(projectileIdsToRemove[i], 1);
-            }
-            const enemyIdsToRemove: number[] = Array.from(enemyIdsToRemoveSet).sort((a, b) => a - b);
-            for (let i = enemyIdsToRemove.length - 1; i >= 0; i--) {
-                enemies.splice(enemyIdsToRemove[i], 1);
-            }
-            tank.update(dt);
-        },
-    });
-    const itemNames = localStorage.getItem("tankymctankface_items");
-    const oldItems: Item[] = [];
-
-    const availableItems: Record<string, Item> = {};
-
-    const projItem = new ProjectileItem(0, 0);
-    availableItems[projItem.name] = projItem;
-    const speedItem = new SpeedItem(0, 0);
-    availableItems[speedItem.name] = speedItem;
-    const damageItem = new DamageItem(0, 0);
-    availableItems[damageItem.name] = damageItem;
-    const healthItem = new HealthItem(0, 0);
-    availableItems[healthItem.name] = healthItem;
-
-    if (itemNames) {
-        const parsedItemNames: string[] = JSON.parse(itemNames);
-        parsedItemNames.forEach((parsedItemName) => {
-            oldItems.push(availableItems[parsedItemName]);
-        });
-    }
-
-    startRun(Number(localStorage.getItem("tankymctankface_highscore")), oldItems);
-    loop.start();    // start the game
-
 }

@@ -2,7 +2,7 @@
 const css = require("./main.css");
 
 import { GameDimensions } from "./dimensions";
-import { start } from "./game";
+import { TankyGame } from "./game";
 
 const gameDimensions = new GameDimensions();
 
@@ -38,9 +38,11 @@ window.addEventListener("orientationchange", resizeIfNeeded, false);
 
 resizeIfNeeded();
 
+const game = new TankyGame(gameDimensions);
+
 const startButton = document.getElementById("startbutton")!;
 startButton.addEventListener("click", (_) => {
-    start(gameDimensions);
+    game.start();
     const gameMenu = document.getElementById("gameMenu")!;
     gameMenu.hidden = true;
 });
