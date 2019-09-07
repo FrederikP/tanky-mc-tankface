@@ -4,7 +4,7 @@ export class Sound {
 
     private audio: HTMLAudioElement;
 
-    public constructor(sound: any, loop = false) {
+    public constructor(sound: any, volume = 1, loop = false) {
         const player = new CPlayer(sound);
         // Generate music...
         let done = false;
@@ -19,6 +19,7 @@ export class Sound {
         if (loop) {
             audio.setAttribute("loop", "loop");
         }
+        audio.volume = volume;
         audio.src = URL.createObjectURL(new Blob([wave], {type: "audio/wav"}));
         this.audio = audio;
     }
@@ -26,17 +27,17 @@ export class Sound {
     public play() {
         if (this.audio.paused) {
             const audioPromise = this.audio.play();
+            if (audioPromise !== undefined) {
+                audioPromise.then(_ => {
+                    // Autoplay started!
+                }).catch(error => {
+                    // Autoplay was prevented.
+                    // Show a "Play" button so that user can start playback.
+                    console.log(error.message);
+                });
+            }
         } else {
             this.audio.currentTime = 0;
         }
-        // if (audioPromise !== undefined) {
-        //     audioPromise.then(_ => {
-        //         // Autoplay started!
-        //     }).catch(error => {
-        //         // Autoplay was prevented.
-        //         // Show a "Play" button so that user can start playback.
-        //         console.log(error.message);
-        //     });
-        // }
     }
 }

@@ -1,5 +1,10 @@
 # Tanky McTankface
 
+Tanky McTankface is a [js13k](https://js13kgames.com/) game for the 2019 edition of the contest. The zipped game including all dependencies must at most 13kb in size.
+The deadline is 13:00 CEST, 13th September 2019.
+
+You take control of the tank and try to go as far as you can while fighting enemy turrets. You gather items along the way, but they are no applied instantly. Only when you are destroyed and start back at the beginning, the items will be applied and you will become more powerful. Compare Highscores to see how well you did.
+
 ## Setup for development
 
 First clone the repository and change directory to the project root.
