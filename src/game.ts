@@ -25,6 +25,7 @@ import { MuzzleFlash } from "./sprites/muzzleflash";
 import { ProjectileItem } from "./sprites/projectileitem";
 import { SpeedItem } from "./sprites/speeditem";
 import { TextLayer } from "./sprites/textlayer";
+import { ReloadTimeItem } from "./sprites/reloadtimeitem";
 
 export class TankyGame {
 
@@ -270,6 +271,8 @@ export class TankyGame {
             this.items.push(new SpeedItem(enemy.x, enemy.y));
         } else if (rand < 70) {
             this.items.push(new HealthItem(enemy.x, enemy.y));
+        } else if (rand < 95) {
+            this.items.push(new ReloadTimeItem(enemy.x, enemy.y));
         }
     }
 

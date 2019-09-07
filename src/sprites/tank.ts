@@ -27,10 +27,10 @@ export class Tank extends Sprite.class {
 
     public readonly acceleration = 0.1;
 
+    public reloadTime = 1000;
+
     private radius = 10;
     private height = 20;
-
-    private timeToReload = 1000;
 
     private gunRotation = 0;
 
@@ -97,7 +97,7 @@ export class Tank extends Sprite.class {
     }
 
     public isReloading() {
-        return Date.now() - this.lastShot < this.timeToReload;
+        return Date.now() - this.lastShot < this.reloadTime;
     }
 
     public update(dt: number) {

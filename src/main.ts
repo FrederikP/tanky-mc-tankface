@@ -9,6 +9,7 @@ import { HealthItem } from "./sprites/healthitem";
 import { Item } from "./sprites/item";
 import { ProjectileItem } from "./sprites/projectileitem";
 import { SpeedItem } from "./sprites/speeditem";
+import { ReloadTimeItem } from "./sprites/reloadtimeitem";
 
 const gameDimensions = new GameDimensions();
 
@@ -117,6 +118,8 @@ function getItemsFromStorage() {
     availableItems[damageItem.name] = damageItem;
     const healthItem = new HealthItem(0, 0);
     availableItems[healthItem.name] = healthItem;
+    const reloadTimeItem = new ReloadTimeItem(0, 0);
+    availableItems[reloadTimeItem.name] = reloadTimeItem;
     if (itemNames) {
         const parsedItemNames: string[] = JSON.parse(itemNames);
         parsedItemNames.forEach((parsedItemName) => {

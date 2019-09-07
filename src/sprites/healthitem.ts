@@ -6,11 +6,11 @@ export class HealthItem extends Item {
     public name = "health";
 
     public getLabel(): string {
-        return "50% more health";
+        return "double health";
     }
 
     public apply(tank: Tank): void {
-        tank.setInitialHealth(tank.getInitialHealth() * 1.5);
+        tank.setInitialHealth(tank.getInitialHealth() * 2);
     }
 
     protected renderItem(context: any): void {

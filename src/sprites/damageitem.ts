@@ -6,11 +6,11 @@ export class DamageItem extends Item {
     public name = "damage";
 
     public getLabel(): string {
-        return "50% more damage";
+        return "double damage";
     }
 
     public apply(tank: Tank): void {
-        tank.damage *= 1.5;
+        tank.damage *= 2;
     }
 
     protected renderItem(context: any): void {
