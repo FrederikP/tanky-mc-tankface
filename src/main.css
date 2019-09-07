@@ -73,7 +73,7 @@
     -webkit-appearance: none; /* Override default look */
     appearance: none;
     width: 10%; /* Set a specific slider handle width */
-    height: 20px; /* Slider handle height */
+    height: 20px; /* Slider handle height - This fucker doesn't like percentages*/
     background: #4CAF50; /* Green background */
     cursor: pointer; /* Cursor on hover */
 }
