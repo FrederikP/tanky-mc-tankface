@@ -2,7 +2,7 @@ import { on, Sprite } from "kontra";
 
 export class Projectile extends Sprite.class {
 
-    static prerendered: HTMLCanvasElement = Projectile.createCanvas();
+    private static prerendered: HTMLCanvasElement = Projectile.createCanvas();
 
     private static createCanvas() {
         const canvas = document.createElement("canvas");
