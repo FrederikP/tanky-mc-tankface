@@ -44,7 +44,7 @@ export class Turret extends Enemy {
         const yDiff = projectile.y - this.y;
         const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
         let colliding = false;
-        if (distance < this.radius + projectile.radius || (Math.abs(xDiff) < this.radius && projectile.y > this.y)) {
+        if (distance < this.radius + 2 || (Math.abs(xDiff) < this.radius && projectile.y > this.y)) {
             colliding = true;
         }
         return colliding;

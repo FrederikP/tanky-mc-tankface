@@ -212,8 +212,8 @@ export class Tank extends Sprite.class {
         const yDiff = projectile.y - this.y;
         const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
         let colliding = false;
-        if (distance < this.radius + projectile.radius ||
-            circleAndRectangleCollide(projectile.x, projectile.y, projectile.radius,
+        if (distance < this.radius + 2 ||
+            circleAndRectangleCollide(projectile.x, projectile.y, 2,
                                       this.x - this.width / 2, this.y - this.width / 2,
                                       this.width, this.height)) {
             colliding = true;
