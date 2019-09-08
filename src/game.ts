@@ -46,12 +46,14 @@ export class TankyGame {
     private itemSound: Sound;
     private loop: any;
     private backgroundSong: Sound;
+    private numberOfActiveItems: number;
 
     private hasStarted = false;
 
     public constructor(gameDimensions: GameDimensions, initialItems: Item[], soundSettings: SoundSettings) {
         init();
         initKeys();
+        this.numberOfActiveItems = initialItems.length;
         this.backgroundSong = new Sound(backgroundMusicData, soundSettings, true, true);
 
         this.shotSound = new Sound(shotSoundData, soundSettings);
@@ -214,6 +216,7 @@ export class TankyGame {
     }
 
     private restartRun(highScore: number, itemsToApply: Item[]) {
+        this.numberOfActiveItems = itemsToApply.length;
         this.effects = [];
         this.background = new Background(this.gameDimensions);
         this.textLayer = new TextLayer(this.gameDimensions);
@@ -240,9 +243,8 @@ export class TankyGame {
     }
 
     private newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
-        const difficultyFactor = Math.abs(leftIdx / 2000);
-        const numberOfTurrets = Math.round(difficultyFactor * Math.random() *
-            (1 + 10 / (difficultyFactor * difficultyFactor / 2 + 1)) * (rightIdx - leftIdx) / 2000);
+        const difficultyFactor = Math.abs(leftIdx / 2000) + this.numberOfActiveItems / 3;
+        const numberOfTurrets = Math.round((rightIdx - leftIdx) / 300 * Math.random());
         const scaleFactor = Math.pow(difficultyFactor, 2);
         for (let turretIdx = 0; turretIdx < numberOfTurrets; turretIdx++) {
             const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
