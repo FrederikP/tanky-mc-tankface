@@ -53,7 +53,7 @@ Game will be accessible running at http://localhost:9000/
 - [x] Add sounds
 - [x] Add simple start screen
 - [x] Mirror repo to github and include link to repo in game menu
-- [ ] Optimize performance
+- [x] Optimize performance
 - [ ] Add more items if size allows, repeat
 - [ ] Final balance
 
