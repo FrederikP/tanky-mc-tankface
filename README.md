@@ -5,6 +5,12 @@ The deadline is 13:00 CEST, 13th September 2019.
 
 You take control of the tank and try to go as far as you can while fighting enemy turrets. You gather items along the way, but they are no applied instantly. Only when you are destroyed and start back at the beginning, the items will be applied and you will become more powerful. Compare Highscores to see how well you did.
 
+## Latest version
+
+[Play](https://tanky.upseil.com/master/)
+
+[Download ZIP](https://tanky.upseil.com/master/tanky.zip)
+
 ## Setup for development
 
 First clone the repository and change directory to the project root.
