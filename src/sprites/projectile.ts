@@ -2,8 +2,20 @@ import { on, Sprite } from "kontra";
 
 export class Projectile extends Sprite.class {
 
+    static prerendered: HTMLCanvasElement = Projectile.createCanvas();
+
+    private static createCanvas() {
+        const canvas = document.createElement("canvas");
+        canvas.width = 4;
+        canvas.height = 4;
+        const context = canvas.getContext("2d")!;
+        context.fillStyle = "white";
+        context.arc(2, 2, 2, 0, 2 * Math.PI);
+        context.fill();
+        return canvas;
+    }
+
     public damage = 1;
-    public radius = 2;
 
     private startTime = Date.now();
 
@@ -30,10 +42,7 @@ export class Projectile extends Sprite.class {
 
     public render() {
         const context = this.context;
-        context.beginPath();
-        context.fillStyle = "white";
-        context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-        context.fill();
+        context.drawImage(Projectile.prerendered, this.x - 2, this.y - 2);
     }
 
     public update() {
