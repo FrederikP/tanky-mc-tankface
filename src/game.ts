@@ -23,9 +23,9 @@ import { HUD } from "./sprites/hud";
 import { Item } from "./sprites/item";
 import { MuzzleFlash } from "./sprites/muzzleflash";
 import { ProjectileItem } from "./sprites/projectileitem";
+import { ReloadTimeItem } from "./sprites/reloadtimeitem";
 import { SpeedItem } from "./sprites/speeditem";
 import { TextLayer } from "./sprites/textlayer";
-import { ReloadTimeItem } from "./sprites/reloadtimeitem";
 
 export class TankyGame {
 
@@ -277,7 +277,7 @@ export class TankyGame {
     }
 
     private blowUpParticles(projectile: Projectile) {
-        for (let bpIdx = 0; bpIdx < 10; bpIdx++) {
+        for (let bpIdx = 0; bpIdx < 5; bpIdx++) {
             const angle = Math.random() * -Math.PI;
             const v0 = 10 + Math.random() * 20;
             const particle: Effect = new BlowupParticle(projectile.x, projectile.y, angle, v0, "#696969");

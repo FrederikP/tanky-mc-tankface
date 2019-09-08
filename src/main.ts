@@ -8,8 +8,8 @@ import { DamageItem } from "./sprites/damageitem";
 import { HealthItem } from "./sprites/healthitem";
 import { Item } from "./sprites/item";
 import { ProjectileItem } from "./sprites/projectileitem";
-import { SpeedItem } from "./sprites/speeditem";
 import { ReloadTimeItem } from "./sprites/reloadtimeitem";
+import { SpeedItem } from "./sprites/speeditem";
 
 const gameDimensions = new GameDimensions();
 

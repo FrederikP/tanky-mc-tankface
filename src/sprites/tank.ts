@@ -284,7 +284,9 @@ export class Tank extends Sprite.class {
     }
 
     private onDrive() {
-        this.blowUpParticle();
+        if (Math.random() > 0.6) {
+            this.blowUpParticle();
+        }
     }
 
 }

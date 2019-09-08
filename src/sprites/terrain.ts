@@ -64,19 +64,37 @@ export class Terrain extends Sprite.class {
 
     public render() {
         const context = this.context;
+        context.fillStyle = "#663300";
+        context.beginPath();
+        context.moveTo(0, this.gameDimensions.height);
+        for (let index = 0; index < this.gameDimensions.width + 1; index++) {
+            const height = this.getGlobalHeight(index);
+            context.lineTo(index, height);
+        }
+        context.lineTo(this.gameDimensions.width, this.gameDimensions.height);
+        context.fill();
 
         context.beginPath();
+        context.strokeStyle = "#006400";
+        context.lineWidth = 4;
+        context.moveTo(0, this.getGlobalHeight(0) - 1);
+        let explodeMode = false;
         for (let index = 0; index < this.gameDimensions.width; index++) {
-            const height = this.getGlobalHeight(index);
-            context.fillStyle = "#663300";
-            context.fillRect(this.x + index, height, 1, this.gameDimensions.height);
-            if (this.hasExploded(index)) {
-                context.fillStyle = "black";
-            } else {
-                context.fillStyle = "#006400";
+            if (!explodeMode && this.hasExploded(index)) {
+                explodeMode = true;
+                context.stroke();
+                context.beginPath();
+                context.strokeStyle = "black";
+            } else if (explodeMode && !this.hasExploded(index)) {
+                explodeMode = false;
+                context.stroke();
+                context.beginPath();
+                context.strokeStyle = "#006400";
             }
-            context.fillRect(this.x + index, height - 4, 1, 4);
+            const height = this.getGlobalHeight(index) - 1;
+            context.lineTo(index, height);
         }
+        context.stroke();
     }
 
     public getGlobalHeight(x: number, applyOffset = true, originalHeight = false): number {
