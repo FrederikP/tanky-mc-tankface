@@ -17,6 +17,7 @@ import { Background } from "./sprites/background";
 import { BlowupParticle } from "./sprites/blowupparticle";
 import { DamageItem } from "./sprites/damageitem";
 import { Effect } from "./sprites/effect";
+import { EnemyTank } from "./sprites/enemytank";
 import { HealthItem } from "./sprites/healthitem";
 import { HUD } from "./sprites/hud";
 import { Item } from "./sprites/item";
@@ -113,17 +114,25 @@ export class TankyGame {
         this.background.render();
         this.textLayer.render();
         this.enemies.forEach((enemy) => {
-            enemy.render();
+            if (enemy.x > -40 && enemy.x < this.gameDimensions.width + 40) {
+                enemy.render();
+            }
         });
         this.projectiles.forEach((projectile) => {
-            projectile.render();
+            if (projectile.x > -2 && projectile.x < this.gameDimensions.width + 2) {
+                projectile.render();
+            }
         });
         this.tanky.render();
         this.items.forEach((item) => {
-            item.render();
+            if (item.x > -20 && item.x < this.gameDimensions.width + 20) {
+                item.render();
+            }
         });
         this.effects.forEach((effect) => {
-            effect.render();
+            if (effect.x > -5 && effect.x < this.gameDimensions.width + 5) {
+                effect.render();
+            }
         });
         this.terrain.render();
         this.hud.render();
@@ -260,6 +269,11 @@ export class TankyGame {
             this.enemies.push(new Turret(index - currentOffset, this.tanky, shootingSpeed,
                 msBetweenShots, shootDirectly, inaccuracy, maxHealth,
                 damage, points, this.gameDimensions, this.terrain));
+        }
+        const numberOfTanks = Math.round((rightIdx - leftIdx) / 800 * Math.random());
+        for (let tankIdx = 0; tankIdx < numberOfTanks; tankIdx++) {
+            const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
+            this.enemies.push(new EnemyTank(index - currentOffset, this.gameDimensions, this.terrain, this.effects, 0));
         }
     }
 

@@ -28,15 +28,17 @@ export abstract class Tank extends Machine {
     public reloadTime = 1500;
 
     protected gunRotation = 0;
+    protected faceLeft = false;
+
+    protected startedMovingLeftAt: number = -1;
+    protected startedMovingRightAt: number = -1;
+
+    protected gameDimensions: GameDimensions;
 
     private radius = 10;
     private height = 20;
 
-    private faceLeft = false;
-
     private terrainRotationAngle = 0;
-
-    private gameDimensions: GameDimensions;
     private effects: Effect[];
 
     constructor(x: number, gameDimensions: GameDimensions, terrain: Terrain,
@@ -77,24 +79,9 @@ export abstract class Tank extends Machine {
 
     }
 
-    public isReloading() {
-        return Date.now() - this.lastShot < this.reloadTime;
-    }
-
-    public reloadRatio() {
-        return (Date.now() - this.lastShot) / this.reloadTime;
-    }
-
     public updateMachine(dt: number) {
         this.moveTank(dt);
         this.updateHeightAndRotation();
-        const gameWidth = this.gameDimensions.width;
-        if (this.x < gameWidth / 2 - 30) {
-            this.terrain.scroll(Math.round(this.x - (gameWidth / 2 - 30)));
-        }
-        if (this.x > gameWidth / 2 + 30) {
-            this.terrain.scroll(Math.round(this.x - (gameWidth / 2 + 30)));
-        }
     }
 
     public abstract moveTank(dt: number): void;
@@ -159,16 +146,28 @@ export abstract class Tank extends Machine {
         return this.speed;
     }
 
+    public isReloading() {
+        return Date.now() - this.lastShot < this.reloadTime;
+    }
+
     protected goLeft(dt: number) {
         super.x = this.x - dt * (Math.min(this.speed - this.terrainRotationAngle * 60, Math.max(2, this.acceleration *
             (Date.now() - this.startedMovingLeftAt)) - this.terrainRotationAngle * 60));
         this.faceLeft = true;
+        this.onDrive();
     }
 
     protected goRight(dt: number) {
         super.x = this.x + dt * (Math.min(this.speed + this.terrainRotationAngle * 60, Math.max(2, this.acceleration *
             (Date.now() - this.startedMovingRightAt)) + this.terrainRotationAngle * 60));
         this.faceLeft = false;
+        this.onDrive();
+    }
+
+    private onDrive() {
+        if (Math.random() > 0.6) {
+            this.blowUpParticle();
+        }
     }
 
     private updateHeightAndRotation() {
@@ -196,12 +195,6 @@ export abstract class Tank extends Machine {
         const xDiff = Math.random() * this.width / 2 * (this.faceLeft ? 1 : -1);
         const particle: Effect = new BlowupParticle(this.x + xDiff, this.y + 20, angle, v0, "#663300");
         this.effects.push(particle);
-    }
-
-    protected onDrive() {
-        if (Math.random() > 0.6) {
-            this.blowUpParticle();
-        }
     }
 
 }

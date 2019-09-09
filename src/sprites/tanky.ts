@@ -7,19 +7,12 @@ import { Terrain } from "./terrain";
 
 export class Tanky extends Tank {
 
-    private startedMovingLeftAt: number = -1;
-    private startedMovingRightAt: number = -1;
-
     private items: Item[] = [];
     private itemLabelCounts: Record<string, number> = {};
 
     constructor(x: number, gameDimensions: GameDimensions, terrain: Terrain,
                 effects: Effect[]) {
         super(x, gameDimensions, terrain, effects);
-    }
-
-    public isReloading() {
-        return Date.now() - this.lastShot < this.reloadTime;
     }
 
     public reloadRatio() {
@@ -54,17 +47,22 @@ export class Tanky extends Tank {
                 this.startedMovingRightAt = Date.now();
             }
             this.goRight(dt);
-            this.onDrive();
         } else if (keyPressed("left")) {
             this.startedMovingRightAt = -1;
             if (this.startedMovingLeftAt < 0) {
                 this.startedMovingLeftAt = Date.now();
             }
             this.goLeft(dt);
-            this.onDrive();
         } else {
             this.startedMovingRightAt = -1;
             this.startedMovingLeftAt = -1;
+        }
+        const gameWidth = this.gameDimensions.width;
+        if (this.x < gameWidth / 2 - 30) {
+            this.terrain.scroll(Math.round(this.x - (gameWidth / 2 - 30)));
+        }
+        if (this.x > gameWidth / 2 + 30) {
+            this.terrain.scroll(Math.round(this.x - (gameWidth / 2 + 30)));
         }
     }
 
