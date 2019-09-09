@@ -5,13 +5,11 @@ import { circleAndRectangleCollide } from "../util";
 import { BlowupParticle } from "./blowupparticle";
 import { Effect } from "./effect";
 import { Item } from "./item";
+import { Machine } from "./machine";
 import { Projectile } from "./projectile";
 import { Terrain } from "./terrain";
 
-export class Tank extends Sprite.class {
-
-    public maxHealth = 3;
-    public health = this.maxHealth;
+export abstract class Tank extends Machine {
 
     public power = 0;
 
@@ -29,42 +27,26 @@ export class Tank extends Sprite.class {
 
     public reloadTime = 1500;
 
+    protected gunRotation = 0;
+
     private radius = 10;
     private height = 20;
 
-    private gunRotation = 0;
-
     private faceLeft = false;
-    private terrain: Terrain;
 
     private terrainRotationAngle = 0;
 
-    private items: Item[] = [];
-    private itemLabelCounts: Record<string, number> = {};
-
-    private startedMovingLeftAt: number = -1;
-    private startedMovingRightAt: number = -1;
     private gameDimensions: GameDimensions;
     private effects: Effect[];
 
-    constructor(x: number, y: number, gameDimensions: GameDimensions, terrain: Terrain,
-                effects: Effect[]) {
-        super({
-            x,
-            y,
-        });
-        on("scroll", (offset: number) => {
-            super.x = this.x - offset;
-        });
-        this.terrain = terrain;
+    constructor(x: number, gameDimensions: GameDimensions, terrain: Terrain,
+                effects: Effect[], showHealthBar = false, points = 0) {
+        super(x, 1, terrain, showHealthBar, points);
         this.gameDimensions = gameDimensions;
         this.effects = effects;
     }
 
-    public render() {
-        const context = this.context;
-        context.save();
-        context.translate(this.x, this.y);
+    public renderMachine(context: any) {
         if (this.faceLeft) {
             context.scale(-1, 1);
             context.rotate(-this.terrainRotationAngle);
@@ -92,7 +74,6 @@ export class Tank extends Sprite.class {
         context.rotate(this.gunRotation);
         context.fillStyle = "silver";
         context.fillRect(0, -2, 30, 4);
-        context.restore();
 
     }
 
@@ -104,46 +85,8 @@ export class Tank extends Sprite.class {
         return (Date.now() - this.lastShot) / this.reloadTime;
     }
 
-    public update(dt: number) {
-        if (!this.isReloading()) {
-            if (keyPressed("space")) {
-                if (this.power < 30) {
-                    this.power = 35;
-                } else {
-                    this.power = Math.min(100, this.power + (dt * 100));
-                }
-            } else {
-                if (this.power > 30) {
-                    this.fireGun();
-                    this.power = 0;
-                    this.lastShot = Date.now();
-                }
-            }
-        }
-        if (keyPressed("up")) {
-            this.liftGun(dt);
-        } else if (keyPressed("down")) {
-            this.lowerGun(dt);
-        }
-
-        if (keyPressed("right")) {
-            this.startedMovingLeftAt = -1;
-            if (this.startedMovingRightAt < 0) {
-                this.startedMovingRightAt = Date.now();
-            }
-            this.goRight(dt);
-            this.onDrive();
-        } else if (keyPressed("left")) {
-            this.startedMovingRightAt = -1;
-            if (this.startedMovingLeftAt < 0) {
-                this.startedMovingLeftAt = Date.now();
-            }
-            this.goLeft(dt);
-            this.onDrive();
-        } else {
-            this.startedMovingRightAt = -1;
-            this.startedMovingLeftAt = -1;
-        }
+    public updateMachine(dt: number) {
+        this.moveTank(dt);
         this.updateHeightAndRotation();
         const gameWidth = this.gameDimensions.width;
         if (this.x < gameWidth / 2 - 30) {
@@ -154,29 +97,7 @@ export class Tank extends Sprite.class {
         }
     }
 
-    public liftGun(dt: number) {
-        if (this.gunRotation >  ((- Math.PI / 2) + (Math.PI / 10))) {
-            this.gunRotation = this.gunRotation - Math.PI * (dt / 5);
-        }
-    }
-
-    public lowerGun(dt: number) {
-        if (this.gunRotation < (0 + Math.PI / 16)) {
-            this.gunRotation = this.gunRotation + Math.PI * (dt / 5);
-        }
-    }
-
-    public goLeft(dt: number) {
-        super.x = this.x - dt * (Math.min(this.speed - this.terrainRotationAngle * 60, Math.max(2, this.acceleration *
-            (Date.now() - this.startedMovingLeftAt)) - this.terrainRotationAngle * 60));
-        this.faceLeft = true;
-    }
-
-    public goRight(dt: number) {
-        super.x = this.x + dt * (Math.min(this.speed + this.terrainRotationAngle * 60, Math.max(2, this.acceleration *
-            (Date.now() - this.startedMovingRightAt)) + this.terrainRotationAngle * 60));
-        this.faceLeft = false;
-    }
+    public abstract moveTank(dt: number): void;
 
     public fireGun() {
         const originXRotationDiff = 2 * Math.sin(this.terrainRotationAngle);
@@ -238,22 +159,16 @@ export class Tank extends Sprite.class {
         return this.speed;
     }
 
-    public pickUp(item: Item) {
-        this.items.push(item);
-        const label = item.getLabel();
-        if (!this.itemLabelCounts[label]) {
-            this.itemLabelCounts[label] = 1;
-        } else {
-            this.itemLabelCounts[label] += 1;
-        }
+    protected goLeft(dt: number) {
+        super.x = this.x - dt * (Math.min(this.speed - this.terrainRotationAngle * 60, Math.max(2, this.acceleration *
+            (Date.now() - this.startedMovingLeftAt)) - this.terrainRotationAngle * 60));
+        this.faceLeft = true;
     }
 
-    public getPickedUpItems() {
-        return this.items;
-    }
-
-    public getPickedUpItemsLabelCounts() {
-        return this.itemLabelCounts;
+    protected goRight(dt: number) {
+        super.x = this.x + dt * (Math.min(this.speed + this.terrainRotationAngle * 60, Math.max(2, this.acceleration *
+            (Date.now() - this.startedMovingRightAt)) + this.terrainRotationAngle * 60));
+        this.faceLeft = false;
     }
 
     private updateHeightAndRotation() {
@@ -283,7 +198,7 @@ export class Tank extends Sprite.class {
         this.effects.push(particle);
     }
 
-    private onDrive() {
+    protected onDrive() {
         if (Math.random() > 0.6) {
             this.blowUpParticle();
         }

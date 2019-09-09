@@ -17,14 +17,15 @@ import { Background } from "./sprites/background";
 import { BlowupParticle } from "./sprites/blowupparticle";
 import { DamageItem } from "./sprites/damageitem";
 import { Effect } from "./sprites/effect";
-import { Enemy } from "./sprites/enemy";
 import { HealthItem } from "./sprites/healthitem";
 import { HUD } from "./sprites/hud";
 import { Item } from "./sprites/item";
+import { Machine } from "./sprites/machine";
 import { MuzzleFlash } from "./sprites/muzzleflash";
 import { ProjectileItem } from "./sprites/projectileitem";
 import { ReloadTimeItem } from "./sprites/reloadtimeitem";
 import { SpeedItem } from "./sprites/speeditem";
+import { Tanky } from "./sprites/tanky";
 import { TextLayer } from "./sprites/textlayer";
 
 export class TankyGame {
@@ -32,9 +33,9 @@ export class TankyGame {
     private background: Background;
     private textLayer: TextLayer;
     private terrain: Terrain;
-    private tank: Tank;
+    private tanky: Tanky;
     private hud: HUD;
-    private enemies: Enemy[];
+    private enemies: Machine[];
     private projectiles: Projectile[];
     private score: Score;
     private items: Item[];
@@ -67,19 +68,19 @@ export class TankyGame {
             this.spawnProjectile(x, y, direction, v0, damage));
         on("newTerrain", (leftIdx: number, rightIdx: number, currentOffset: number) =>
             this.newTerrain(leftIdx, rightIdx, currentOffset));
-        on("enemyKilled", (enemy: Enemy) => this.enemyKilled(enemy));
+        on("enemyKilled", (enemy: Machine) => this.enemyKilled(enemy));
 
         this.effects = [];
         this.background = new Background(this.gameDimensions);
         this.textLayer = new TextLayer(this.gameDimensions);
         this.terrain = new Terrain(this.gameDimensions);
-        this.tank = new Tank(this.gameDimensions.width / 2, -30, this.gameDimensions, this.terrain, this.effects);
+        this.tanky = new Tanky(this.gameDimensions.width / 2, this.gameDimensions, this.terrain, this.effects);
         initialItems.forEach((item) => {
-            item.apply(this.tank);
+            item.apply(this.tanky);
         });
 
         this.score = new Score(Number(localStorage.getItem("tankymctankface_highscore")));
-        this.hud = new HUD(this.tank, this.score, this.gameDimensions);
+        this.hud = new HUD(this.tanky, this.score, this.gameDimensions);
 
         this.projectiles = [];
         this.enemies = [];
@@ -117,7 +118,7 @@ export class TankyGame {
         this.projectiles.forEach((projectile) => {
             projectile.render();
         });
-        this.tank.render();
+        this.tanky.render();
         this.items.forEach((item) => {
             item.render();
         });
@@ -148,9 +149,9 @@ export class TankyGame {
         const itemIdsToRemove = [];
         for (let index = 0; index < this.items.length; index++) {
             const item = this.items[index];
-            if (Math.abs(this.tank.x - item.x) < this.tank.width / 2) {
+            if (Math.abs(this.tanky.x - item.x) < this.tanky.width / 2) {
                 itemIdsToRemove.push(index);
-                this.tank.pickUp(item);
+                this.tanky.pickUp(item);
                 this.pickedUpItems.push(item);
                 this.itemSound.play();
                 const itemsAsNames = this.pickedUpItems.map((pickedUpItem) => pickedUpItem.name);
@@ -190,14 +191,14 @@ export class TankyGame {
                 this.blowUpParticles(projectile);
                 this.explosionSound.play();
             }
-            if (Math.abs(projectile.x - this.tank.x) < 50) {
-                if (this.tank.collidesWith(projectile)) {
-                    this.tank.takeDamage(projectile);
+            if (Math.abs(projectile.x - this.tanky.x) < 50) {
+                if (this.tanky.collidesWith(projectile)) {
+                    this.tanky.takeDamage(projectile);
                     removeProjectile = true;
                     this.blowUpParticles(projectile);
                     this.explosionSound.play();
-                    if (this.tank.isDead()) {
-                        this.restartRun(this.score.getHighscore(), this.tank.getPickedUpItems());
+                    if (this.tanky.isDead()) {
+                        this.restartRun(this.score.getHighscore(), this.tanky.getPickedUpItems());
                     }
                 }
             }
@@ -212,7 +213,7 @@ export class TankyGame {
         for (let i = enemyIdsToRemove.length - 1; i >= 0; i--) {
             this.enemies.splice(enemyIdsToRemove[i], 1);
         }
-        this.tank.update(dt);
+        this.tanky.update(dt);
     }
 
     private restartRun(highScore: number, itemsToApply: Item[]) {
@@ -221,14 +222,14 @@ export class TankyGame {
         this.background = new Background(this.gameDimensions);
         this.textLayer = new TextLayer(this.gameDimensions);
         this.terrain = new Terrain(this.gameDimensions);
-        this.tank = new Tank(this.gameDimensions.width / 2, -30, this.gameDimensions, this.terrain, this.effects);
+        this.tanky = new Tanky(this.gameDimensions.width / 2, this.gameDimensions, this.terrain, this.effects);
 
         itemsToApply.forEach((item) => {
-            item.apply(this.tank);
+            item.apply(this.tanky);
         });
 
         this.score = new Score(highScore);
-        this.hud = new HUD(this.tank, this.score, this.gameDimensions);
+        this.hud = new HUD(this.tanky, this.score, this.gameDimensions);
 
         this.projectiles = [];
         this.enemies = [];
@@ -256,13 +257,13 @@ export class TankyGame {
             const damage = maxHealth / 3;
             const points = Math.round(((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
                 maxHealth * damage * (shootDirectly ? 5 : 1)) / Math.log2(difficultyFactor + 1));
-            this.enemies.push(new Turret(index - currentOffset, this.tank, shootingSpeed,
+            this.enemies.push(new Turret(index - currentOffset, this.tanky, shootingSpeed,
                 msBetweenShots, shootDirectly, inaccuracy, maxHealth,
                 damage, points, this.gameDimensions, this.terrain));
         }
     }
 
-    private enemyKilled(enemy: Enemy) {
+    private enemyKilled(enemy: Machine) {
         this.score.addPoints(enemy.points);
         const rand = Math.random() * 100;
         if (rand < 5) {

@@ -1,11 +1,11 @@
 import { emit } from "kontra";
 import { GameDimensions } from "../dimensions";
-import { Enemy } from "./enemy";
+import { Machine } from "./machine";
 import { Projectile } from "./projectile";
 import { Tank } from "./tank";
 import { Terrain } from "./terrain";
 
-export class Turret extends Enemy {
+export class Turret extends Machine {
 
     private shootingSpeed: number;
     private msBetweenShots: number;
@@ -27,7 +27,7 @@ export class Turret extends Enemy {
                 msBetweenShots: number, directTrajectory: boolean, inaccuracy: number,
                 maxHealth: number, damage: number, points: number,
                 gameDimensions: GameDimensions, terrain: Terrain) {
-        super(x, maxHealth, points, terrain);
+        super(x, maxHealth, terrain, true, points);
         this.tank = tank;
         this.shootingSpeed = shootingSpeed;
         this.msBetweenShots = msBetweenShots;
@@ -50,7 +50,7 @@ export class Turret extends Enemy {
         return colliding;
     }
 
-    protected renderEnemy(context: any) {
+    protected renderMachine(context: any) {
         context.beginPath();
         context.fillStyle = "grey";
         context.fillRect(- this.radius, 0, this.radius * 2, 200);
@@ -70,7 +70,8 @@ export class Turret extends Enemy {
         context.fillRect(0, -2, 20, 4);
     }
 
-    protected updateEnemy(dt: number) {
+    protected updateMachine(dt: number) {
+        super.y = this.terrain.getGlobalHeight(this.x, true, true) - 20;
         const { muzzleX, muzzleY } = this.getMuzzlePosition();
         if (this.seenTanky || Math.abs(muzzleX - this.tank.x) < this.gameDimensions.width / 2) {
             this.seenTanky = true;
