@@ -42,13 +42,13 @@ export class EnemyTank extends Tank {
             this.startedMovingRightAt = Date.now();
             this.goRight(dt);
             this.timeLastTurn = Date.now();
-            this.nextTripDuration = 3 + Math.random() * 7;
+            this.nextTripDuration = 3000 + Math.random() * 7000;
         } else if (!this.faceLeft && Date.now() - this.timeLastTurn > this.nextTripDuration) {
             this.startedMovingRightAt = -1;
             this.startedMovingLeftAt = Date.now();
             this.goLeft(dt);
             this.timeLastTurn = Date.now();
-            this.nextTripDuration = 3 + Math.random() * 7;
+            this.nextTripDuration = 3000 + Math.random() * 7000;
         } else {
             if (this.faceLeft) {
                 this.goLeft(dt);
