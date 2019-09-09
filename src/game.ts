@@ -256,34 +256,35 @@ export class TankyGame {
         const numberOfTurrets = Math.round((rightIdx - leftIdx) / 300 * Math.random());
         const scaleFactor = Math.pow(difficultyFactor, 2);
         for (let turretIdx = 0; turretIdx < numberOfTurrets; turretIdx++) {
-            const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
-            const shootDirectly = difficultyFactor * Math.random() > 2 && Math.random() > 0.3;
-            const inaccuracy = Math.max(1, 80 - scaleFactor * Math.random());
-            const msBetweenShots = Math.max(100, 4000 - scaleFactor * Math.random());
-            const shootingSpeed = 100 + (Math.random() - 0.5) * 40;
-            const maxHealth = Math.round(1 + Math.random() * 0.2 * scaleFactor);
-            const damage = Math.round(1 + maxHealth / 3);
-            const points = Math.round(((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
-                maxHealth * damage * (shootDirectly ? 5 : 1)) / Math.log2(difficultyFactor + 1));
+            const { index, shootingSpeed, msBetweenShots, shootDirectly, inaccuracy, maxHealth, damage, points } =
+                this.scaleDifficulty(leftIdx, rightIdx, difficultyFactor, scaleFactor);
             this.enemies.push(new Turret(index - currentOffset, this.tanky, shootingSpeed,
                 msBetweenShots, shootDirectly, inaccuracy, maxHealth,
                 damage, points, this.gameDimensions, this.terrain));
         }
         const numberOfTanks = Math.round((rightIdx - leftIdx) / 600 * Math.random());
         for (let tankIdx = 0; tankIdx < numberOfTanks; tankIdx++) {
-            const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
-            const shootDirectly = difficultyFactor * Math.random() > 2 && Math.random() > 0.3;
-            const inaccuracy = Math.max(1, 80 - scaleFactor * Math.random());
-            const msBetweenShots = Math.max(100, 4000 - scaleFactor * Math.random());
-            const shootingSpeed = 100 + (Math.random() - 0.5) * 40;
-            const maxHealth = Math.round(1 + Math.random() * 0.2 * scaleFactor);
-            const damage = Math.round(1 + maxHealth / 3);
-            const points = Math.round(((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
-                maxHealth * damage * (shootDirectly ? 5 : 1)) / Math.log2(difficultyFactor + 1));
-            this.enemies.push(new EnemyTank(index - currentOffset, this.gameDimensions, this.terrain, this.effects,
-                                            points, shootingSpeed, msBetweenShots, shootDirectly, inaccuracy, damage,
-                                            this.tanky));
+            const { index, shootingSpeed, msBetweenShots, shootDirectly, inaccuracy, maxHealth, damage, points } =
+                this.scaleDifficulty(leftIdx, rightIdx, difficultyFactor, scaleFactor);
+            const tank = new EnemyTank(index - currentOffset, this.gameDimensions, this.terrain, this.effects,
+                points, shootingSpeed, msBetweenShots, shootDirectly, inaccuracy, damage,
+                this.tanky);
+            tank.setInitialHealth(maxHealth);
+            this.enemies.push(tank);
         }
+    }
+
+    private scaleDifficulty(leftIdx: number, rightIdx: number, difficultyFactor: number, scaleFactor: number) {
+        const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
+        const shootDirectly = difficultyFactor * Math.random() > 2 && Math.random() > 0.3;
+        const inaccuracy = Math.max(1, 80 - scaleFactor * Math.random());
+        const msBetweenShots = Math.max(100, 4000 - scaleFactor * Math.random());
+        const shootingSpeed = 100 + (Math.random() - 0.5) * 40;
+        const maxHealth = Math.round(1 + Math.random() * 0.2 * scaleFactor);
+        const damage = Math.round(1 + maxHealth / 3);
+        const points = Math.round(((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
+            maxHealth * damage * (shootDirectly ? 5 : 1)) / Math.log2(difficultyFactor + 1));
+        return { index, shootingSpeed, msBetweenShots, shootDirectly, inaccuracy, maxHealth, damage, points };
     }
 
     private enemyKilled(enemy: Machine) {
