@@ -276,8 +276,8 @@ export class TankyGame {
             const inaccuracy = Math.max(1, 80 - scaleFactor * Math.random());
             const msBetweenShots = Math.max(100, 4000 - scaleFactor * Math.random());
             const shootingSpeed = 100 + (Math.random() - 0.5) * 40;
-            const maxHealth = Math.round(1 + Math.random() * 0.1 * scaleFactor);
-            const damage = Math.round(1 + maxHealth / 5);
+            const maxHealth = Math.round(1 + Math.random() * 0.2 * scaleFactor);
+            const damage = Math.round(1 + maxHealth / 3);
             const points = Math.round(((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
                 maxHealth * damage * (shootDirectly ? 5 : 1)) / Math.log2(difficultyFactor + 1));
             this.enemies.push(new EnemyTank(index - currentOffset, this.gameDimensions, this.terrain, this.effects,
