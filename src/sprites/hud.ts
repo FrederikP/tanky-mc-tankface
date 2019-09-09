@@ -12,7 +12,7 @@ function abbreviateNumber(numberToAbbrev: number) {
     const tier = Math.log10(numberToAbbrev) / 3 | 0;
 
     // if zero, we don't need a suffix
-    if (tier === 0) {
+    if (tier < 1) {
         return numberToAbbrev.toLocaleString("en-us", {maximumFractionDigits: 2});
     }
 

@@ -60,9 +60,9 @@ Game will be accessible running at http://localhost:9000/
 - [x] Add simple start screen
 - [x] Mirror repo to github and include link to repo in game menu
 - [x] Optimize performance
-- [ ] Add enemy tanks to give more enemy variance
-- [ ] Fix health very low number formatting bug
-- [ ] Add more items if size allows, repeat
+- [x] Add enemy tanks to give more enemy variance
+- [x] Fix health very low number formatting bug
+- [x] Add more items if size allows, repeat
 - [ ] Final balance
 
 ## Libraries and Tools

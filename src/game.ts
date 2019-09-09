@@ -1,7 +1,6 @@
 import { emit, GameLoop, init, initKeys, on } from "kontra";
 
 import { Projectile } from "../src/sprites/projectile";
-import { Tank } from "../src/sprites/tank";
 import { Terrain } from "../src/sprites/terrain";
 import { Turret } from "../src/sprites/turret";
 import { GameDimensions } from "./dimensions";
@@ -263,14 +262,14 @@ export class TankyGame {
             const msBetweenShots = Math.max(100, 4000 - scaleFactor * Math.random());
             const shootingSpeed = 100 + (Math.random() - 0.5) * 40;
             const maxHealth = Math.round(1 + Math.random() * 0.2 * scaleFactor);
-            const damage = maxHealth / 3;
+            const damage = Math.round(1 + maxHealth / 3);
             const points = Math.round(((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
                 maxHealth * damage * (shootDirectly ? 5 : 1)) / Math.log2(difficultyFactor + 1));
             this.enemies.push(new Turret(index - currentOffset, this.tanky, shootingSpeed,
                 msBetweenShots, shootDirectly, inaccuracy, maxHealth,
                 damage, points, this.gameDimensions, this.terrain));
         }
-        const numberOfTanks = Math.round((rightIdx - leftIdx) / 800 * Math.random());
+        const numberOfTanks = Math.round((rightIdx - leftIdx) / 600 * Math.random());
         for (let tankIdx = 0; tankIdx < numberOfTanks; tankIdx++) {
             const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
             const shootDirectly = difficultyFactor * Math.random() > 2 && Math.random() > 0.3;
@@ -278,7 +277,7 @@ export class TankyGame {
             const msBetweenShots = Math.max(100, 4000 - scaleFactor * Math.random());
             const shootingSpeed = 100 + (Math.random() - 0.5) * 40;
             const maxHealth = Math.round(1 + Math.random() * 0.1 * scaleFactor);
-            const damage = maxHealth / 5;
+            const damage = Math.round(1 + maxHealth / 5);
             const points = Math.round(((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
                 maxHealth * damage * (shootDirectly ? 5 : 1)) / Math.log2(difficultyFactor + 1));
             this.enemies.push(new EnemyTank(index - currentOffset, this.gameDimensions, this.terrain, this.effects,

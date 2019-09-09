@@ -15,6 +15,7 @@ export class EnemyTank extends Tank {
 
     private currentInaccuracyX: number;
     private currentInaccuracyY: number;
+    private nextTripDuration: number;
 
     private seenTanky = false;
 
@@ -31,20 +32,23 @@ export class EnemyTank extends Tank {
         this.tanky = tanky;
         this.currentInaccuracyX = (Math.random() - 0.5) * 2 * this.inaccuracy;
         this.currentInaccuracyY = (Math.random() - 0.5) * 2 * this.inaccuracy;
+        this.nextTripDuration = 3 + Math.random() * 7;
     }
 
     protected moveTank(dt: number) {
 
-        if (this.faceLeft && Date.now() - this.timeLastTurn > 10000) {
+        if (this.faceLeft && Date.now() - this.timeLastTurn > this.nextTripDuration) {
             this.startedMovingLeftAt = -1;
             this.startedMovingRightAt = Date.now();
             this.goRight(dt);
             this.timeLastTurn = Date.now();
-        } else if (!this.faceLeft && Date.now() - this.timeLastTurn > 10000) {
+            this.nextTripDuration = 3 + Math.random() * 7;
+        } else if (!this.faceLeft && Date.now() - this.timeLastTurn > this.nextTripDuration) {
             this.startedMovingRightAt = -1;
             this.startedMovingLeftAt = Date.now();
             this.goLeft(dt);
             this.timeLastTurn = Date.now();
+            this.nextTripDuration = 3 + Math.random() * 7;
         } else {
             if (this.faceLeft) {
                 this.goLeft(dt);

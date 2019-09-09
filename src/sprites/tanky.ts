@@ -13,6 +13,7 @@ export class Tanky extends Tank {
     constructor(x: number, gameDimensions: GameDimensions, terrain: Terrain,
                 effects: Effect[]) {
         super(x, gameDimensions, terrain, effects);
+        this.setInitialHealth(3);
     }
 
     public reloadRatio() {
