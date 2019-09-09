@@ -19,7 +19,37 @@ export class Tanky extends Tank {
         return (Date.now() - this.lastShot) / this.reloadTime;
     }
 
-    public moveTank(dt: number) {
+    public liftGun(dt: number) {
+        if (this.gunRotation > ((- Math.PI / 2) + (Math.PI / 10))) {
+            this.gunRotation = this.gunRotation - Math.PI * (dt / 5);
+        }
+    }
+
+    public lowerGun(dt: number) {
+        if (this.gunRotation < (0 + Math.PI / 16)) {
+            this.gunRotation = this.gunRotation + Math.PI * (dt / 5);
+        }
+    }
+
+    public pickUp(item: Item) {
+        this.items.push(item);
+        const label = item.getLabel();
+        if (!this.itemLabelCounts[label]) {
+            this.itemLabelCounts[label] = 1;
+        } else {
+            this.itemLabelCounts[label] += 1;
+        }
+    }
+
+    public getPickedUpItems() {
+        return this.items;
+    }
+
+    public getPickedUpItemsLabelCounts() {
+        return this.itemLabelCounts;
+    }
+
+    protected moveTank(dt: number) {
         if (!this.isReloading()) {
             if (keyPressed("space")) {
                 if (this.power < 30) {
@@ -66,34 +96,8 @@ export class Tanky extends Tank {
         }
     }
 
-    public liftGun(dt: number) {
-        if (this.gunRotation >  ((- Math.PI / 2) + (Math.PI / 10))) {
-            this.gunRotation = this.gunRotation - Math.PI * (dt / 5);
-        }
-    }
-
-    public lowerGun(dt: number) {
-        if (this.gunRotation < (0 + Math.PI / 16)) {
-            this.gunRotation = this.gunRotation + Math.PI * (dt / 5);
-        }
-    }
-
-    public pickUp(item: Item) {
-        this.items.push(item);
-        const label = item.getLabel();
-        if (!this.itemLabelCounts[label]) {
-            this.itemLabelCounts[label] = 1;
-        } else {
-            this.itemLabelCounts[label] += 1;
-        }
-    }
-
-    public getPickedUpItems() {
-        return this.items;
-    }
-
-    public getPickedUpItemsLabelCounts() {
-        return this.itemLabelCounts;
+    protected getTurretColor() {
+        return "silver";
     }
 
 }

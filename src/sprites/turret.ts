@@ -72,11 +72,10 @@ export class Turret extends Machine {
 
     protected updateMachine(dt: number) {
         super.y = this.terrain.getGlobalHeight(this.x, true, true) - 20;
-        const { muzzleX, muzzleY } = this.getMuzzlePosition();
-        if (this.seenTanky || Math.abs(muzzleX - this.tank.x) < this.gameDimensions.width / 2) {
+        if (this.seenTanky || Math.abs(this.x - this.tank.x) < this.gameDimensions.width / 2) {
             this.seenTanky = true;
-            const x = this.tank.x - muzzleX + this.currentInaccuracyX;
-            const y = -(this.tank.y - muzzleY + this.currentInaccuracyY);
+            const x = this.tank.x - this.x + this.currentInaccuracyX;
+            const y = -(this.tank.y - (this.y - 2) + this.currentInaccuracyY);
             const speedSquared = Math.pow(this.shootingSpeed, 2);
             const toSqrt1 = Math.pow(speedSquared, 2);
             const toSqrt2 = 9.8 * (9.8 * Math.pow(x, 2) + 2 * y  * speedSquared);
@@ -89,7 +88,7 @@ export class Turret extends Machine {
             if (rightSide) {
                 const angle = Math.atan(rightSide);
                 let targetGunRotation;
-                if (this.tank.x - muzzleX > 0) {
+                if (this.tank.x - this.x > 0) {
                     targetGunRotation = - angle;
                 } else {
                     targetGunRotation = - Math.PI - angle;

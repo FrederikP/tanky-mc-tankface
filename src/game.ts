@@ -273,7 +273,17 @@ export class TankyGame {
         const numberOfTanks = Math.round((rightIdx - leftIdx) / 800 * Math.random());
         for (let tankIdx = 0; tankIdx < numberOfTanks; tankIdx++) {
             const index = leftIdx + Math.random() * (rightIdx - leftIdx - 40);
-            this.enemies.push(new EnemyTank(index - currentOffset, this.gameDimensions, this.terrain, this.effects, 0));
+            const shootDirectly = difficultyFactor * Math.random() > 2 && Math.random() > 0.3;
+            const inaccuracy = Math.max(1, 80 - scaleFactor * Math.random());
+            const msBetweenShots = Math.max(100, 4000 - scaleFactor * Math.random());
+            const shootingSpeed = 100 + (Math.random() - 0.5) * 40;
+            const maxHealth = Math.round(1 + Math.random() * 0.1 * scaleFactor);
+            const damage = maxHealth / 5;
+            const points = Math.round(((80 / inaccuracy) * (4000 / msBetweenShots) * shootingSpeed *
+                maxHealth * damage * (shootDirectly ? 5 : 1)) / Math.log2(difficultyFactor + 1));
+            this.enemies.push(new EnemyTank(index - currentOffset, this.gameDimensions, this.terrain, this.effects,
+                                            points, shootingSpeed, msBetweenShots, shootDirectly, inaccuracy, damage,
+                                            this.tanky));
         }
     }
 

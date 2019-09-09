@@ -35,10 +35,11 @@ export abstract class Tank extends Machine {
 
     protected gameDimensions: GameDimensions;
 
+    protected terrainRotationAngle = 0;
+
     private radius = 10;
     private height = 20;
 
-    private terrainRotationAngle = 0;
     private effects: Effect[];
 
     constructor(x: number, gameDimensions: GameDimensions, terrain: Terrain,
@@ -56,10 +57,6 @@ export abstract class Tank extends Machine {
             context.rotate(this.terrainRotationAngle);
         }
         context.beginPath();
-        context.fillStyle = "silver";
-        context.arc(0, 0, this.radius, Math.PI, 0);
-        context.fill();
-        context.beginPath();
         context.fillStyle = "grey";
         context.fillRect(- this.width / 2, 0, this.width, this.height);
         context.beginPath();
@@ -72,9 +69,12 @@ export abstract class Tank extends Machine {
         context.ellipse(0, this.height / 1.5,
             this.width / 2, this.height / 2.8, 0, 0, Math.PI * 2);
         context.fill();
+        context.beginPath();
+        context.fillStyle = this.getTurretColor();
+        context.arc(0, 0, this.radius, Math.PI, 0);
+        context.fill();
         context.translate(0, -4);
         context.rotate(this.gunRotation);
-        context.fillStyle = "silver";
         context.fillRect(0, -2, 30, 4);
 
     }
@@ -82,33 +82,6 @@ export abstract class Tank extends Machine {
     public updateMachine(dt: number) {
         this.moveTank(dt);
         this.updateHeightAndRotation();
-    }
-
-    public abstract moveTank(dt: number): void;
-
-    public fireGun() {
-        const originXRotationDiff = 2 * Math.sin(this.terrainRotationAngle);
-        const originYRotationDiff = - 2 * Math.cos(this.terrainRotationAngle);
-
-        const originX = this.x + originXRotationDiff;
-        const originY = this.y - 2 + originYRotationDiff;
-
-        let rotation = this.gunRotation + this.terrainRotationAngle;
-        if (this.faceLeft) {
-            rotation = Math.PI - this.gunRotation + this.terrainRotationAngle;
-        }
-
-        const originMuzzleDiffX = Math.cos(rotation) * 30;
-        const originMuzzleDiffY = Math.sin(rotation) * 30;
-
-        const muzzleX = originX + originMuzzleDiffX;
-        const muzzleY = originY + originMuzzleDiffY;
-
-        emit("spawnProjectile", muzzleX, muzzleY, rotation, this.power, this.damage);
-        for (let index = 1; index < this.projectiles; index++) {
-            emit("spawnProjectile", muzzleX, muzzleY, rotation + (Math.random() - 0.5) * (Math.PI / 10),
-                this.power, this.damage);
-        }
     }
 
     public isDead(): boolean {
@@ -122,8 +95,8 @@ export abstract class Tank extends Machine {
         let colliding = false;
         if (distance < this.radius + 2 ||
             circleAndRectangleCollide(projectile.x, projectile.y, 2,
-                                      this.x - this.width / 2, this.y - this.width / 2,
-                                      this.width, this.height)) {
+                this.x - this.width / 2, this.y - this.width / 2,
+                this.width, this.height)) {
             colliding = true;
         }
         return colliding;
@@ -150,6 +123,10 @@ export abstract class Tank extends Machine {
         return Date.now() - this.lastShot < this.reloadTime;
     }
 
+    protected abstract getTurretColor(): string;
+
+    protected abstract moveTank(dt: number): void;
+
     protected goLeft(dt: number) {
         super.x = this.x - dt * (Math.min(this.speed - this.terrainRotationAngle * 60, Math.max(2, this.acceleration *
             (Date.now() - this.startedMovingLeftAt)) - this.terrainRotationAngle * 60));
@@ -162,6 +139,35 @@ export abstract class Tank extends Machine {
             (Date.now() - this.startedMovingRightAt)) + this.terrainRotationAngle * 60));
         this.faceLeft = false;
         this.onDrive();
+    }
+
+    protected fireGun() {
+        const { originX, originY } = this.getProjectileOrigin();
+
+        let rotation = this.gunRotation + this.terrainRotationAngle;
+        if (this.faceLeft) {
+            rotation = Math.PI - this.gunRotation + this.terrainRotationAngle;
+        }
+
+        const originMuzzleDiffX = Math.cos(rotation) * 30;
+        const originMuzzleDiffY = Math.sin(rotation) * 30;
+
+        const muzzleX = originX + originMuzzleDiffX;
+        const muzzleY = originY + originMuzzleDiffY;
+
+        emit("spawnProjectile", muzzleX, muzzleY, rotation, this.power, this.damage);
+        for (let index = 1; index < this.projectiles; index++) {
+            emit("spawnProjectile", muzzleX, muzzleY, rotation + (Math.random() - 0.5) * (Math.PI / 10),
+                this.power, this.damage);
+        }
+    }
+
+    protected getProjectileOrigin() {
+        const originXRotationDiff = 2 * Math.sin(this.terrainRotationAngle);
+        const originYRotationDiff = -2 * Math.cos(this.terrainRotationAngle);
+        const originX = this.x + originXRotationDiff;
+        const originY = this.y - 2 + originYRotationDiff;
+        return { originX, originY };
     }
 
     private onDrive() {
