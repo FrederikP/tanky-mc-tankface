@@ -282,7 +282,7 @@ export class TankyGame {
 
     private newTerrain(leftIdx: number, rightIdx: number, currentOffset: number) {
         const difficultyFactor = Math.abs(leftIdx / 2000) + this.numberOfActiveItems / 3;
-        const numberOfTurrets = Math.round((rightIdx - leftIdx) / 300 * Math.random());
+        const numberOfTurrets = Math.round((rightIdx - leftIdx) / 200 * Math.random());
         const scaleFactor = Math.pow(difficultyFactor, 2);
         for (let turretIdx = 0; turretIdx < numberOfTurrets; turretIdx++) {
             const { index, shootingSpeed, msBetweenShots, shootDirectly, inaccuracy, maxHealth, damage, points } =
@@ -291,7 +291,7 @@ export class TankyGame {
                 msBetweenShots, shootDirectly, inaccuracy, maxHealth,
                 damage, points, this.gameDimensions, this.terrain));
         }
-        const numberOfTanks = Math.round((rightIdx - leftIdx) / 600 * Math.random());
+        const numberOfTanks = Math.round((rightIdx - leftIdx) / 400 * Math.random());
         for (let tankIdx = 0; tankIdx < numberOfTanks; tankIdx++) {
             const { index, shootingSpeed, msBetweenShots, shootDirectly, inaccuracy, maxHealth, damage, points } =
                 this.scaleDifficulty(leftIdx, rightIdx, difficultyFactor, scaleFactor);
@@ -319,15 +319,15 @@ export class TankyGame {
     private enemyKilled(enemy: Machine) {
         this.score.addPoints(enemy.points);
         const rand = Math.random() * 100;
-        if (rand < 5) {
+        if (rand < 7) {
             this.items.push(new ProjectileItem(enemy.x, enemy.y));
-        } else if (rand < 15) {
+        } else if (rand < 20) {
             this.items.push(new DamageItem(enemy.x, enemy.y));
-        } else if (rand < 25) {
-            this.items.push(new SpeedItem(enemy.x, enemy.y));
         } else if (rand < 35) {
+            this.items.push(new SpeedItem(enemy.x, enemy.y));
+        } else if (rand < 50) {
             this.items.push(new HealthItem(enemy.x, enemy.y));
-        } else if (rand < 45) {
+        } else if (rand < 65) {
             this.items.push(new ReloadTimeItem(enemy.x, enemy.y));
         }
     }
