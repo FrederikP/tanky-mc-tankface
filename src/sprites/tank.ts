@@ -95,7 +95,7 @@ export abstract class Tank extends Machine {
         let colliding = false;
         if (distance < this.radius + 2 ||
             circleAndRectangleCollide(projectile.x, projectile.y, 2,
-                this.x - this.width / 2, this.y - this.width / 2,
+                this.x - this.width / 2, this.y - this.height / 2,
                 this.width, this.height)) {
             colliding = true;
         }
