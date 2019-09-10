@@ -46,4 +46,9 @@ export class BlowupParticle extends Effect {
         context.fill();
         return canvas;
     }
+
+    public scroll(offset: number) {
+        super.scroll(offset);
+        this.startX = this.startX - offset;
+    }
 }

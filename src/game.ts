@@ -1,4 +1,4 @@
-import { emit, GameLoop, init, initKeys, on } from "kontra";
+import { emit, GameLoop, init, initKeys, off, on } from "kontra";
 
 import { Projectile } from "../src/sprites/projectile";
 import { Terrain } from "../src/sprites/terrain";
@@ -51,6 +51,16 @@ export class TankyGame {
 
     private hasStarted = false;
 
+    private spawnProjectileCallback = (x: number, y: number, direction: number, v0: number, damage: number) =>
+                                      this.spawnProjectile(x, y, direction, v0, damage);
+    
+    private newTerrainCallback = (leftIdx: number, rightIdx: number, currentOffset: number) =>
+                                 this.newTerrain(leftIdx, rightIdx, currentOffset);
+    
+    private enemyKilledCallback = (enemy: Machine) => this.enemyKilled(enemy);
+
+    private scrollCallback = (offset: number) => this.scroll(offset);
+
     public constructor(gameDimensions: GameDimensions, initialItems: Item[], soundSettings: SoundSettings) {
         init();
         initKeys();
@@ -62,13 +72,6 @@ export class TankyGame {
         this.itemSound = new Sound(itemSoundData, soundSettings);
 
         this.gameDimensions = gameDimensions;
-
-        on("spawnProjectile", (x: number, y: number, direction: number,
-                               v0: number, damage: number) =>
-            this.spawnProjectile(x, y, direction, v0, damage));
-        on("newTerrain", (leftIdx: number, rightIdx: number, currentOffset: number) =>
-            this.newTerrain(leftIdx, rightIdx, currentOffset));
-        on("enemyKilled", (enemy: Machine) => this.enemyKilled(enemy));
 
         this.effects = [];
         this.background = new Background(this.gameDimensions);
@@ -94,6 +97,10 @@ export class TankyGame {
     }
 
     public start() {
+        on("spawnProjectile", this.spawnProjectileCallback);
+        on("newTerrain", this.newTerrainCallback);
+        on("enemyKilled", this.enemyKilledCallback);
+        on("scroll", this.scrollCallback);
         this.backgroundSong.play();
         this.loop.start();
         this.hasStarted = true;
@@ -106,6 +113,28 @@ export class TankyGame {
     public stop() {
         this.backgroundSong.pause();
         this.loop.stop();
+        off("spawnProjectile", this.spawnProjectileCallback);
+        off("newTerrain", this.newTerrainCallback);
+        off("enemyKilled", this.enemyKilledCallback);
+        off("scroll", this.scrollCallback);
+    }
+
+    private scroll(offset: number) {
+        this.background.scroll(offset);
+        this.textLayer.scroll(offset);
+        this.effects.forEach(effect => {
+            effect.scroll(offset);
+        });
+        this.items.forEach(item => {
+            item.scroll(offset);
+        });
+        this.enemies.forEach((enemy) => {
+            enemy.scroll(offset);
+        });
+        this.projectiles.forEach((projectile) => {
+            projectile.scroll(offset);
+        });
+        this.tanky.scroll(offset);
     }
 
     private render() { // render the game state

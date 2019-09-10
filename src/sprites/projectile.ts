@@ -1,4 +1,4 @@
-import { on, Sprite } from "kontra";
+import { Sprite } from "kontra";
 
 export class Projectile extends Sprite.class {
 
@@ -34,10 +34,6 @@ export class Projectile extends Sprite.class {
         this.damage = damage;
         this.startX = x;
         this.startY = y;
-        on("scroll", (offset: number) => {
-            super.x = this.x - offset;
-            this.startX = this.startX - offset;
-        });
     }
 
     public render() {
@@ -56,6 +52,11 @@ export class Projectile extends Sprite.class {
             0.5 * 9.8 * timePassed * timePassed;
         super.x = this.startX + xOffset;
         super.y = this.startY - yOffset;
+    }
+
+    public scroll(offset: number) {
+        super.x = this.x - offset;
+        this.startX = this.startX - offset;
     }
 
 }

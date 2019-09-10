@@ -1,4 +1,4 @@
-import { on, Sprite } from "kontra";
+import { Sprite } from "kontra";
 import { Tank } from "./tank";
 
 export abstract class Item extends Sprite.class {
@@ -7,9 +7,6 @@ export abstract class Item extends Sprite.class {
         super({
             x,
             y,
-        });
-        on("scroll", (offset: number) => {
-            super.x = this.x - offset;
         });
     }
 
@@ -20,6 +17,10 @@ export abstract class Item extends Sprite.class {
         context.beginPath();
         this.renderItem(context);
         context.restore();
+    }
+
+    public scroll(offset: number) {
+        super.x = this.x - offset;
     }
 
     public abstract apply(tank: Tank): void;

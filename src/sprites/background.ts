@@ -1,4 +1,4 @@
-import { on, Sprite } from "kontra";
+import { Sprite } from "kontra";
 import { GameDimensions } from "../dimensions";
 
 export class Background extends Sprite.class {
@@ -44,9 +44,6 @@ export class Background extends Sprite.class {
 
     constructor(gameDimensions: GameDimensions) {
         super();
-        on("scroll", (offset: number) => {
-            super.x = this.x - offset / 5;
-        });
         this.starPatternX = [];
         this.starPatternY = [];
         this.gameDimensions = gameDimensions;
@@ -72,6 +69,10 @@ export class Background extends Sprite.class {
             }
             context.drawImage(Background.prerenderedStar, screenX * sectorWidthRatio, y * sectorWidthRatio);
         }
+    }
+
+    public scroll(offset: number) {
+        super.x = this.x - offset / 5;
     }
 
 }

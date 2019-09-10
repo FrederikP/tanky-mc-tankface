@@ -1,4 +1,4 @@
-import { on, Sprite } from "kontra";
+import { Sprite } from "kontra";
 
 export abstract class Effect extends Sprite.class {
 
@@ -9,9 +9,6 @@ export abstract class Effect extends Sprite.class {
         super({
             x,
             y,
-        });
-        on("scroll", (offset: number) => {
-            super.x = this.x - offset;
         });
         this.ttl = ttl;
     }
@@ -27,6 +24,10 @@ export abstract class Effect extends Sprite.class {
 
     public effectDone() {
         return this.progress() > 1;
+    }
+
+    public scroll(offset: number) {
+        super.x = this.x - offset;
     }
 
     protected progress() {

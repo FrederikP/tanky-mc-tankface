@@ -15,9 +15,6 @@ export abstract class Machine extends Sprite.class {
         super({
             x,
         });
-        on("scroll", (offset: number) => {
-            super.x = this.x - offset;
-        });
         this.maxHealth = maxHealth;
         this.health = maxHealth;
         this.points = points;
@@ -52,6 +49,10 @@ export abstract class Machine extends Sprite.class {
 
     public isDead(): boolean {
         return this.health <= 0;
+    }
+
+    public scroll(offset: number) {
+        super.x = this.x - offset;
     }
 
     public abstract collidesWith(projectile: Projectile): boolean;

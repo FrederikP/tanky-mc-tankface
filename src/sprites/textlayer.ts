@@ -1,4 +1,4 @@
-import { on, Sprite } from "kontra";
+import { Sprite } from "kontra";
 import { GameDimensions } from "../dimensions";
 
 export class TextLayer extends Sprite.class {
@@ -7,9 +7,6 @@ export class TextLayer extends Sprite.class {
 
     constructor(gameDimensions: GameDimensions) {
         super();
-        on("scroll", (offset: number) => {
-            super.x = this.x - offset / 2;
-        });
         this.gameDimensions = gameDimensions;
     }
 
@@ -41,5 +38,9 @@ space -> hold to charge shot`;
                 context.fillText(line, this.x + 55, 30 + (this.gameDimensions.height / 50 * index));
             }
         }
+    }
+
+    public scroll(offset: number) {
+        super.x = this.x - offset / 2;
     }
 }
