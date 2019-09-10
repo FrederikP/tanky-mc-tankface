@@ -51,16 +51,6 @@ export class TankyGame {
 
     private hasStarted = false;
 
-    private spawnProjectileCallback = (x: number, y: number, direction: number, v0: number, damage: number) =>
-                                      this.spawnProjectile(x, y, direction, v0, damage);
-    
-    private newTerrainCallback = (leftIdx: number, rightIdx: number, currentOffset: number) =>
-                                 this.newTerrain(leftIdx, rightIdx, currentOffset);
-    
-    private enemyKilledCallback = (enemy: Machine) => this.enemyKilled(enemy);
-
-    private scrollCallback = (offset: number) => this.scroll(offset);
-
     public constructor(gameDimensions: GameDimensions, initialItems: Item[], soundSettings: SoundSettings) {
         init();
         initKeys();
@@ -119,13 +109,23 @@ export class TankyGame {
         off("scroll", this.scrollCallback);
     }
 
+    private spawnProjectileCallback = (x: number, y: number, direction: number, v0: number, damage: number) =>
+        this.spawnProjectile(x, y, direction, v0, damage)
+
+    private newTerrainCallback = (leftIdx: number, rightIdx: number, currentOffset: number) =>
+        this.newTerrain(leftIdx, rightIdx, currentOffset)
+
+    private enemyKilledCallback = (enemy: Machine) => this.enemyKilled(enemy);
+
+    private scrollCallback = (offset: number) => this.scroll(offset);
+
     private scroll(offset: number) {
         this.background.scroll(offset);
         this.textLayer.scroll(offset);
-        this.effects.forEach(effect => {
+        this.effects.forEach((effect) => {
             effect.scroll(offset);
         });
-        this.items.forEach(item => {
+        this.items.forEach((item) => {
             item.scroll(offset);
         });
         this.enemies.forEach((enemy) => {
