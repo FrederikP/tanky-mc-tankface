@@ -320,9 +320,9 @@ export class TankyGame {
             const itemRand = Math.random();
             if (itemRand < 0.15) {
                 this.items.push(new ProjectileItem(enemy.x, enemy.y));
-            } else if (itemRand < 0.35) {
+            } else if (itemRand < 0.40) {
                 this.items.push(new DamageItem(enemy.x, enemy.y));
-            } else if (itemRand < 0.50) {
+            } else if (itemRand < 0.60) {
                 this.items.push(new SpeedItem(enemy.x, enemy.y));
             } else if (itemRand < 0.85) {
                 this.items.push(new HealthItem(enemy.x, enemy.y));
