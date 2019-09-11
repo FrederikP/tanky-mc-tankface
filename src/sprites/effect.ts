@@ -1,20 +1,17 @@
-import { Sprite } from "kontra";
+import { getContext, Vector } from "../kontra/kontra";
 
-export abstract class Effect extends Sprite.class {
+export abstract class Effect extends Vector {
 
     protected startTime = Date.now();
     private ttl: number;
 
     constructor(x: number, y: number, ttl: number) {
-        super({
-            x,
-            y,
-        });
+        super(x, y);
         this.ttl = ttl;
     }
 
     public render() {
-        const context = this.context;
+        const context = getContext();
         context.save();
         context.translate(this.x, this.y);
         context.beginPath();

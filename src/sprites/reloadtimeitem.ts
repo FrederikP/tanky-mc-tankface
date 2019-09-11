@@ -3,7 +3,9 @@ import { Tank } from "./tank";
 
 export class ReloadTimeItem extends Item {
 
-    public name = "reload";
+    constructor(x: number, y: number) {
+        super(x, y, "reload");
+    }
 
     public getLabel(): string {
         return "20% less reload time";
@@ -13,7 +15,7 @@ export class ReloadTimeItem extends Item {
         tank.reloadTime = tank.reloadTime * 0.8;
     }
 
-    protected renderItem(context: any): void {
+    protected renderItem(context: CanvasRenderingContext2D): void {
         context.fillStyle = "pink";
         context.fillRect(-10, -10, 4, 20);
         context.fillRect(-2, -10, 4, 20);

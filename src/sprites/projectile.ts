@@ -1,7 +1,7 @@
-import { Sprite } from "kontra";
+import { getContext, Vector } from "../kontra/kontra";
 import { getUpdatedPositionForBallisticCurve } from "../util";
 
-export class Projectile extends Sprite.class {
+export class Projectile extends Vector {
 
     private static prerendered: HTMLCanvasElement = Projectile.createCanvas();
 
@@ -26,10 +26,7 @@ export class Projectile extends Sprite.class {
     private startY: number;
 
     constructor(x: number, y: number, initialDirection: number, v0: number, damage: number) {
-        super({
-            x,
-            y,
-        });
+        super(x, y);
         this.v0 = v0;
         this.angle = initialDirection;
         this.damage = damage;
@@ -38,7 +35,7 @@ export class Projectile extends Sprite.class {
     }
 
     public render() {
-        const context = this.context;
+        const context = getContext();
         context.drawImage(Projectile.prerendered, this.x - 2, this.y - 2);
     }
 

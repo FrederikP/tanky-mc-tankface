@@ -1,17 +1,17 @@
-import { Sprite } from "kontra";
+import { getContext, Vector } from "../kontra/kontra";
 import { Tank } from "./tank";
 
-export abstract class Item extends Sprite.class {
+export abstract class Item extends Vector {
 
-    constructor(x: number, y: number) {
-        super({
-            x,
-            y,
-        });
+    public name: string;
+
+    constructor(x: number, y: number, name: string) {
+        super(x, y);
+        this.name = name;
     }
 
     public render() {
-        const context = this.context;
+        const context = getContext();
         context.save();
         context.translate(this.x, this.y);
         context.beginPath();

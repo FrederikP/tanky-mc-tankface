@@ -1,5 +1,5 @@
-import { emit, Sprite } from "kontra";
 import { GameDimensions } from "../dimensions";
+import { emit, getContext, Vector } from "../kontra/kontra";
 
 class HeightEntry {
     public height: number;
@@ -12,7 +12,7 @@ class HeightEntry {
 }
 
 // tslint:disable-next-line: max-classes-per-file
-export class Terrain extends Sprite.class {
+export class Terrain extends Vector {
 
     public sectorWidth: number;
     private heightMapsPos: HeightEntry[][];
@@ -63,7 +63,7 @@ export class Terrain extends Sprite.class {
     }
 
     public render() {
-        const context = this.context;
+        const context = getContext();
         context.fillStyle = "#663300";
         context.beginPath();
         context.moveTo(0, this.gameDimensions.height);

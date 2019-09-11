@@ -1,5 +1,5 @@
-import { emit, keyPressed, on, Sprite } from "kontra";
 import { GameDimensions } from "../dimensions";
+import { emit } from "../kontra/kontra";
 import { Sound } from "../sounds/sound";
 import { circleAndRectangleCollide } from "../util";
 import { BlowupParticle } from "./blowupparticle";
@@ -49,7 +49,7 @@ export abstract class Tank extends Machine {
         this.effects = effects;
     }
 
-    public renderMachine(context: any) {
+    public renderMachine(context: CanvasRenderingContext2D) {
         if (this.faceLeft) {
             context.scale(-1, 1);
             context.rotate(-this.terrainRotationAngle);

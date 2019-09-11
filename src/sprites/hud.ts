@@ -1,7 +1,7 @@
-import { Sprite } from "kontra";
 import { GameDimensions } from "../dimensions";
+import { getContext, Vector } from "../kontra/kontra";
 import { Score } from "../score";
-import { Tank } from "./tank";
+import { Tanky } from "./tanky";
 
 const SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
 
@@ -27,38 +27,38 @@ function abbreviateNumber(numberToAbbrev: number) {
     return scaled.toFixed(2) + suffix;
 }
 
-export class HUD extends Sprite.class {
-    private tank: Tank;
+export class HUD extends Vector {
+    private tanky: Tanky;
     private score: Score;
     private gameDimensions: GameDimensions;
 
-    constructor(tank: Tank, score: Score, gameDimensions: GameDimensions) {
+    constructor(tanky: Tanky, score: Score, gameDimensions: GameDimensions) {
         super();
-        this.tank = tank;
+        this.tanky = tanky;
         this.score = score;
         this.gameDimensions = gameDimensions;
     }
 
     public render() {
-        const context = this.context;
+        const context = getContext();
         context.font = '1em "Lucida Console",Monaco,monospace';
         context.beginPath();
         const barWidth = this.gameDimensions.width / 5;
-        const healthMid = barWidth * (this.tank.health / this.tank.maxHealth);
+        const healthMid = barWidth * (this.tanky.health / this.tanky.maxHealth);
         context.fillStyle = "green";
         context.fillRect(this.gameDimensions.width / 9, this.gameDimensions.height - 40, healthMid, 30);
         context.fillStyle = "red";
         context.fillRect(this.gameDimensions.width / 9 + healthMid,
             this.gameDimensions.height - 40, barWidth - healthMid, 30);
         context.fillStyle = "black";
-        const currentHealth = abbreviateNumber(this.tank.health);
-        const maxHealth = abbreviateNumber(this.tank.maxHealth);
+        const currentHealth = abbreviateNumber(this.tanky.health);
+        const maxHealth = abbreviateNumber(this.tanky.maxHealth);
         context.fillText(`${currentHealth}/${maxHealth} HP`,
             this.gameDimensions.width / 9 + 20, this.gameDimensions.height - 16);
         context.beginPath();
 
-        if (this.tank.isReloading()) {
-            const reloadMid = barWidth * this.tank.reloadRatio();
+        if (this.tanky.isReloading()) {
+            const reloadMid = barWidth * this.tanky.reloadRatio();
             context.fillStyle = "white";
             context.fillRect(this.gameDimensions.width / 5 * 3, this.gameDimensions.height - 40, -reloadMid, 30);
             context.fillStyle = "grey";
@@ -67,7 +67,7 @@ export class HUD extends Sprite.class {
             context.fillStyle = "black";
             context.fillText(`RELOADING`, this.gameDimensions.width / 5 * 2 + 20, this.gameDimensions.height - 16);
         } else {
-            const powerMid = barWidth * (this.tank.power / 100);
+            const powerMid = barWidth * (this.tanky.power / 100);
             context.fillStyle = "orange";
             context.fillRect(this.gameDimensions.width / 5 * 2, this.gameDimensions.height - 40, powerMid, 30);
             context.fillStyle = "grey";
@@ -75,7 +75,7 @@ export class HUD extends Sprite.class {
                 barWidth - powerMid, 30);
         }
         context.fillStyle = "orange";
-        const damage = abbreviateNumber(this.tank.damage);
+        const damage = abbreviateNumber(this.tanky.damage);
         context.fillText(`Damage/Shot: ${damage}`, this.gameDimensions.width / 3 * 2, this.gameDimensions.height - 16);
 
         context.beginPath();
@@ -95,7 +95,7 @@ export class HUD extends Sprite.class {
 
         context.fillStyle = "white";
         let currentY = 40 + lineDiff * 3;
-        const labelCounts = this.tank.getPickedUpItemsLabelCounts();
+        const labelCounts = this.tanky.getPickedUpItemsLabelCounts();
         if (Object.keys(labelCounts).length > 0) {
             context.fillText(`Modifiers for next run:`, scoreX, currentY);
 

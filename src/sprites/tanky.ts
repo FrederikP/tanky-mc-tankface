@@ -1,5 +1,5 @@
-import { keyPressed } from "kontra";
 import { GameDimensions } from "../dimensions";
+import { keyPressed } from "../kontra/kontra";
 import { Effect } from "./effect";
 import { Item } from "./item";
 import { Tank } from "./tank";

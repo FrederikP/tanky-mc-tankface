@@ -1,9 +1,8 @@
-import { emit, GameLoop, init, initKeys, off, on } from "kontra";
-
 import { Projectile } from "../src/sprites/projectile";
 import { Terrain } from "../src/sprites/terrain";
 import { Turret } from "../src/sprites/turret";
 import { GameDimensions } from "./dimensions";
+import GameLoop, { emit, init, initKeys, off, on } from "./kontra/kontra";
 import { resizeIfNeeded } from "./main";
 import { Score } from "./score";
 import { backgroundMusicData } from "./sounds/background";
@@ -80,10 +79,7 @@ export class TankyGame {
         this.items = [];
         this.pickedUpItems = [];
 
-        this.loop = GameLoop({
-            render: () => this.render(),
-            update: (dt: number) => this.update(dt),
-        });
+        this.loop = GameLoop(60, true, (dt: number) => this.update(dt), () => this.render());
     }
 
     public start() {
@@ -166,8 +162,7 @@ export class TankyGame {
         this.hud.render();
     }
 
-    private update(dt: number) { // update the game state
-        this.terrain.update();
+    private update(dt: number) {
         this.enemies.forEach((enemy) => {
             enemy.update(dt);
         });

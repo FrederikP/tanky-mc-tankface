@@ -1,7 +1,7 @@
-import { Sprite } from "kontra";
 import { GameDimensions } from "../dimensions";
+import { getContext, Vector } from "../kontra/kontra";
 
-export class TextLayer extends Sprite.class {
+export class TextLayer extends Vector {
 
     private gameDimensions: GameDimensions;
 
@@ -11,7 +11,7 @@ export class TextLayer extends Sprite.class {
     }
 
     public render() {
-        const context = this.context;
+        const context = getContext();
         context.font = '0.5em "Lucida Console",Monaco,monospace';
         if (Math.abs(this.x) < this.gameDimensions.width * 2) {
             context.beginPath();

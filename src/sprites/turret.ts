@@ -1,5 +1,5 @@
-import { emit } from "kontra";
 import { GameDimensions } from "../dimensions";
+import { emit } from "../kontra/kontra";
 import { Machine } from "./machine";
 import { Projectile } from "./projectile";
 import { Tank } from "./tank";

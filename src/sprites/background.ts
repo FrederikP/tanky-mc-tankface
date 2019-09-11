@@ -1,7 +1,7 @@
-import { Sprite } from "kontra";
 import { GameDimensions } from "../dimensions";
+import { getContext, Vector } from "../kontra/kontra";
 
-export class Background extends Sprite.class {
+export class Background extends Vector {
 
     private static prerenderedMoon: HTMLCanvasElement = Background.createMoon();
     private static prerenderedStar: HTMLCanvasElement = Background.createStar();
@@ -55,7 +55,7 @@ export class Background extends Sprite.class {
     }
 
     public render() {
-        const context = this.context;
+        const context = getContext();
         context.drawImage(Background.prerenderedMoon, this.x + this.gameDimensions.width / 2, 150);
         const sectorWidthRatio = this.gameDimensions.width / this.sectorWidth;
 

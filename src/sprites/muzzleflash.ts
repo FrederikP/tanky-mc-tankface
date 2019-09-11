@@ -9,7 +9,7 @@ export class MuzzleFlash extends Effect {
         this.angle = direction;
     }
 
-    protected renderEffect(context: any) {
+    protected renderEffect(context: CanvasRenderingContext2D) {
         context.fillStyle = "yellow";
         context.rotate(this.angle);
         context.fillRect(0, -1, this.progress() * 8, 2);

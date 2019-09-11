@@ -1,8 +1,8 @@
-import { on, Sprite } from "kontra";
+import { getContext, Vector } from "../kontra/kontra";
 import { Projectile } from "./projectile";
 import { Terrain } from "./terrain";
 
-export abstract class Machine extends Sprite.class {
+export abstract class Machine extends Vector {
     public readonly points: number;
 
     public maxHealth: number;
@@ -12,9 +12,7 @@ export abstract class Machine extends Sprite.class {
     private showHealthbar: boolean;
 
     constructor(x: number, maxHealth: number,  terrain: Terrain, showHealthbar = false, points = 0) {
-        super({
-            x,
-        });
+        super(x);
         this.maxHealth = maxHealth;
         this.health = maxHealth;
         this.points = points;
@@ -23,15 +21,15 @@ export abstract class Machine extends Sprite.class {
     }
 
     public render() {
-        const context = this.context;
+        const context = getContext();
         context.save();
         context.translate(this.x, this.y);
         if (this.showHealthbar) {
-            const healthMid = 2 * (this.radius * this.health / this.maxHealth);
+            const healthMid = 2 * (30 * this.health / this.maxHealth);
             context.fillStyle = "green";
-            context.fillRect(-this.radius, -this.radius - 30, healthMid, 5);
+            context.fillRect(-30, -30, healthMid, 5);
             context.fillStyle = "red";
-            context.fillRect(-this.radius + healthMid, -this.radius - 30, 2 * this.radius - healthMid, 5);
+            context.fillRect(-30 + healthMid, -30, 60 - healthMid, 5);
         }
 
         this.renderMachine(context);
@@ -57,7 +55,7 @@ export abstract class Machine extends Sprite.class {
 
     public abstract collidesWith(projectile: Projectile): boolean;
 
-    protected abstract renderMachine(context: any): void;
+    protected abstract renderMachine(context: CanvasRenderingContext2D): void;
 
     protected abstract updateMachine(dt: number): void;
 }

@@ -3,7 +3,9 @@ import { Tank } from "./tank";
 
 export class DamageItem extends Item {
 
-    public name = "damage";
+    constructor(x: number, y: number) {
+        super(x, y, "damage");
+    }
 
     public getLabel(): string {
         return "double damage";

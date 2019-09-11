@@ -3,8 +3,9 @@ import { Tank } from "./tank";
 
 export class HealthItem extends Item {
 
-    public name = "health";
-
+    constructor(x: number, y: number) {
+        super(x, y, "health");
+    }
     public getLabel(): string {
         return "double health";
     }

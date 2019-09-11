@@ -3,7 +3,9 @@ import { Tank } from "./tank";
 
 export class ProjectileItem extends Item {
 
-    public name = "proj";
+    constructor(x: number, y: number) {
+        super(x, y, "proj");
+    }
 
     public getLabel(): string {
         return "one more projectile";
@@ -13,7 +15,7 @@ export class ProjectileItem extends Item {
         tank.projectiles += 1;
     }
 
-    protected renderItem(context: any): void {
+    protected renderItem(context: CanvasRenderingContext2D): void {
         context.fillStyle = "chartreuse";
         context.arc(-4, -4, 3, 0, 2 * Math.PI);
         context.fill();
