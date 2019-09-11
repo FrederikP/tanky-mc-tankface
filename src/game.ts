@@ -318,19 +318,19 @@ export class TankyGame {
 
     private enemyKilled(enemy: Machine) {
         this.score.addPoints(enemy.points);
-        const rand = Math.random() * 100;
-        const chanceToFind = 100 / (1 + this.tanky.getPickedUpItems().length / 5);
+        const rand = Math.random();
+        const chanceToFind = 1 / (1 + this.tanky.getPickedUpItems().length / 5);
         if (rand < chanceToFind) {
-            const itemRand = Math.random() * 100;
-            if (itemRand < 15) {
+            const itemRand = Math.random();
+            if (itemRand < 0.15) {
                 this.items.push(new ProjectileItem(enemy.x, enemy.y));
-            } else if (itemRand < 35) {
+            } else if (itemRand < 0.35) {
                 this.items.push(new DamageItem(enemy.x, enemy.y));
-            } else if (itemRand < 55) {
+            } else if (itemRand < 0.55) {
                 this.items.push(new SpeedItem(enemy.x, enemy.y));
-            } else if (itemRand < 75) {
+            } else if (itemRand < 0.75) {
                 this.items.push(new HealthItem(enemy.x, enemy.y));
-            } else if (itemRand < 100) {
+            } else {
                 this.items.push(new ReloadTimeItem(enemy.x, enemy.y));
             }
         }
