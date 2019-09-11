@@ -319,7 +319,7 @@ export class TankyGame {
     private enemyKilled(enemy: Machine) {
         this.score.addPoints(enemy.points);
         const rand = Math.random();
-        const chanceToFind = 1 / (1 + this.tanky.getPickedUpItems().length / 5);
+        const chanceToFind = 0.5 / (1 + this.tanky.getPickedUpItems().length / 3);
         if (rand < chanceToFind) {
             const itemRand = Math.random();
             if (itemRand < 0.15) {
