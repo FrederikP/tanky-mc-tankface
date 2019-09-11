@@ -27,5 +27,5 @@ export abstract class Item extends Vector {
 
     public abstract getLabel(): string;
 
-    protected abstract renderItem(context: any): void;
+    protected abstract renderItem(context: CanvasRenderingContext2D): void;
 }

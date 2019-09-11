@@ -14,7 +14,7 @@ export class HealthItem extends Item {
         tank.setInitialHealth(tank.getInitialHealth() * 2);
     }
 
-    protected renderItem(context: any): void {
+    protected renderItem(context: CanvasRenderingContext2D): void {
         context.fillStyle = "red";
         context.fillRect(-10, -3, 20, 6);
         context.fillRect(-3, -10, 6, 20);

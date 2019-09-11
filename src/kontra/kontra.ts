@@ -6,12 +6,12 @@
 
 const callbacks: Record<string, Function[]> = {};
 
-export function on(event: string, callback: any) {
+export function on(event: string, callback: Function) {
     callbacks[event] = callbacks[event] || [];
     callbacks[event].push(callback);
 }
 
-export function off(event: string, callback: any) {
+export function off(event: string, callback: Function) {
     let index;
     // tslint:disable-next-line: no-conditional-assignment
     if (!callbacks[event] || (index = callbacks[event].indexOf(callback)) < 0) {
@@ -24,7 +24,7 @@ export function emit(event: string, ...args: any) {
     if (!callbacks[event]) {
         return;
     }
-    callbacks[event].map((fn: any) => fn(...args));
+    callbacks[event].map((fn: Function) => fn(...args));
 }
 
 const keyCallbacks: Record<string, Function> = {};

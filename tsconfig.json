@@ -6,7 +6,7 @@
     "sourceMap": true,                     /* Generates corresponding '.map' file. */
     "outDir": "./dist/",                   /* Redirect output structure to the directory. */
     "strict": true,                        /* Enable all strict type-checking options. */
-    "noImplicitAny": true,                 /* Raise error on expressions and declarations with an implied 'any' type. */
+    "noImplicitAny": true                 /* Raise error on expressions and declarations with an implied 'any' type. */
   },
   "include": [
     "@types/**/*.d.ts",

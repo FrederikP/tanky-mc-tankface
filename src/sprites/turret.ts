@@ -50,7 +50,7 @@ export class Turret extends Machine {
         return colliding;
     }
 
-    protected renderMachine(context: any) {
+    protected renderMachine(context: CanvasRenderingContext2D) {
         context.beginPath();
         context.fillStyle = "grey";
         context.fillRect(- this.radius, 0, this.radius * 2, 200);

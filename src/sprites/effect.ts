@@ -31,6 +31,6 @@ export abstract class Effect extends Vector {
         return (Date.now() - this.startTime) / this.ttl;
     }
 
-    protected abstract renderEffect(context: any): void;
+    protected abstract renderEffect(context: CanvasRenderingContext2D): void;
 
 }

@@ -44,11 +44,12 @@ export class TankyGame {
     private shotSound: Sound;
     private explosionSound: Sound;
     private itemSound: Sound;
-    private loop: any;
     private backgroundSong: Sound;
     private numberOfActiveItems: number;
 
     private hasStarted = false;
+    private loop: { isStopped: boolean; render: () => void;
+                    update: (dt: number) => void; start(): void; stop(): void; };
 
     public constructor(gameDimensions: GameDimensions, initialItems: Item[], soundSettings: SoundSettings) {
         init();

@@ -28,7 +28,7 @@ export class BlowupParticle extends Effect {
         this.startX = this.startX - offset;
     }
 
-    protected renderEffect(context: any) {
+    protected renderEffect(context: CanvasRenderingContext2D) {
         const pos = getUpdatedPositionForBallisticCurve(this.startTime, this.v0, this.angle, this.startX, this.startY);
         super.x = pos.x;
         super.y = pos.y;

@@ -15,7 +15,7 @@ export class DamageItem extends Item {
         tank.damage *= 2;
     }
 
-    protected renderItem(context: any): void {
+    protected renderItem(context: CanvasRenderingContext2D): void {
         context.fillStyle = "yellow";
         context.rotate(45 * Math.PI / 180);
         context.fillRect(-10, -3, 20, 6);
