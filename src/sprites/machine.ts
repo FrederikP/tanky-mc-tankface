@@ -3,6 +3,10 @@ import { Projectile } from "./projectile";
 import { Terrain } from "./terrain";
 
 export abstract class Machine extends Vector {
+    private static readonly HEALTHBAR_WIDTH = 30;
+    private static readonly HEALTHBAR_HEIGHT = 5;
+    private static readonly HEALTHBAR_X = -Machine.HEALTHBAR_WIDTH / 2;
+    private static readonly HEALTHBAR_Y_DISPLACEMENT = 50;
     public readonly points: number;
 
     public maxHealth: number;
@@ -25,11 +29,13 @@ export abstract class Machine extends Vector {
         context.save();
         context.translate(this.x, this.y);
         if (this.showHealthbar) {
-            const healthMid = 2 * (30 * this.health / this.maxHealth);
+            const healthMid = (Machine.HEALTHBAR_WIDTH * this.health / this.maxHealth);
             context.fillStyle = "green";
-            context.fillRect(-30, -30, healthMid, 5);
+            context.fillRect(Machine.HEALTHBAR_X, -Machine.HEALTHBAR_Y_DISPLACEMENT,
+                             healthMid, Machine.HEALTHBAR_HEIGHT);
             context.fillStyle = "red";
-            context.fillRect(-30 + healthMid, -30, 60 - healthMid, 5);
+            context.fillRect(Machine.HEALTHBAR_X + healthMid, -Machine.HEALTHBAR_Y_DISPLACEMENT, Machine.
+                             HEALTHBAR_WIDTH - healthMid, Machine.HEALTHBAR_HEIGHT);
         }
 
         this.renderMachine(context);

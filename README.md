@@ -11,6 +11,12 @@ You take control of the tank and try to go as far as you can while fighting enem
 
 [Download ZIP](https://tanky.upseil.com/master/tanky.zip)
 
+## Notes
+
+* mostly tested with 1080p monitor. Some scaling will be performed, but experience will be best on 1080p
+* enemies will sometimes not be very smart, but it was a design decision. some will shoot upper curve, some directly
+* enemy inaccuracy is random and will overall decrease with progress
+
 ## Setup for development
 
 First clone the repository and change directory to the project root.
