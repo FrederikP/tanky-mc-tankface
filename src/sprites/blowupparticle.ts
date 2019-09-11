@@ -1,3 +1,4 @@
+import { getUpdatedPositionForBallisticCurve } from "../util";
 import { Effect } from "./effect";
 
 export class BlowupParticle extends Effect {
@@ -22,18 +23,16 @@ export class BlowupParticle extends Effect {
         this.prerenderedCanvas = BlowupParticle.prerendered[color];
     }
 
-    protected renderEffect(context: any) {
-        this.updatePositionsForBallisticCurve();
-        context.drawImage(this.prerenderedCanvas, 0, 0);
+    public scroll(offset: number) {
+        super.scroll(offset);
+        this.startX = this.startX - offset;
     }
 
-    private updatePositionsForBallisticCurve() {
-        const timePassed = (Date.now() - this.startTime) / 100;
-        const xOffset = this.v0 * timePassed * Math.cos(-this.angle);
-        const yOffset = this.v0 * timePassed * Math.sin(-this.angle) -
-            0.5 * 9.8 * timePassed * timePassed;
-        super.x = this.startX + xOffset;
-        super.y = this.startY - yOffset;
+    protected renderEffect(context: any) {
+        const pos = getUpdatedPositionForBallisticCurve(this.startTime, this.v0, this.angle, this.startX, this.startY);
+        super.x = pos.x;
+        super.y = pos.y;
+        context.drawImage(this.prerenderedCanvas, 0, 0);
     }
 
     private createParticle(color: string) {
@@ -47,8 +46,4 @@ export class BlowupParticle extends Effect {
         return canvas;
     }
 
-    public scroll(offset: number) {
-        super.scroll(offset);
-        this.startX = this.startX - offset;
-    }
 }

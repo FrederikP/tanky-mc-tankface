@@ -1,4 +1,5 @@
 import { Sprite } from "kontra";
+import { getUpdatedPositionForBallisticCurve } from "../util";
 
 export class Projectile extends Sprite.class {
 
@@ -42,16 +43,9 @@ export class Projectile extends Sprite.class {
     }
 
     public update() {
-        this.updatePositionsForBallisticCurve();
-    }
-
-    private updatePositionsForBallisticCurve() {
-        const timePassed = (Date.now() - this.startTime) / 100;
-        const xOffset = this.v0 * timePassed * Math.cos(-this.angle);
-        const yOffset = this.v0 * timePassed * Math.sin(-this.angle) -
-            0.5 * 9.8 * timePassed * timePassed;
-        super.x = this.startX + xOffset;
-        super.y = this.startY - yOffset;
+        const pos = getUpdatedPositionForBallisticCurve(this.startTime, this.v0, this.angle, this.startX, this.startY);
+        super.x = pos.x;
+        super.y = pos.y;
     }
 
     public scroll(offset: number) {
