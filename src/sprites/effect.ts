@@ -2,7 +2,7 @@ import { getContext, Vector } from "../kontra/kontra";
 
 export abstract class Effect extends Vector {
 
-    protected startTime = Date.now();
+    protected startTime = performance.now();
     private ttl: number;
 
     constructor(x: number, y: number, ttl: number) {
@@ -28,7 +28,7 @@ export abstract class Effect extends Vector {
     }
 
     protected progress() {
-        return (Date.now() - this.startTime) / this.ttl;
+        return (performance.now() - this.startTime) / this.ttl;
     }
 
     protected abstract renderEffect(context: CanvasRenderingContext2D): void;

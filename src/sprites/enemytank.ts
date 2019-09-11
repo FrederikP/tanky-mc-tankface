@@ -11,7 +11,7 @@ export class EnemyTank extends Tank {
     private inaccuracy: number;
     private tanky: Tanky;
 
-    private timeLastTurn = Date.now();
+    private timeLastTurn = performance.now();
 
     private currentInaccuracyX: number;
     private currentInaccuracyY: number;
@@ -37,17 +37,17 @@ export class EnemyTank extends Tank {
 
     protected moveTank(dt: number) {
 
-        if (this.faceLeft && Date.now() - this.timeLastTurn > this.nextTripDuration) {
+        if (this.faceLeft && performance.now() - this.timeLastTurn > this.nextTripDuration) {
             this.startedMovingLeftAt = -1;
-            this.startedMovingRightAt = Date.now();
+            this.startedMovingRightAt = performance.now();
             this.goRight(dt);
-            this.timeLastTurn = Date.now();
+            this.timeLastTurn = performance.now();
             this.nextTripDuration = 3000 + Math.random() * 7000;
-        } else if (!this.faceLeft && Date.now() - this.timeLastTurn > this.nextTripDuration) {
+        } else if (!this.faceLeft && performance.now() - this.timeLastTurn > this.nextTripDuration) {
             this.startedMovingRightAt = -1;
-            this.startedMovingLeftAt = Date.now();
+            this.startedMovingLeftAt = performance.now();
             this.goLeft(dt);
-            this.timeLastTurn = Date.now();
+            this.timeLastTurn = performance.now();
             this.nextTripDuration = 3000 + Math.random() * 7000;
         } else {
             if (this.faceLeft) {
@@ -82,9 +82,9 @@ export class EnemyTank extends Tank {
                     targetGunRotation = - Math.PI - targetGunRotation;
                 }
                 this.gunRotation = this.gunRotation - Math.min(this.gunRotation - targetGunRotation, 20) * dt;
-                if (Date.now() - this.lastShot > this.msBetweenShots) {
+                if (performance.now() - this.lastShot > this.msBetweenShots) {
                     this.fireGun();
-                    this.lastShot = Date.now();
+                    this.lastShot = performance.now();
                     this.currentInaccuracyX = (Math.random() - 0.5) * 2 * this.inaccuracy;
                     this.currentInaccuracyY = (Math.random() - 0.5) * 2 * this.inaccuracy;
                 }

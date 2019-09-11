@@ -120,7 +120,7 @@ export abstract class Tank extends Machine {
     }
 
     public isReloading() {
-        return Date.now() - this.lastShot < this.reloadTime;
+        return performance.now() - this.lastShot < this.reloadTime;
     }
 
     protected abstract getTurretColor(): string;
@@ -129,14 +129,14 @@ export abstract class Tank extends Machine {
 
     protected goLeft(dt: number) {
         super.x = this.x - dt * (Math.min(this.speed - this.terrainRotationAngle * 60, Math.max(2, this.acceleration *
-            (Date.now() - this.startedMovingLeftAt)) - this.terrainRotationAngle * 60));
+            (performance.now() - this.startedMovingLeftAt)) - this.terrainRotationAngle * 60));
         this.faceLeft = true;
         this.onDrive();
     }
 
     protected goRight(dt: number) {
         super.x = this.x + dt * (Math.min(this.speed + this.terrainRotationAngle * 60, Math.max(2, this.acceleration *
-            (Date.now() - this.startedMovingRightAt)) + this.terrainRotationAngle * 60));
+            (performance.now() - this.startedMovingRightAt)) + this.terrainRotationAngle * 60));
         this.faceLeft = false;
         this.onDrive();
     }

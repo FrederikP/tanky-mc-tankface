@@ -17,7 +17,7 @@ export class Tanky extends Tank {
     }
 
     public reloadRatio() {
-        return (Date.now() - this.lastShot) / this.reloadTime;
+        return (performance.now() - this.lastShot) / this.reloadTime;
     }
 
     public liftGun(dt: number) {
@@ -62,7 +62,7 @@ export class Tanky extends Tank {
                 if (this.power > 30) {
                     this.fireGun();
                     this.power = 0;
-                    this.lastShot = Date.now();
+                    this.lastShot = performance.now();
                 }
             }
         }
@@ -75,13 +75,13 @@ export class Tanky extends Tank {
         if (keyPressed("right")) {
             this.startedMovingLeftAt = -1;
             if (this.startedMovingRightAt < 0) {
-                this.startedMovingRightAt = Date.now();
+                this.startedMovingRightAt = performance.now();
             }
             this.goRight(dt);
         } else if (keyPressed("left")) {
             this.startedMovingRightAt = -1;
             if (this.startedMovingLeftAt < 0) {
-                this.startedMovingLeftAt = Date.now();
+                this.startedMovingLeftAt = performance.now();
             }
             this.goLeft(dt);
         } else {

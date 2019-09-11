@@ -16,7 +16,7 @@ export class Turret extends Machine {
     private radius = 10;
     private gunRotation = 0.75 * -Math.PI;
     private tank: Tank;
-    private lastShot = Date.now();
+    private lastShot = performance.now();
 
     private seenTanky = false;
     private currentInaccuracyX: number;
@@ -94,9 +94,9 @@ export class Turret extends Machine {
                     targetGunRotation = - Math.PI - angle;
                 }
                 this.gunRotation = this.gunRotation - Math.min(this.gunRotation - targetGunRotation, 20) * dt;
-                if (Date.now() - this.lastShot > this.msBetweenShots) {
+                if (performance.now() - this.lastShot > this.msBetweenShots) {
                     this.fireGun();
-                    this.lastShot = Date.now();
+                    this.lastShot = performance.now();
                     this.currentInaccuracyX = (Math.random() - 0.5) * 2 * this.inaccuracy;
                     this.currentInaccuracyY = (Math.random() - 0.5) * 2 * this.inaccuracy;
                 }

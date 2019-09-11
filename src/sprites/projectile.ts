@@ -18,7 +18,7 @@ export class Projectile extends Vector {
 
     public damage = 1;
 
-    private startTime = Date.now();
+    private startTime = performance.now();
 
     private v0: number;
     private angle: number;

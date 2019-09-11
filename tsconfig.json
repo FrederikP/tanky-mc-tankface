@@ -9,8 +9,7 @@
     "noImplicitAny": true                 /* Raise error on expressions and declarations with an implied 'any' type. */
   },
   "include": [
-    "@types/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx"
-]
+  ]
 }
